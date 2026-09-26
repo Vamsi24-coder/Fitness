@@ -2,11 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 
 // Robust URL sanitization to handle accidental concatenation of Vercel domains or trailing paths
 function sanitizeSupabaseUrl(rawUrl) {
-  const fallback = 'https://dzfgdimeamocmrgkxjqh.supabase.co';
-  if (!rawUrl || typeof rawUrl !== 'string') return fallback;
+  if (!rawUrl || typeof rawUrl !== 'string') return '';
   const trimmed = rawUrl.trim();
   
-  // Extract the true Supabase project domain (e.g. https://dzfgdimeamocmrgkxjqh.supabase.co)
+  // Extract the true Supabase project domain
   const match = trimmed.match(/(https?:\/\/[a-z0-9-]+(?:\.supabase\.co|\.supabase\.in))/i);
   if (match) {
     return match[1];
@@ -15,14 +14,17 @@ function sanitizeSupabaseUrl(rawUrl) {
 }
 
 function sanitizeSupabaseKey(rawKey) {
-  const fallback = 'sb_publishable_-b5hpCcpgIKRAqV_II-JLg_Z9EvVRxG';
-  if (!rawKey || typeof rawKey !== 'string') return fallback;
+  if (!rawKey || typeof rawKey !== 'string') return '';
   return rawKey.trim().replace(/^["']|["']$/g, '');
 }
 
-// Configuration from environment variables with safe fallback sanitization
+// Configuration strictly from environment variables
 const supabaseUrl = sanitizeSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
 const supabaseAnonKey = sanitizeSupabaseKey(import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn('Supabase URL or Anon Key is missing. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are configured.');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

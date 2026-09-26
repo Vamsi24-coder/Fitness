@@ -1,65 +1,26 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { summarizeLogs } from './nutrition';
-
-// Primary API key loaded securely from Vite environment variables (VITE_GEMINI_API_KEY)
-const PRIMARY_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const FALLBACK_API_KEY = '';
-
-// Prioritize gemini-3.5-flash-lite and gemini-3.8-flash for fast, quota-resilient responses
-const MODELS_TO_TRY = [
-  'gemini-3.5-flash-lite',
-  'gemini-3.8-flash',
-  'gemini-flash-latest',
-  'gemini-pro-latest',
-];
+import { supabase } from '../lib/supabase.js';
+import { summarizeLogs } from './nutrition.js';
 
 /**
- * Execute generation with API key and model fallback
- */
-async function generateWithFallback(prompt, generationConfig = {}) {
-  const keys = [PRIMARY_API_KEY, FALLBACK_API_KEY].filter(Boolean);
-  let lastError = null;
-
-  for (const apiKey of keys) {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    for (const modelName of MODELS_TO_TRY) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig,
-        });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        if (text) {
-          return text;
-        }
-      } catch (err) {
-        console.warn(`Gemini generation notice (${modelName}):`, err.message);
-        lastError = err;
-      }
-    }
-  }
-
-  throw lastError || new Error('All Gemini API attempts failed.');
-}
-
-/**
- * Clean and parse JSON response from Gemini
+ * Clean and parse JSON response from Gemini or fallback payload
  */
 function cleanAndParseJSON(rawText, fallbackObj = null) {
+  if (typeof rawText === 'object' && rawText !== null) {
+    return rawText;
+  }
   try {
-    let clean = rawText.trim();
+    let clean = String(rawText).trim();
     if (clean.startsWith('```')) {
       clean = clean.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
     }
     return JSON.parse(clean);
-  } catch (e) {
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+  } catch (_e) {
+    const jsonMatch = String(rawText).match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       try {
         return JSON.parse(jsonMatch[0]);
-      } catch (innerErr) {
-        console.error('Regex JSON parse error:', innerErr);
+      } catch (_innerErr) {
+        // Fall through
       }
     }
     return fallbackObj;
@@ -67,7 +28,64 @@ function cleanAndParseJSON(rawText, fallbackObj = null) {
 }
 
 /**
- * UPGRADE 1 & 3: Intelligent Gemini Nutritionist that asks clarifying follow-up questions
+ * Execute AI request securely via server-side / edge layer.
+ * 1. Prioritizes Supabase Edge Function (`gemini-nutrition`).
+ * 2. Falls back to secure local dev / Vercel Serverless `/api/gemini`.
+ * 3. Never loads or exposes GEMINI_API_KEY in the browser bundle.
+ */
+async function callSecureGemini(action, payload = {}) {
+  // Strategy A: Supabase Edge Function
+  try {
+    const { data, error } = await supabase.functions.invoke('gemini-nutrition', {
+      body: { action, ...payload },
+    });
+
+    if (!error && data && !data.error) {
+      return data;
+    }
+    if (data?.error) {
+      console.warn('[Gemini Edge Notice]:', data.error);
+    }
+  } catch (edgeErr) {
+    console.warn('[Gemini Edge Notice]:', edgeErr.message);
+  }
+
+  // Strategy B: Serverless API Endpoint (/api/gemini for Vite dev / Vercel)
+  try {
+    const { data: sessionData } = await supabase.auth.getSession().catch(() => ({ data: {} }));
+    const token = sessionData?.session?.access_token;
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ action, ...payload }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && !data.error) {
+        return data;
+      }
+    } else {
+      const errData = await res.json().catch(() => null);
+      if (errData?.error) {
+        throw new Error(errData.error);
+      }
+    }
+  } catch (apiErr) {
+    console.warn('[Gemini Serverless Notice]:', apiErr.message);
+  }
+
+  throw new Error('All secure AI endpoints unavailable. Engaging heuristic fallback.');
+}
+
+/**
+ * Intelligent Nutritionist that asks clarifying follow-up questions
  * (e.g., if user enters "3 dosa", asks about oil/ghee, chutney, fillings before final calculation).
  *
  * @param {string} foodInput - Natural text (e.g. "3 dosa", "caesar salad", "grilled chicken")
@@ -77,63 +95,22 @@ function cleanAndParseJSON(rawText, fallbackObj = null) {
 export async function analyzeFoodWithClarification(foodInput, clarificationAnswers = '', preferredCategory = null) {
   if (!foodInput || !foodInput.trim()) return null;
 
-  const prompt = `You are an expert clinical dietitian and sports nutritionist with conversational intelligence.
-User food entry: "${foodInput.trim()}"
-${clarificationAnswers ? `User clarification answers: "${clarificationAnswers.trim()}"` : ''}
-Preferred Meal Category: ${preferredCategory || 'Auto-detect'}
-
-Task:
-1. Determine if this food has critical missing preparation variables that substantially alter calories/macros (e.g., cooking oil/ghee amount, chutney or sauce sides, type of bread/filling, sugar/milk additions, or dressing).
-2. IF critical variables are missing and no clarification answers were provided, return a clarification request JSON:
-{
-  "status": "needs_clarification",
-  "food_summary": "Short title of food (e.g. 3 Dosas)",
-  "message": "Friendly 1-sentence question asking for preparation details",
-  "questions": [
-    {
-      "id": "oil_or_fat",
-      "question": "How much cooking oil, ghee, or butter was used?",
-      "options": ["Cooked with 1 tsp oil/ghee (~5g fat)", "Ghee roast / Crispy (2 tsp ghee, ~10g fat)", "Minimal / Non-stick pan (1-2g fat)"]
-    },
-    {
-      "id": "sides_or_chutney",
-      "question": "Which chutney, sauce, or side did you have?",
-      "options": ["Coconut Chutney & Sambar", "Tomato / Onion Chutney", "Only Sambar", "No chutney or sides"]
-    },
-    {
-      "id": "food_variant",
-      "question": "What type or variant?",
-      "options": ["Plain / Regular", "Filled (e.g. Masala / Potato)", "Whole grain / Oats / Rava"]
-    }
-  ]
-}
-
-3. IF sufficient details exist OR clarification answers are provided, calculate exact composite nutrition:
-{
-  "status": "calculated",
-  "food_name": "Clear descriptive title including cooking details (e.g. 3 Plain Dosas with Coconut Chutney & 1 tsp oil)",
-  "meal_category": "Breakfast" | "Lunch" | "Snacks" | "Dinner",
-  "quantity": numeric quantity (e.g. 3, 1, 200),
-  "unit": "piece" | "serving" | "g" | "bowl" | "plate" | "cup",
-  "carbs": numeric grams of carbs,
-  "protein": numeric grams of protein,
-  "fats": numeric grams of fats,
-  "fiber": numeric grams of fiber,
-  "calories": numeric total (carbs*4 + protein*4 + fats*9),
-  "breakdown_note": "A concise 1-2 sentence breakdown showing exactly how the base food, oil, and sides factored into the final macros."
-}
-
-Respond STRICTLY with valid JSON only. Do NOT include markdown fences.`;
+  // Enforce client-side validation guardrail (max 300 chars)
+  const trimmedInput = foodInput.trim().slice(0, 300);
+  const trimmedAnswers = (clarificationAnswers || '').trim().slice(0, 300);
 
   try {
-    const rawText = await generateWithFallback(prompt, { temperature: 0.1 });
-    const parsed = cleanAndParseJSON(rawText);
+    const parsed = await callSecureGemini('analyze_food', {
+      foodInput: trimmedInput,
+      clarificationAnswers: trimmedAnswers,
+      preferredCategory,
+    });
 
     if (parsed) {
       if (parsed.status === 'needs_clarification' && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
         return {
           status: 'needs_clarification',
-          food_summary: parsed.food_summary || foodInput,
+          food_summary: parsed.food_summary || trimmedInput,
           message: parsed.message || 'Please clarify a few preparation details for accurate macro calculation:',
           questions: parsed.questions,
         };
@@ -148,7 +125,7 @@ Respond STRICTLY with valid JSON only. Do NOT include markdown fences.`;
 
         return {
           status: 'calculated',
-          food_name: parsed.food_name || foodInput.trim(),
+          food_name: parsed.food_name || trimmedInput,
           meal_category: preferredCategory || parsed.meal_category || 'Breakfast',
           quantity: Math.max(0.1, Number(parsed.quantity) || 1),
           unit: parsed.unit || 'serving',
@@ -162,15 +139,15 @@ Respond STRICTLY with valid JSON only. Do NOT include markdown fences.`;
       }
     }
   } catch (err) {
-    console.error('Conversational nutrition calculation error:', err);
+    console.warn('Secure food analysis fallback engaged:', err.message);
   }
 
   // Smart local fallback for common items like "dosa" if API rate limits or network issues occur
-  const lower = foodInput.toLowerCase();
-  if (lower.includes('dosa') && !clarificationAnswers) {
+  const lower = trimmedInput.toLowerCase();
+  if (lower.includes('dosa') && !trimmedAnswers) {
     return {
       status: 'needs_clarification',
-      food_summary: foodInput,
+      food_summary: trimmedInput,
       message: 'To give you the exact macros for your dosa, how was it prepared?',
       questions: [
         {
@@ -195,7 +172,7 @@ Respond STRICTLY with valid JSON only. Do NOT include markdown fences.`;
   // Direct calculation fallback
   return {
     status: 'calculated',
-    food_name: foodInput,
+    food_name: trimmedInput,
     meal_category: preferredCategory || 'Lunch',
     quantity: 1,
     unit: 'serving',
@@ -225,7 +202,7 @@ export const estimateFoodNutrition = parseAndCalculateFoodNutrition;
 /**
  * Culturally authentic Andhra Pradesh / South Indian dynamic fallback plan
  */
-function getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, profile, eatenCategories = []) {
+function getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, profile, _eatenCategories = []) {
   const caloriesRemaining = Math.max(0, (targets.calories || 2000) - summary.calories);
   const proteinGap = Math.max(0, (targets.protein || 120) - Math.round(summary.protein));
 
@@ -519,99 +496,22 @@ export async function generateNutritionSuggestions(profile, todayLogs = [], targ
     return `* ${cat} [${catSummary.calories} kcal | ${catSummary.carbs}g C, ${catSummary.protein}g P, ${catSummary.fats}g F, ${catSummary.fiber}g Fiber]: ${itemList}`;
   }).join('\n');
 
-  const prompt = `You are an elite clinical dietitian and sports nutritionist specializing in authentic Andhra Pradesh and South Indian nutrition.
-You are providing the daily nutrition fuel plan for a user in Andhra Pradesh / South India based on their actual biometric profile and what they have consumed so far today.
-
-USER PROFILE:
-- Gender: ${profile?.gender || 'Adult'}
-- Age: ${profile?.age || 25} years
-- Weight: ${profile?.weight || 70} kg
-- Daily Workout: ${profile?.works_out ? `Yes (${profile.intensity} intensity, ${profile.duration} mins/day)` : 'Sedentary / Rest day'}
-- Basal Metabolic Rate (BMR): ${targets.bmr || 1650} kcal
-- Daily Calorie Target: ${targets.calories || 2000} kcal
-- Daily Macro Targets: ${targets.protein || 120}g Protein (${targets.factors?.proteinPerKg || 1.7}g/kg), ${targets.carbs || 220}g Carbs, ${targets.fats || 65}g Fats, ${targets.fiber || 28}g Fiber
-
-TODAY'S INTAKE & LOGGED MEALS SO FAR:
-${mealsEatenBreakdown || 'No meals logged yet today.'}
-
-CURRENT NUTRITIONAL BALANCE & GAPS:
-- Calories Consumed: ${summary.calories} kcal / ${targets.calories || 2000} kcal (Remaining: ${caloriesRemaining} kcal)
-- Protein Consumed: ${Math.round(summary.protein)}g / ${targets.protein || 120}g (Deficit: ${proteinGap > 0 ? `${proteinGap}g remaining` : `Target met (+${Math.abs(proteinGap)}g)`})
-- Carbs Consumed: ${Math.round(summary.carbs)}g / ${targets.carbs || 220}g (Deficit: ${carbsGap > 0 ? `${carbsGap}g remaining` : `Target met (+${Math.abs(carbsGap)}g)`})
-- Fats Consumed: ${Math.round(summary.fats)}g / ${targets.fats || 65}g (Deficit: ${fatsGap > 0 ? `${fatsGap}g remaining` : `Target met (+${Math.abs(fatsGap)}g)`})
-- Fiber Consumed: ${Math.round(summary.fiber)}g / ${targets.fiber || 28}g (Deficit: ${fiberGap > 0 ? `${fiberGap}g remaining` : `Target met (+${Math.abs(fiberGap)}g)`})
-
-CURRENT STAGE: ${stage}
-IMMEDIATE NEXT MEAL TO RECOMMEND: ${nextCategory}
-UNLOGGED UPCOMING MEALS: ${unloggedCategories.filter(c => c !== nextCategory).join(', ') || 'None'}
-
-CRITICAL DIETARY & CULTURAL RULES FOR ANDHRA PRADESH / SOUTH INDIA:
-1. EXCLUSIVELY RECOMMEND REALISTIC, FAMILIAR ANDHRA / SOUTH INDIAN FOODS:
-   - Breakfasts: Pesarattu (with allam/ginger chutney), Idli (with sambar or peanut/coconut chutney), Dosa, Rava Upma, Pongal, Chapati, Boiled eggs/egg porutu, Ragi java/porridge.
-   - Lunches: Steamed rice (Sona Masoori/brown, measured in cups), Pappu (Palakura, Tomato, Dosakaya, Mamidikaya, Thotakura), Sambar, Rasam (chaaru), Vepudu/Curries (bendakaya, dondakaya, beerakaya, aratikaya), Leafy greens (gongura, thotakura), Curd (perugu), Boiled eggs, Kodi kura (Andhra chicken curry/roast with controlled oil), Chepala pulusu (fish curry), Paneer/Soya chunks curry.
-   - Evening Snacks: Spiced Buttermilk (chilled majjiga with ginger, curry leaves, hing), Guggillu / Sundal (boiled tempered chickpeas or black chana), Roasted chana (putnalu), Boiled peanuts, Boiled eggs with black pepper, Moong sprouts salad with lemon, local fruits (guava, banana, papaya, pomegranate).
-   - Dinners: Phulkas/Chapatis (2-3 phulkas without excess oil), Light rice with rasam or dal, Moong dal pesarattu, Egg curry, Andhra chicken with sliced cucumber, Curd.
-   - DO NOT default to generic Western fitness foods (NO avocado toast, Greek yogurt bowls, quinoa salads, protein pancakes, kale smoothies, turkey deli slices, or cottage cheese).
-2. ANDHRA EATING PATTERNS:
-   - Lunch is traditionally substantial (Rice + Pappu + Curry + Curd). Honor this rhythm while controlling rice portions (e.g. 1 to 1.5 cups) and boosting dal/egg/curd protein.
-   - If Breakfast was carb-dense (e.g. 3-4 idlis or 2 dosas), recommend high-protein, fiber-rich lunch and dinner (thick dal, boiled eggs, chicken, curd).
-   - If Lunch was heavy on rice/carbs, recommend high-protein/low-carb snacks (boiled eggs + buttermilk or roasted chana).
-   - If calories are running low, suggest light, satiating options (vegetable chaaru, clear rasam, stir-fried leafy greens, boiled egg whites).
-3. SPECIFIC REALISTIC PORTIONS & REASONING:
-   - Always state exact portions (e.g., "1 cup steamed rice (~150g cooked)", "1 bowl Palakura Pappu", "2 boiled eggs", "1 tall glass majjiga (250ml)").
-   - Explain WHY this meal fits what has already been eaten today.
-4. WORKOUT TIMING:
-   - Connect meal timing to user's workout: ${profile?.works_out ? `${profile.intensity} workout (${profile.duration} mins)` : 'Rest day'}.
-   - Recommend pre-workout fuel (e.g. banana or ragi malt 30-45 mins before) and post-workout protein replenishment (within 1-2 hours).
-5. HYDRATION & RECOVERY:
-   - Provide practical hydration advice considering bodyweight (${profile?.weight || 70}kg) and Andhra warm climate (recommend spiced buttermilk/majjiga for electrolytes, lemon water, and 2.5-3.5L water).
-
-Respond STRICTLY with a valid JSON object matching this schema (NO markdown fences):
-{
-  "stage": "${stage}",
-  "headline": "Punchy 4-7 word headline summarizing today's state (e.g. 'Breakfast Logged • High-Protein Lunch Plan')",
-  "alreadyEatenDiagnosis": "1-2 sentences diagnosing what has been consumed so far today and what nutritional gaps need immediate attention.",
-  "macroStatus": {
-    "caloriesRemaining": ${caloriesRemaining},
-    "proteinRemainingGrams": ${Math.max(0, proteinGap)},
-    "primaryFocus": "High Protein & Controlled Carbs" | "Glycogen Fuel" | "Calorie Deficit Control" | "Hydration & Recovery"
-  },
-  "nextMeal": {
-    "category": "${nextCategory === 'DayComplete' ? 'Day Completed' : nextCategory}",
-    "title": "Clear descriptive name of recommended Andhra meal",
-    "itemsAndPortions": [
-      "Exact item with portion (e.g. 1 cup steamed rice ~150g)",
-      "Exact item with portion (e.g. 1 bowl Palakura Pappu)",
-      "Exact item with portion (e.g. 2 boiled eggs or 100g paneer)",
-      "Exact item with portion (e.g. 1 small cup fresh homemade curd)"
-    ],
-    "estimatedMacros": {
-      "calories": 480,
-      "carbs": 56,
-      "protein": 26,
-      "fats": 14,
-      "fiber": 8
-    },
-    "whyThisWorks": "Clear explanation of why this specific combination complements today's prior meals and meets remaining targets.",
-    "quickAlternative": "A practical Andhra alternative meal (e.g. 2 Phulkas with Egg Porutu and cucumber slices)"
-  },
-  "laterMeals": [
-    {
-      "category": "Meal Category Name",
-      "title": "Descriptive meal name",
-      "portion": "Concise items and portions",
-      "estCalories": 220,
-      "estProtein": 12
-    }
-  ],
-  "workoutNutritionAdvice": "Specific pre-workout or post-workout guidance tailored to their ${profile?.intensity || 'daily'} workout and remaining calories.",
-  "hydrationAndRecovery": "Contextual fluid target with practical Andhra hydration tip (e.g. spiced buttermilk / majjiga)."
-}
-`;
-
   try {
-    const rawText = await generateWithFallback(prompt, { temperature: 0.25 });
-    const parsed = cleanAndParseJSON(rawText, null);
+    const parsed = await callSecureGemini('generate_suggestions', {
+      profile,
+      targets,
+      stage,
+      nextCategory,
+      unloggedCategories,
+      mealsEatenBreakdown,
+      summary,
+      caloriesRemaining,
+      proteinGap,
+      carbsGap,
+      fatsGap,
+      fiberGap,
+    });
+
     if (parsed && parsed.nextMeal) {
       parsed.eatenCategories = eatenCategories;
       parsed.summary = parsed.headline || parsed.summary || 'Custom Andhra Fuel Plan';
@@ -620,7 +520,7 @@ Respond STRICTLY with a valid JSON object matching this schema (NO markdown fenc
       return parsed;
     }
   } catch (err) {
-    console.error('Error getting dynamic Andhra nutrition suggestions from Gemini:', err);
+    console.warn('Secure nutrition suggestions fallback engaged:', err.message);
   }
 
   // Graceful, authentic Andhra fallback plan

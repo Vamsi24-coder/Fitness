@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, 
@@ -25,9 +25,15 @@ export function AISuggestions({ profile, todayLogs = [], targets = {} }) {
   const [suggestions, setSuggestions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const lastRequestTimeRef = useRef(0);
 
   const fetchSuggestions = async () => {
     if (!profile) return;
+    const now = Date.now();
+    if (now - lastRequestTimeRef.current < 2500) {
+      return; // Cooldown: prevent repeated clicks within 2.5s
+    }
+    lastRequestTimeRef.current = now;
     try {
       setLoading(true);
       setError('');

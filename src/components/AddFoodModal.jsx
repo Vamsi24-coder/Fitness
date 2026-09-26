@@ -95,6 +95,11 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
       return;
     }
 
+    if (text.length > 300) {
+      setErrorMessage('Food description must be 300 characters or less.');
+      return;
+    }
+
     try {
       setIsAiProcessing(true);
       setErrorMessage('');
@@ -411,6 +416,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
               <div className="flex flex-col sm:flex-row gap-2.5">
                 <input
                   type="text"
+                  maxLength={300}
                   value={naturalInput}
                   onChange={(e) => setNaturalInput(e.target.value)}
                   onKeyDown={(e) => {
