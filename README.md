@@ -114,29 +114,38 @@ To enable Google sign-in with your Supabase project:
 
 ---
 
-## ☁️ Deploying to Vercel
+---
 
-### Step 1: Push to GitHub & Connect to Vercel
-1. Import the repository `https://github.com/Vamsi24-coder/Fitness` into [Vercel](https://vercel.com/new).
-2. Framework Preset will automatically detect **Vite**.
-3. Root Directory: `./`
+## 🚀 Deploying to Render (Recommended Free Hosting)
 
-### Step 2: Configure Environment Variables in Vercel
-Under **Environment Variables**, add the 3 required keys:
+### Method A: 1-Click via Render Blueprint
+1. Log in to [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** $\rightarrow$ **Blueprint**.
+3. Connect your repository `https://github.com/Vamsi24-coder/Fitness`.
+4. Render will read [`render.yaml`](./render.yaml) automatically, configure the build command (`npm install && npm run build`), publish directory (`dist`), and SPA rewrites (`/*` $\rightarrow$ `/index.html`).
+5. Provide your 3 environment variables when prompted.
 
-| Key | Example Value | Description |
-| :--- | :--- | :--- |
-| `VITE_SUPABASE_URL` | `https://dzfgdimeamocmrgkxjqh.supabase.co` | Supabase API endpoint |
-| `VITE_SUPABASE_ANON_KEY` | `sb_publishable_...` | Supabase public publishable key |
-| `VITE_GEMINI_API_KEY` | `AQ.Ab8RN6KH...` | Google Gemini AI Studio API key |
-
-### Step 3: Add Vercel URL to Supabase Auth
-Once Vercel assigns your production URL (e.g., `https://fitness-xxx.vercel.app`):
-1. In [Supabase Dashboard](https://supabase.com/dashboard/project/dzfgdimeamocmrgkxjqh/auth/url-configuration):
-   - Set **Site URL** to `https://fitness-xxx.vercel.app`
-   - Under **Redirect URLs**, add `https://fitness-xxx.vercel.app/**`
-2. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
-   - Under Authorized JavaScript origins, add `https://fitness-xxx.vercel.app`
+### Method B: Manual Static Site Setup
+1. Click **New +** $\rightarrow$ **Static Site**.
+2. Connect `Vamsi24-coder/Fitness` (branch: `main`).
+3. Fill in configuration:
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `dist`
+4. Add **Environment Variables**:
+   - `VITE_SUPABASE_URL` = `https://dzfgdimeamocmrgkxjqh.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY` = `sb_publishable_-b5hpCcpgIKRAqV_II-JLg_Z9EvVRxG`
+   - `VITE_GEMINI_API_KEY` = `your_gemini_api_key_from_google_ai_studio`
+5. **Redirects / Rewrites (Crucial for client-side routing)**:
+   - Under **Redirects/Rewrites**:
+     - **Type**: `Rewrite`
+     - **Source**: `/*`
+     - **Destination**: `/index.html`
+6. Once deployed, copy your Render URL (e.g. `https://nutripulse-fitness.onrender.com`):
+   - In [Supabase Dashboard $\rightarrow$ URL Configuration](https://supabase.com/dashboard/project/dzfgdimeamocmrgkxjqh/auth/url-configuration):
+     - Set **Site URL**: `https://nutripulse-fitness.onrender.com`
+     - Add to **Redirect URLs**: `https://nutripulse-fitness.onrender.com/**`
+   - In [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials):
+     - Add `https://nutripulse-fitness.onrender.com` to **Authorized JavaScript origins**.
 
 ---
 
