@@ -5,10 +5,10 @@ import { summarizeLogs } from './nutrition';
 const PRIMARY_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 const FALLBACK_API_KEY = '';
 
-// Prioritize gemini-3.5-flash-lite and flash-lite-latest to avoid free tier 429 quota spikes
+// Prioritize gemini-3.5-flash-lite and gemini-3.8-flash for fast, quota-resilient responses
 const MODELS_TO_TRY = [
   'gemini-3.5-flash-lite',
-  'gemini-flash-lite-latest',
+  'gemini-3.8-flash',
   'gemini-flash-latest',
   'gemini-pro-latest',
 ];
@@ -223,98 +223,411 @@ export async function parseAndCalculateFoodNutrition(foodInput, preferredCategor
 export const estimateFoodNutrition = parseAndCalculateFoodNutrition;
 
 /**
- * Generate personalized nutrition & workout suggestions
+ * Culturally authentic Andhra Pradesh / South Indian dynamic fallback plan
+ */
+function getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, profile, eatenCategories = []) {
+  const caloriesRemaining = Math.max(0, (targets.calories || 2000) - summary.calories);
+  const proteinGap = Math.max(0, (targets.protein || 120) - Math.round(summary.protein));
+
+  if (nextCategory === 'DayComplete' || stage === 'day_complete') {
+    return {
+      stage: 'day_complete',
+      headline: 'Full Day Completed • Overnight Recovery & Tomorrow Prep',
+      alreadyEatenDiagnosis: `You have completed your day with ${summary.calories} kcal consumed against your ${targets.calories} kcal goal and ${Math.round(summary.protein)}g protein logged.`,
+      macroStatus: {
+        caloriesRemaining,
+        proteinRemainingGrams: proteinGap,
+        primaryFocus: 'Hydration & Overnight Recovery',
+      },
+      nextMeal: {
+        category: 'Day Completed',
+        title: 'Daily Nutrition Goal Reached',
+        itemsAndPortions: [
+          'All primary meals logged today',
+          'Sip warm water or light spiced buttermilk before bed for digestion',
+          'Tomorrow morning: High-protein breakfast planned (Pesarattu / Boiled Eggs)',
+        ],
+        estimatedMacros: {
+          calories: summary.calories,
+          carbs: Math.round(summary.carbs),
+          protein: Math.round(summary.protein),
+          fats: Math.round(summary.fats),
+          fiber: Math.round(summary.fiber),
+        },
+        whyThisWorks: 'Consistently logging every meal provides the data foundation for sustainable body composition and metabolic health.',
+        quickAlternative: 'Take 7-8 hours restful sleep to allow muscle protein synthesis to take effect.',
+      },
+      laterMeals: [],
+      workoutNutritionAdvice: profile?.works_out
+        ? `Ensure your post-workout protein window is satisfied before sleep. Muscle tissue repairs overnight during deep sleep stages.`
+        : 'Rest day recovery is where adaptation happens. Maintain a consistent sleep schedule.',
+      hydrationAndRecovery: `Target total 3.0L fluids today. A warm glass of water or light majjiga aids overnight digestion and prevents waking dehydrated.`,
+    };
+  }
+
+  if (nextCategory === 'Lunch') {
+    return {
+      stage: 'recommend_lunch',
+      headline: 'Balanced Andhra Lunch • Protein & Controlled Rice',
+      alreadyEatenDiagnosis: `Breakfast provided ${summary.calories} kcal and ${Math.round(summary.carbs)}g carbs. Lunch should combine measured Sona Masoori rice with protein-dense Palakura Pappu, eggs, and fresh curd.`,
+      macroStatus: {
+        caloriesRemaining,
+        proteinRemainingGrams: proteinGap,
+        primaryFocus: proteinGap > 40 ? 'High Protein Anchor' : 'Balanced Macro Split',
+      },
+      nextMeal: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, Boiled Eggs & Curd',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 medium bowl Palakura Pappu (Spinach Dal)',
+          '2 boiled eggs (or 100g paneer / soya curry for vegetarian)',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: {
+          calories: 510,
+          carbs: 58,
+          protein: 26,
+          fats: 14,
+          fiber: 8,
+        },
+        whyThisWorks: 'Spinach dal and boiled eggs deliver 26g of bioavailable protein while keeping rice measured to 1 cup, preventing afternoon lethargy and saving calories for dinner.',
+        quickAlternative: '2 Phulkas with Andhra Egg Porutu (Bhurji) and cucumber slices',
+      },
+      laterMeals: [
+        {
+          category: 'Evening Snacks',
+          title: 'Chilled Spiced Buttermilk & Roasted Chana',
+          portion: '1 tall glass majjiga (250ml) + 30g putnalu (roasted chana)',
+          estCalories: 160,
+          estProtein: 9,
+        },
+        {
+          category: 'Dinner',
+          title: '2 Phulkas with Light Andhra Chicken Curry or Dal',
+          portion: '2 phulkas without oil + 1 bowl chicken curry/dal + cucumber',
+          estCalories: 380,
+          estProtein: 28,
+        },
+      ],
+      workoutNutritionAdvice: profile?.works_out
+        ? `For your ${profile.intensity} session (${profile.duration}m), schedule lunch at least 2.5 hours before training to allow optimal digestion.`
+        : 'Keep meal timing structured to sustain stable energy and focus.',
+      hydrationAndRecovery: 'Keep a bottle of water and 1 glass of spiced buttermilk handy for mid-afternoon electrolyte replenishment.',
+    };
+  }
+
+  if (nextCategory === 'Evening Snacks') {
+    return {
+      stage: 'recommend_snacks',
+      headline: 'Pre-Workout & Evening Fuel • High-Protein Snack',
+      alreadyEatenDiagnosis: `With Breakfast and Lunch logged, you have consumed ${summary.calories} kcal. You have ${caloriesRemaining} kcal and ${proteinGap}g protein remaining today.`,
+      macroStatus: {
+        caloriesRemaining,
+        proteinRemainingGrams: proteinGap,
+        primaryFocus: 'Protein Satiety & Sustained Energy',
+      },
+      nextMeal: {
+        category: 'Evening Snacks',
+        title: 'Chilled Spiced Buttermilk with Boiled Eggs or Roasted Chana',
+        itemsAndPortions: [
+          '1 tall glass spiced buttermilk (majjiga with ginger, curry leaves & hing)',
+          '2 boiled eggs with crushed pepper (or 35g roasted chana / putnalu)',
+          '1 medium banana if workout is scheduled in 45 mins',
+        ],
+        estimatedMacros: {
+          calories: 220,
+          carbs: 18,
+          protein: 16,
+          fats: 8,
+          fiber: 4,
+        },
+        whyThisWorks: 'Provides a clean 16g protein boost with digestive cooling from majjiga, curbing evening cravings without loading up on heavy fats.',
+        quickAlternative: 'Moong sprouts salad with chopped onion, tomato, green chilli, and lemon',
+      },
+      laterMeals: [
+        {
+          category: 'Dinner',
+          title: '2 Phulkas with Light Andhra Chicken Curry & Salad',
+          portion: '2 phulkas + 1 bowl chicken curry or Dal + cucumber',
+          estCalories: 380,
+          estProtein: 28,
+        },
+      ],
+      workoutNutritionAdvice: profile?.works_out
+        ? `If working out this evening, have your snack 45 minutes prior. The electrolytes in buttermilk prevent cramping during ${profile.intensity} workouts.`
+        : 'A light protein snack prevents overeating at dinner.',
+      hydrationAndRecovery: 'Stay well-hydrated. Afternoon hydration in warm Andhra climates is critical for mental alertness and workout performance.',
+    };
+  }
+
+  if (nextCategory === 'Dinner') {
+    return {
+      stage: 'recommend_dinner',
+      headline: 'Light Andhra Dinner • Muscle Recovery Split',
+      alreadyEatenDiagnosis: `You have logged ${summary.calories} kcal today. Dinner should cleanly hit your remaining ${proteinGap}g protein target while keeping carbs light for easy sleep digestion.`,
+      macroStatus: {
+        caloriesRemaining,
+        proteinRemainingGrams: proteinGap,
+        primaryFocus: 'Light Carbs & High Protein',
+      },
+      nextMeal: {
+        category: 'Dinner',
+        title: '2 Phulkas with Light Kodi Kura (Chicken Curry) or Egg Curry',
+        itemsAndPortions: [
+          '2 hot phulkas / chapatis without excess oil',
+          '1 bowl Andhra chicken curry or 2-egg curry (or thick Tadka Dal / Paneer for veg)',
+          'Sliced cucumber, tomato, and onion salad with lemon juice',
+        ],
+        estimatedMacros: {
+          calories: 390,
+          carbs: 38,
+          protein: 29,
+          fats: 11,
+          fiber: 6,
+        },
+        whyThisWorks: 'Phulkas digest easily before sleep while chicken/egg protein supports overnight muscle recovery without feeling bloated or heavy.',
+        quickAlternative: '1 cup light Jeera Rice or Rasam Rice with 2 boiled eggs and vegetable curry',
+      },
+      laterMeals: [],
+      workoutNutritionAdvice: profile?.works_out
+        ? `Your post-workout recovery window will be fulfilled by this dinner's protein and complex carbs, replenishing liver and muscle glycogen.`
+        : 'Finish dinner at least 2 hours before bedtime for optimal sleep quality and digestive comfort.',
+      hydrationAndRecovery: 'Sip a glass of warm water or light chaaru (rasam) after dinner to soothe digestion.',
+    };
+  }
+
+  // Default: Breakfast
+  return {
+    stage: 'recommend_breakfast',
+    headline: 'High-Protein Andhra Breakfast • Ignite Your Day',
+    alreadyEatenDiagnosis: `Starting your day with a calibrated ${targets.calories} kcal goal and ${targets.protein}g protein target. A protein-rich Andhra breakfast sets steady blood sugar for the day.`,
+    macroStatus: {
+      caloriesRemaining,
+      proteinRemainingGrams: proteinGap,
+      primaryFocus: 'Protein-Anchor & Clean Fuel',
+    },
+    nextMeal: {
+      category: 'Breakfast',
+      title: '2 Pesarattu with Ginger (Allam) Chutney & 1 Boiled Egg',
+      itemsAndPortions: [
+        '2 medium Pesarattu (whole moong dal crepes)',
+        '2 tbsp Allam (Ginger) Chutney',
+        '1 boiled egg (or 50g paneer bhurji)',
+        '1 cup warm water or spiced ragi java',
+      ],
+      estimatedMacros: {
+        calories: 380,
+        carbs: 44,
+        protein: 22,
+        fats: 9,
+        fiber: 9,
+      },
+      whyThisWorks: 'Whole moong pesarattu paired with eggs delivers 22g of slow-digesting protein and 9g of gut-healthy prebiotic fiber, preventing insulin spikes.',
+      quickAlternative: '3 Idlis with Sambar and Peanut Chutney + 1 boiled egg',
+    },
+    laterMeals: [
+      {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, Boiled Eggs & Curd',
+        portion: '1 cup rice + 1 bowl dal + 2 eggs + curd',
+        estCalories: 510,
+        estProtein: 26,
+      },
+      {
+        category: 'Evening Snacks',
+        title: 'Chilled Spiced Buttermilk & Roasted Chana',
+        portion: '1 glass majjiga + 30g putnalu',
+        estCalories: 160,
+        estProtein: 9,
+      },
+      {
+        category: 'Dinner',
+        title: '2 Phulkas with Andhra Chicken Curry / Dal',
+        portion: '2 phulkas + 1 bowl curry + salad',
+        estCalories: 380,
+        estProtein: 28,
+      },
+    ],
+    workoutNutritionAdvice: profile?.works_out
+      ? `For your ${profile.intensity} workout, fuel with this balanced breakfast. If you train in the morning, have 1 banana or ragi malt 30 mins prior.`
+      : 'Maintain hydration early in the morning to kickstart metabolic burn.',
+    hydrationAndRecovery: 'Drink 500ml water upon waking. Target 3.0L total fluids across the day.',
+  };
+}
+
+/**
+ * Generate genuinely day-aware, culturally authentic Andhra Pradesh & South Indian
+ * nutrition, meal-by-meal roadmap, and workout recovery guidance.
  */
 export async function generateNutritionSuggestions(profile, todayLogs = [], targets = {}) {
   const summary = summarizeLogs(todayLogs);
 
-  const carbsGap = Math.round((targets.carbs || 0) - summary.carbs);
-  const proteinGap = Math.round((targets.protein || 0) - summary.protein);
-  const fatsGap = Math.round((targets.fats || 0) - summary.fats);
-  const fiberGap = Math.round((targets.fiber || 0) - summary.fiber);
-  const caloriesGap = Math.round((targets.calories || 0) - summary.calories);
+  // Group today's logs by meal category
+  const mealsByCategory = {
+    Breakfast: [],
+    Lunch: [],
+    Snacks: [],
+    Dinner: [],
+  };
 
-  const loggedItemsList = todayLogs.length > 0
-    ? todayLogs
-        .map(
-          (l) =>
-            `- ${l.meal_category}: ${l.food_name} (${l.quantity}${l.unit}) -> ${l.carbs}g C, ${l.protein}g P, ${l.fats}g F, ${l.fiber}g fiber`
-        )
-        .join('\n')
-    : 'No food items logged yet today.';
+  todayLogs.forEach((log) => {
+    const rawCat = (log.meal_category || 'Snacks').trim().toLowerCase();
+    if (rawCat === 'breakfast') mealsByCategory.Breakfast.push(log);
+    else if (rawCat === 'lunch') mealsByCategory.Lunch.push(log);
+    else if (rawCat === 'dinner') mealsByCategory.Dinner.push(log);
+    else mealsByCategory.Snacks.push(log);
+  });
 
-  const prompt = `
-You are an expert sports nutritionist and personal health coach.
-Analyze the user profile, their nutritional intake so far today, and their macro targets to provide tailored feedback.
+  const MEAL_ORDER = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
+  const eatenCategories = MEAL_ORDER.filter((cat) => mealsByCategory[cat].length > 0);
+  const unloggedCategories = MEAL_ORDER.filter((cat) => mealsByCategory[cat].length === 0);
 
-User Profile:
-- Gender: ${profile?.gender || 'Not specified'}
+  // Determine dynamic stage and next meal based on what is logged
+  let stage = 'recommend_breakfast';
+  let nextCategory = 'Breakfast';
+
+  if (mealsByCategory.Breakfast.length > 0 && mealsByCategory.Lunch.length === 0) {
+    stage = 'recommend_lunch';
+    nextCategory = 'Lunch';
+  } else if (mealsByCategory.Lunch.length > 0 && mealsByCategory.Snacks.length === 0 && mealsByCategory.Dinner.length === 0) {
+    stage = 'recommend_snacks';
+    nextCategory = 'Evening Snacks';
+  } else if (mealsByCategory.Lunch.length > 0 && mealsByCategory.Dinner.length === 0) {
+    stage = 'recommend_dinner';
+    nextCategory = 'Dinner';
+  } else if (mealsByCategory.Dinner.length > 0) {
+    stage = 'day_complete';
+    nextCategory = 'DayComplete';
+  } else if (unloggedCategories.length > 0) {
+    nextCategory = unloggedCategories[0];
+    stage = `recommend_${nextCategory.toLowerCase()}`;
+  }
+
+  // Calculate remaining macros
+  const caloriesRemaining = Math.max(0, Math.round((targets.calories || 2000) - summary.calories));
+  const proteinGap = Math.round((targets.protein || 120) - summary.protein);
+  const carbsGap = Math.round((targets.carbs || 220) - summary.carbs);
+  const fatsGap = Math.round((targets.fats || 65) - summary.fats);
+  const fiberGap = Math.round((targets.fiber || 28) - summary.fiber);
+
+  // Format detailed breakdown of meals eaten today
+  const mealsEatenBreakdown = eatenCategories.map((cat) => {
+    const items = mealsByCategory[cat];
+    const catSummary = summarizeLogs(items);
+    const itemList = items.map((it) => `${it.food_name} (${it.quantity}${it.unit})`).join(', ');
+    return `* ${cat} [${catSummary.calories} kcal | ${catSummary.carbs}g C, ${catSummary.protein}g P, ${catSummary.fats}g F, ${catSummary.fiber}g Fiber]: ${itemList}`;
+  }).join('\n');
+
+  const prompt = `You are an elite clinical dietitian and sports nutritionist specializing in authentic Andhra Pradesh and South Indian nutrition.
+You are providing the daily nutrition fuel plan for a user in Andhra Pradesh / South India based on their actual biometric profile and what they have consumed so far today.
+
+USER PROFILE:
+- Gender: ${profile?.gender || 'Adult'}
 - Age: ${profile?.age || 25} years
 - Weight: ${profile?.weight || 70} kg
-- Works out daily: ${profile?.works_out ? 'Yes' : 'No'}
-- Workout intensity: ${profile?.intensity || 'None'}
-- Workout duration: ${profile?.duration || 0} minutes
+- Daily Workout: ${profile?.works_out ? `Yes (${profile.intensity} intensity, ${profile.duration} mins/day)` : 'Sedentary / Rest day'}
+- Basal Metabolic Rate (BMR): ${targets.bmr || 1650} kcal
+- Daily Calorie Target: ${targets.calories || 2000} kcal
+- Daily Macro Targets: ${targets.protein || 120}g Protein (${targets.factors?.proteinPerKg || 1.7}g/kg), ${targets.carbs || 220}g Carbs, ${targets.fats || 65}g Fats, ${targets.fiber || 28}g Fiber
 
-Today's Targets:
-- Calories Target: ${targets.calories || 2000} kcal (Remaining: ${caloriesGap} kcal)
-- Protein Target: ${targets.protein || 120} g (Gap: ${proteinGap > 0 ? `Needs ${proteinGap}g more` : `Exceeded by ${Math.abs(proteinGap)}g`})
-- Carbs Target: ${targets.carbs || 220} g (Gap: ${carbsGap > 0 ? `Needs ${carbsGap}g more` : `Exceeded by ${Math.abs(carbsGap)}g`})
-- Fats Target: ${targets.fats || 65} g (Gap: ${fatsGap > 0 ? `Needs ${fatsGap}g more` : `Exceeded by ${Math.abs(fatsGap)}g`})
-- Fiber Target: ${targets.fiber || 28} g (Gap: ${fiberGap > 0 ? `Needs ${fiberGap}g more` : `Exceeded by ${Math.abs(fiberGap)}g`})
+TODAY'S INTAKE & LOGGED MEALS SO FAR:
+${mealsEatenBreakdown || 'No meals logged yet today.'}
 
-Foods Logged Today:
-${loggedItemsList}
+CURRENT NUTRITIONAL BALANCE & GAPS:
+- Calories Consumed: ${summary.calories} kcal / ${targets.calories || 2000} kcal (Remaining: ${caloriesRemaining} kcal)
+- Protein Consumed: ${Math.round(summary.protein)}g / ${targets.protein || 120}g (Deficit: ${proteinGap > 0 ? `${proteinGap}g remaining` : `Target met (+${Math.abs(proteinGap)}g)`})
+- Carbs Consumed: ${Math.round(summary.carbs)}g / ${targets.carbs || 220}g (Deficit: ${carbsGap > 0 ? `${carbsGap}g remaining` : `Target met (+${Math.abs(carbsGap)}g)`})
+- Fats Consumed: ${Math.round(summary.fats)}g / ${targets.fats || 65}g (Deficit: ${fatsGap > 0 ? `${fatsGap}g remaining` : `Target met (+${Math.abs(fatsGap)}g)`})
+- Fiber Consumed: ${Math.round(summary.fiber)}g / ${targets.fiber || 28}g (Deficit: ${fiberGap > 0 ? `${fiberGap}g remaining` : `Target met (+${Math.abs(fiberGap)}g)`})
 
-Respond STRICTLY with a valid JSON object matching this schema:
+CURRENT STAGE: ${stage}
+IMMEDIATE NEXT MEAL TO RECOMMEND: ${nextCategory}
+UNLOGGED UPCOMING MEALS: ${unloggedCategories.filter(c => c !== nextCategory).join(', ') || 'None'}
+
+CRITICAL DIETARY & CULTURAL RULES FOR ANDHRA PRADESH / SOUTH INDIA:
+1. EXCLUSIVELY RECOMMEND REALISTIC, FAMILIAR ANDHRA / SOUTH INDIAN FOODS:
+   - Breakfasts: Pesarattu (with allam/ginger chutney), Idli (with sambar or peanut/coconut chutney), Dosa, Rava Upma, Pongal, Chapati, Boiled eggs/egg porutu, Ragi java/porridge.
+   - Lunches: Steamed rice (Sona Masoori/brown, measured in cups), Pappu (Palakura, Tomato, Dosakaya, Mamidikaya, Thotakura), Sambar, Rasam (chaaru), Vepudu/Curries (bendakaya, dondakaya, beerakaya, aratikaya), Leafy greens (gongura, thotakura), Curd (perugu), Boiled eggs, Kodi kura (Andhra chicken curry/roast with controlled oil), Chepala pulusu (fish curry), Paneer/Soya chunks curry.
+   - Evening Snacks: Spiced Buttermilk (chilled majjiga with ginger, curry leaves, hing), Guggillu / Sundal (boiled tempered chickpeas or black chana), Roasted chana (putnalu), Boiled peanuts, Boiled eggs with black pepper, Moong sprouts salad with lemon, local fruits (guava, banana, papaya, pomegranate).
+   - Dinners: Phulkas/Chapatis (2-3 phulkas without excess oil), Light rice with rasam or dal, Moong dal pesarattu, Egg curry, Andhra chicken with sliced cucumber, Curd.
+   - DO NOT default to generic Western fitness foods (NO avocado toast, Greek yogurt bowls, quinoa salads, protein pancakes, kale smoothies, turkey deli slices, or cottage cheese).
+2. ANDHRA EATING PATTERNS:
+   - Lunch is traditionally substantial (Rice + Pappu + Curry + Curd). Honor this rhythm while controlling rice portions (e.g. 1 to 1.5 cups) and boosting dal/egg/curd protein.
+   - If Breakfast was carb-dense (e.g. 3-4 idlis or 2 dosas), recommend high-protein, fiber-rich lunch and dinner (thick dal, boiled eggs, chicken, curd).
+   - If Lunch was heavy on rice/carbs, recommend high-protein/low-carb snacks (boiled eggs + buttermilk or roasted chana).
+   - If calories are running low, suggest light, satiating options (vegetable chaaru, clear rasam, stir-fried leafy greens, boiled egg whites).
+3. SPECIFIC REALISTIC PORTIONS & REASONING:
+   - Always state exact portions (e.g., "1 cup steamed rice (~150g cooked)", "1 bowl Palakura Pappu", "2 boiled eggs", "1 tall glass majjiga (250ml)").
+   - Explain WHY this meal fits what has already been eaten today.
+4. WORKOUT TIMING:
+   - Connect meal timing to user's workout: ${profile?.works_out ? `${profile.intensity} workout (${profile.duration} mins)` : 'Rest day'}.
+   - Recommend pre-workout fuel (e.g. banana or ragi malt 30-45 mins before) and post-workout protein replenishment (within 1-2 hours).
+5. HYDRATION & RECOVERY:
+   - Provide practical hydration advice considering bodyweight (${profile?.weight || 70}kg) and Andhra warm climate (recommend spiced buttermilk/majjiga for electrolytes, lemon water, and 2.5-3.5L water).
+
+Respond STRICTLY with a valid JSON object matching this schema (NO markdown fences):
 {
-  "summary": "1-2 encouraging sentences assessing their day so far.",
-  "status": "on_track" | "needs_protein" | "needs_fuel" | "over_calories" | "fasting",
-  "priorityTip": "One high-impact immediate action the user should take right now.",
-  "mealRecommendations": [
+  "stage": "${stage}",
+  "headline": "Punchy 4-7 word headline summarizing today's state (e.g. 'Breakfast Logged • High-Protein Lunch Plan')",
+  "alreadyEatenDiagnosis": "1-2 sentences diagnosing what has been consumed so far today and what nutritional gaps need immediate attention.",
+  "macroStatus": {
+    "caloriesRemaining": ${caloriesRemaining},
+    "proteinRemainingGrams": ${Math.max(0, proteinGap)},
+    "primaryFocus": "High Protein & Controlled Carbs" | "Glycogen Fuel" | "Calorie Deficit Control" | "Hydration & Recovery"
+  },
+  "nextMeal": {
+    "category": "${nextCategory === 'DayComplete' ? 'Day Completed' : nextCategory}",
+    "title": "Clear descriptive name of recommended Andhra meal",
+    "itemsAndPortions": [
+      "Exact item with portion (e.g. 1 cup steamed rice ~150g)",
+      "Exact item with portion (e.g. 1 bowl Palakura Pappu)",
+      "Exact item with portion (e.g. 2 boiled eggs or 100g paneer)",
+      "Exact item with portion (e.g. 1 small cup fresh homemade curd)"
+    ],
+    "estimatedMacros": {
+      "calories": 480,
+      "carbs": 56,
+      "protein": 26,
+      "fats": 14,
+      "fiber": 8
+    },
+    "whyThisWorks": "Clear explanation of why this specific combination complements today's prior meals and meets remaining targets.",
+    "quickAlternative": "A practical Andhra alternative meal (e.g. 2 Phulkas with Egg Porutu and cucumber slices)"
+  },
+  "laterMeals": [
     {
-      "meal": "e.g. Next Snack or Post-Workout Dinner",
-      "foodIdea": "Specific food item or recipe name",
-      "macroReason": "Why this fixes their specific macro gap",
-      "estCalories": 280
+      "category": "Meal Category Name",
+      "title": "Descriptive meal name",
+      "portion": "Concise items and portions",
+      "estCalories": 220,
+      "estProtein": 12
     }
   ],
-  "workoutNutritionTip": "Specific pre-workout or post-workout advice tailored to their workout intensity (${profile?.intensity}) and duration (${profile?.duration} min).",
-  "hydrationAndRecovery": "Hydration, sleep, or recovery tip."
+  "workoutNutritionAdvice": "Specific pre-workout or post-workout guidance tailored to their ${profile?.intensity || 'daily'} workout and remaining calories.",
+  "hydrationAndRecovery": "Contextual fluid target with practical Andhra hydration tip (e.g. spiced buttermilk / majjiga)."
 }
 `;
 
   try {
-    const rawText = await generateWithFallback(prompt, { temperature: 0.3 });
+    const rawText = await generateWithFallback(prompt, { temperature: 0.25 });
     const parsed = cleanAndParseJSON(rawText, null);
-    if (parsed) return parsed;
+    if (parsed && parsed.nextMeal) {
+      parsed.eatenCategories = eatenCategories;
+      parsed.summary = parsed.headline || parsed.summary || 'Custom Andhra Fuel Plan';
+      parsed.priorityTip = parsed.alreadyEatenDiagnosis || parsed.priorityTip;
+      parsed.workoutNutritionTip = parsed.workoutNutritionAdvice || parsed.workoutNutritionTip;
+      return parsed;
+    }
   } catch (err) {
-    console.error('Error getting Gemini suggestions:', err);
+    console.error('Error getting dynamic Andhra nutrition suggestions from Gemini:', err);
   }
 
-  return {
-    summary: `You've consumed ${summary.calories} of your ${targets.calories} kcal goal today with ${Math.round(summary.protein)}g protein logged.`,
-    status: proteinGap > 25 ? 'needs_protein' : 'on_track',
-    priorityTip:
-      proteinGap > 25
-        ? `Prioritize a lean protein source (chicken breast, Greek yogurt, or tofu) to close your ${proteinGap}g protein gap.`
-        : `Great job balancing your intake today! Keep staying hydrated throughout your workout.`,
-    mealRecommendations: [
-      {
-        meal: 'Next Meal Recommendation',
-        foodIdea:
-          proteinGap > 20
-            ? 'Grilled Salmon or Tofu with Quinoa and steamed broccoli'
-            : 'Whole grain toast with avocado and two boiled eggs',
-        macroReason:
-          proteinGap > 20
-            ? 'Provides 35g of bioavailable protein plus anti-inflammatory omega-3 fats'
-            : 'Clean complex carbohydrates and healthy unsaturated fats for sustained energy',
-        estCalories: 420,
-      },
-    ],
-    workoutNutritionTip: profile?.works_out
-      ? `For your ${profile.intensity} workout (${profile.duration} mins), take 25g fast-digesting carbs 30 mins before, and 25-30g protein within 2 hours after.`
-      : 'Maintain steady meal timing every 3-4 hours to keep blood glucose and energy levels stable.',
-    hydrationAndRecovery: `Aim for at least ${Math.round((profile?.weight || 70) * 0.035 * 10) / 10} liters of water today.`,
-  };
+  // Graceful, authentic Andhra fallback plan
+  const fallback = getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, profile, eatenCategories);
+  fallback.eatenCategories = eatenCategories;
+  fallback.summary = fallback.headline;
+  fallback.priorityTip = fallback.alreadyEatenDiagnosis;
+  fallback.workoutNutritionTip = fallback.workoutNutritionAdvice;
+  return fallback;
 }

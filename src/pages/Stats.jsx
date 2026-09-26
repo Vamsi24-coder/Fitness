@@ -779,7 +779,7 @@ export function Stats() {
             </div>
           </div>
 
-          {/* 6. AI Suggestions (Apple Intelligence Chromatic Treatment) */}
+          {/* 6. Today's Fuel Plan Guidance */}
           <AISuggestions profile={profile} todayLogs={logs} targets={targets} />
 
         </div>
