@@ -1,0 +1,299 @@
+ENTRY 01
+TITLE: Protein Powder Is Not Essential
+TYPE: MYTH
+CONTENT: Protein powder is not required to build muscle. It is simply a convenient, concentrated source of protein that can help when getting enough protein from regular food is difficult.
+TAKEAWAY: Food first is perfectly fine; protein powder is a convenience, not a requirement.
+
+ENTRY 02
+TITLE: Sweating Does Not Equal Fat Loss
+TYPE: MYTH
+CONTENT: Heavy sweating during a workout mainly reflects fluid loss and temperature regulation. The temporary drop on the weighing scale after heavy sweating is mostly water, not body fat.
+TAKEAWAY: Fat loss comes from sustained energy balance, not from how much you sweat.
+
+ENTRY 03
+TITLE: You Do Not Need To Avoid Carbohydrates
+TYPE: MYTH
+CONTENT: Carbohydrates are an important energy source, particularly for higher-intensity exercise. Foods such as rice, oats, potatoes, fruits and dosa can all fit into a balanced fitness diet.
+TAKEAWAY: The amount and overall diet matter more than simply labeling carbohydrates as bad.
+
+ENTRY 04
+TITLE: Muscle Is Built During Recovery
+TYPE: TIP
+CONTENT: Training provides the stimulus for adaptation, while adequate nutrition and recovery allow the body to repair and adapt. Consistently training without enough recovery can reduce performance.
+TAKEAWAY: Training hard and recovering well are both part of progress.
+
+ENTRY 05
+TITLE: Progressive Overload Matters
+TYPE: FITNESS FACT
+CONTENT: Muscles generally need a gradually increasing training stimulus over time. This can involve increasing weight, repetitions, sets, training quality or difficulty.
+TAKEAWAY: Repeating exactly the same workload forever is unlikely to maximize progress.
+
+ENTRY 06
+TITLE: DOMS Is Not A Scorecard
+TYPE: MYTH
+CONTENT: Delayed-onset muscle soreness can occur after unfamiliar or demanding exercise, but severe soreness is not proof that a workout was effective.
+TAKEAWAY: Progress should be measured through performance, consistency and results—not soreness alone.
+
+ENTRY 07
+TITLE: Sleep Supports Recovery
+TYPE: RECOVERY TIP
+CONTENT: Sleep supports physical recovery, normal physiological processes and day-to-day performance. Poor sleep can make training and appetite management more difficult.
+TAKEAWAY: Sleep is part of your fitness routine, not time away from it.
+
+ENTRY 08
+TITLE: Hydration Affects Exercise Performance
+TYPE: HYDRATION
+CONTENT: Losing substantial amounts of body water can negatively affect exercise performance and how you feel during training. Fluid needs vary with temperature, activity, body size and sweat losses.
+TAKEAWAY: Drink regularly and pay attention to thirst, exercise conditions and sweat losses.
+
+ENTRY 09
+TITLE: Vitamin C Supports Normal Body Functions
+TYPE: NUTRIENT
+CONTENT: Vitamin C contributes to normal collagen formation and normal immune function. Guava, citrus fruits, amla, tomatoes and several vegetables can provide vitamin C.
+TAKEAWAY: Include vitamin-C-rich foods regularly rather than relying on a single "superfood."
+
+ENTRY 10
+TITLE: Magnesium And Muscle Function
+TYPE: NUTRIENT
+CONTENT: Magnesium contributes to normal muscle and nerve function and normal energy metabolism. Nuts, seeds, legumes and leafy vegetables can contribute magnesium to the diet.
+TAKEAWAY: A varied diet can provide magnesium without automatically requiring a supplement.
+
+ENTRY 11
+TITLE: Calcium Is More Than A Bone Nutrient
+TYPE: NUTRIENT
+CONTENT: Calcium contributes to normal bone and teeth maintenance and also plays roles in normal muscle function and nerve signaling. Dairy products and some fortified or plant-based foods can contribute calcium.
+TAKEAWAY: Adequate calcium supports several important body functions.
+
+ENTRY 12
+TITLE: Iron Helps Transport Oxygen
+TYPE: NUTRIENT
+CONTENT: Iron contributes to normal formation of hemoglobin, which is involved in oxygen transport. Meat, seafood, legumes, leafy vegetables and fortified foods can provide iron.
+TAKEAWAY: Iron is important for oxygen transport, but unnecessary supplementation is not a substitute for proper assessment.
+
+ENTRY 13
+TITLE: Vitamin B12 And Blood Formation
+TYPE: NUTRIENT
+CONTENT: Vitamin B12 contributes to normal red blood cell formation and normal nervous-system function. It is naturally concentrated in animal-derived foods, while fortified foods and supplements can be useful sources for people who need them.
+TAKEAWAY: People eating little or no animal food should pay particular attention to reliable B12 sources.
+
+ENTRY 14
+TITLE: Vitamin D Is Not Just About The Gym
+TYPE: NUTRIENT
+CONTENT: Vitamin D contributes to normal calcium absorption and normal muscle function. Sun exposure, diet and supplementation can all play roles, but individual vitamin D status varies.
+TAKEAWAY: Vitamin D needs are personal; testing and professional guidance can be useful when deficiency is suspected.
+
+ENTRY 15
+TITLE: Zinc Supports Normal Body Functions
+TYPE: NUTRIENT
+CONTENT: Zinc contributes to normal immune function, normal protein synthesis and maintenance of normal tissues. Meat, seafood, dairy products, legumes, nuts and seeds can contribute zinc.
+TAKEAWAY: Zinc is important, but more is not automatically better.
+
+ENTRY 16
+TITLE: Creatine Is Not A Steroid
+TYPE: MYTH
+CONTENT: Creatine is a naturally occurring compound involved in energy metabolism and is also found in foods such as meat and fish. Creatine monohydrate is one of the most researched sports supplements.
+TAKEAWAY: Creatine and anabolic steroids are completely different categories of substances.
+
+ENTRY 17
+TITLE: More Protein Is Not Always Better
+TYPE: MYTH
+CONTENT: Protein is important for muscle repair and many body functions, but consuming increasingly large amounts does not automatically produce increasingly large amounts of muscle.
+TAKEAWAY: Aim for an appropriate protein intake rather than chasing extreme amounts.
+
+ENTRY 18
+TITLE: Protein Distribution Can Matter
+TYPE: NUTRITION TIP
+CONTENT: Instead of consuming almost all daily protein in one meal, distributing protein-containing foods across meals can make it easier to consistently meet daily needs.
+TAKEAWAY: Think about your whole day's protein intake and practical meal distribution.
+
+ENTRY 19
+TITLE: Post-Workout Nutrition Does Not Have A Five-Minute Deadline
+TYPE: MYTH
+CONTENT: You do not need to consume protein immediately after the final repetition or lose all your gains. A balanced meal or snack after training is useful, but the overall daily diet matters greatly.
+TAKEAWAY: Focus on the whole day's nutrition rather than a tiny post-workout window.
+
+ENTRY 20
+TITLE: Carbohydrates Can Support Training
+TYPE: WORKOUT TIP
+CONTENT: Carbohydrate-containing foods can provide readily available energy for exercise. Fruits, rice, oats, potatoes, dosa and other carbohydrate foods can fit into pre- or post-workout meals.
+TAKEAWAY: Carbohydrates can be useful fuel, especially around demanding training.
+
+ENTRY 21
+TITLE: A Balanced Post-Workout Meal
+TYPE: POST-WORKOUT TIP
+CONTENT: A practical post-workout meal can combine protein, carbohydrates and fluids. Examples include rice with dal and eggs, curd with fruit and oats, or dosa with sambar and a protein source.
+TAKEAWAY: Build a balanced meal rather than searching for a magical recovery food.
+
+ENTRY 22
+TITLE: Warm-Up Before Heavy Training
+TYPE: TRAINING TIP
+CONTENT: A progressive warm-up can prepare you mentally and physically for exercise. Start with general movement and gradually introduce movements or loads similar to the workout.
+TAKEAWAY: A warm-up should prepare you for the session, not exhaust you before it begins.
+
+ENTRY 23
+TITLE: More Exercise Is Not Always Better
+TYPE: MYTH
+CONTENT: Increasing exercise indefinitely is not guaranteed to produce better results. Recovery, nutrition, sleep and manageable training volume all contribute to sustainable progress.
+TAKEAWAY: Train enough to progress, then recover enough to adapt.
+
+ENTRY 24
+TITLE: Rest Days Are Productive
+TYPE: RECOVERY TIP
+CONTENT: Rest or lighter activity can give muscles and the nervous system time to recover. The amount of recovery needed depends on training volume, intensity, sleep and individual factors.
+TAKEAWAY: Recovery is part of training rather than the opposite of training.
+
+ENTRY 25
+TITLE: Stretching Does Not Automatically Prevent All Injuries
+TYPE: MYTH
+CONTENT: Flexibility can be useful, but stretching alone does not guarantee injury prevention. Strength, technique, training load, recovery and individual factors also matter.
+TAKEAWAY: Think of mobility and strength as parts of a bigger training picture.
+
+ENTRY 26
+TITLE: Cardio Does Not Destroy Muscle Automatically
+TYPE: MYTH
+CONTENT: Cardiovascular exercise can coexist with strength training. Excessive training combined with inadequate nutrition and recovery can create problems, but moderate cardio is not inherently muscle-destroying.
+TAKEAWAY: Strength and cardio can be programmed together.
+
+ENTRY 27
+TITLE: Walking Counts
+TYPE: FITNESS TIP
+CONTENT: Walking contributes to daily physical activity and energy expenditure. It is also a practical low-impact activity that many people can maintain consistently.
+TAKEAWAY: Do not underestimate simple, repeatable movement.
+
+ENTRY 28
+TITLE: Fat Is An Essential Nutrient
+TYPE: NUTRITION FACT
+CONTENT: Dietary fats provide energy and are involved in several important physiological processes. Unsaturated fats can be found in nuts, seeds, fish and many plant oils.
+TAKEAWAY: A healthy diet does not need to eliminate dietary fat.
+
+ENTRY 29
+TITLE: Eggs Provide High-Quality Protein
+TYPE: FOOD FACT
+CONTENT: Eggs provide protein along with several vitamins and minerals. They can be a practical protein source for breakfast or other meals.
+TAKEAWAY: Eggs are useful, but variety across protein sources is still valuable.
+
+ENTRY 30
+TITLE: Curd Can Be A Useful Protein Food
+TYPE: FOOD FACT
+CONTENT: Curd provides protein and calcium, although the exact nutritional profile varies according to preparation and fat content.
+TAKEAWAY: Curd can be an easy addition to Indian meals and snacks.
+
+ENTRY 31
+TITLE: Dal And Rice Work Well Together
+TYPE: FOOD COMBINATION
+CONTENT: Dal provides plant protein and rice provides carbohydrate energy. Combining different plant protein sources across the diet can help create a varied amino-acid intake.
+TAKEAWAY: Traditional combinations can fit well into a balanced fitness diet.
+
+ENTRY 32
+TITLE: Pesarattu Is A Protein-Friendly Breakfast Option
+TYPE: FOOD FACT
+CONTENT: Pesarattu is made primarily from green gram and can provide protein, carbohydrates and fiber. Adding vegetables or a complementary protein source can make the meal more substantial.
+TAKEAWAY: Traditional South Indian foods can be adapted easily to fitness goals.
+
+ENTRY 33
+TITLE: Rice Is Not Automatically Unhealthy
+TYPE: MYTH
+CONTENT: Rice can be part of a balanced diet. The overall portion, preparation, accompanying foods and total daily nutrition matter more than labeling rice as inherently unhealthy.
+TAKEAWAY: You do not need to eliminate rice to eat for fitness.
+
+ENTRY 34
+TITLE: Dosa Can Fit A Fitness Diet
+TYPE: MYTH
+CONTENT: Dosa can provide carbohydrates and some protein, and its nutritional profile depends on ingredients, size and cooking method. Pairing it with sambar or another protein-rich side can create a more balanced meal.
+TAKEAWAY: Portion and meal composition matter more than banning dosa.
+
+ENTRY 35
+TITLE: Fruits Are Not "Too Sugary" By Default
+TYPE: MYTH
+CONTENT: Whole fruits contain naturally occurring sugars along with water, fiber and micronutrients. Whole fruit is nutritionally different from consuming the same sugar amount in a sugary beverage.
+TAKEAWAY: Whole fruit can comfortably fit into most balanced diets.
+
+ENTRY 36
+TITLE: Fruit Juice Is Not The Same As Whole Fruit
+TYPE: MYTH
+CONTENT: Juicing can reduce the fiber structure of fruit and makes it easier to consume a larger amount quickly. Whole fruit generally provides more chewing and fiber per eating occasion.
+TAKEAWAY: When practical, choose whole fruit more often than juice.
+
+ENTRY 37
+TITLE: Hydration Is Not Only About Water
+TYPE: HYDRATION TIP
+CONTENT: Foods and beverages can both contribute to daily fluid intake. During prolonged or very sweaty exercise, electrolytes may also become relevant depending on the conditions and individual sweat losses.
+TAKEAWAY: Hydration needs depend on activity and environment.
+
+ENTRY 38
+TITLE: Do Not Fear Salt Automatically
+TYPE: NUTRITION FACT
+CONTENT: Sodium is an essential electrolyte, but excessive sodium intake can be a concern for some people. Needs vary depending on diet, health status, sweat losses and environment.
+TAKEAWAY: Aim for an appropriate intake rather than treating salt as universally good or bad.
+
+ENTRY 39
+TITLE: Hormone Balance Is Not A Single-Food Problem
+TYPE: MYTH
+CONTENT: Hormonal regulation involves multiple organs, nutrients, energy availability, sleep, stress and overall health. No single food can guarantee "hormone balance."
+TAKEAWAY: Build healthy overall habits instead of chasing one hormone-balancing food.
+
+ENTRY 40
+TITLE: Extreme Dieting Can Affect Training
+TYPE: FITNESS FACT
+CONTENT: Very aggressive calorie restriction can reduce available energy for training and daily activities and may make a diet harder to sustain.
+TAKEAWAY: Sustainable progress usually beats extreme short-term restriction.
+
+ENTRY 41
+TITLE: Weight Loss And Fat Loss Are Not Identical
+TYPE: MYTH
+CONTENT: Body weight can change because of water, food volume, glycogen and other factors in addition to body fat.
+TAKEAWAY: Look at longer-term trends instead of interpreting every daily scale change as fat gain or loss.
+
+ENTRY 42
+TITLE: Muscle Gain Takes Time
+TYPE: FITNESS FACT
+CONTENT: Building noticeable muscle is a gradual process influenced by training, nutrition, recovery, genetics and consistency.
+TAKEAWAY: Sustainable training beats expecting dramatic changes in a few days.
+
+ENTRY 43
+TITLE: You Cannot Reliably Spot-Reduce Fat
+TYPE: MYTH
+CONTENT: Doing exercises for one body part does not guarantee that fat will be lost specifically from that area. Fat distribution is influenced by genetics, hormones and overall energy balance.
+TAKEAWAY: Train specific muscles for strength while approaching fat loss through overall habits.
+
+ENTRY 44
+TITLE: Strength Training Is Not Only For Bodybuilders
+TYPE: FITNESS FACT
+CONTENT: Resistance training can support muscle strength, physical function and bone health and can be useful for people with many different fitness goals.
+TAKEAWAY: Strength training can be part of a general healthy lifestyle.
+
+ENTRY 45
+TITLE: Consistency Beats Perfect Workouts
+TYPE: FITNESS TIP
+CONTENT: A manageable training routine performed consistently is generally more practical than an ideal routine that is impossible to maintain.
+TAKEAWAY: Build a routine you can repeat.
+
+ENTRY 46
+TITLE: A Balanced Breakfast Is Not Mandatory For Everyone
+TYPE: MYTH
+CONTENT: People have different schedules, appetites and dietary patterns. Missing breakfast does not automatically ruin a diet, provided overall nutritional needs are appropriately met.
+TAKEAWAY: Judge your diet by the whole day rather than one meal.
+
+ENTRY 47
+TITLE: Caffeine Can Improve Alertness
+TYPE: WORKOUT TIP
+CONTENT: Caffeine can increase alertness and may improve exercise performance for some people. Sensitivity varies, and excessive intake can affect sleep.
+TAKEAWAY: If using caffeine, consider both dose and timing.
+
+ENTRY 48
+TITLE: Sleep And Caffeine Are Connected
+TYPE: RECOVERY TIP
+CONTENT: Caffeine consumed later in the day can interfere with sleep in some people, and poor sleep can make recovery and appetite management more difficult.
+TAKEAWAY: A useful pre-workout habit should not undermine your night's sleep.
+
+ENTRY 49
+TITLE: More Supplements Do Not Mean Better Results
+TYPE: MYTH
+CONTENT: Supplements cannot replace an appropriate diet, training program and recovery routine. Some supplements have useful evidence for specific purposes, while others may provide little practical benefit.
+TAKEAWAY: Build the basics before building a large supplement stack.
+
+ENTRY 50
+TITLE: The Best Diet Is One You Can Sustain
+TYPE: FITNESS PRINCIPLE
+CONTENT: A sustainable diet should provide adequate nutrition while fitting your preferences, culture, schedule, budget and fitness goals.
+TAKEAWAY: A realistic diet you can follow consistently is more useful than a perfect diet you cannot maintain.

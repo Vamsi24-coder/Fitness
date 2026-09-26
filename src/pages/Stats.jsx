@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import { getFoodLogsRange } from '../lib/supabase';
 import { calculateCalories, calculateDailyTargets, summarizeLogs } from '../services/nutrition';
+import { KnowledgeCarouselSection } from '../components/KnowledgeCarousel';
 import {
   BarChart,
   Bar,
@@ -777,6 +778,9 @@ export function Stats() {
               </ResponsiveContainer>
             </div>
           </div>
+
+          {/* 6. Knowledge & Insights Interactive Carousel */}
+          <KnowledgeCarouselSection />
 
         </div>
       )}

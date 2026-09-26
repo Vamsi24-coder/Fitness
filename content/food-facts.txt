@@ -1,0 +1,299 @@
+ENTRY 01
+TITLE: Guava vs Many Common Fruits
+TYPE: COMPARISON
+CONTENT: Guava is particularly notable for its vitamin C content and also provides fiber. The exact nutritional amount depends on fruit size and variety.
+TAKEAWAY: Guava can be a nutrient-dense fruit choice, not just a snack.
+
+ENTRY 02
+TITLE: Whole Fruit vs Fruit Juice
+TYPE: COMPARISON
+CONTENT: Whole fruit retains its natural structure and fiber, while juice is easier to consume quickly and usually provides less fiber per equivalent amount of fruit.
+TAKEAWAY: Choose whole fruit more often when you want more fiber and chewing.
+
+ENTRY 03
+TITLE: Orange vs Guava
+TYPE: COMPARISON
+CONTENT: Both can provide vitamin C, but guava is often especially rich in vitamin C while also providing useful fiber.
+TAKEAWAY: You do not need expensive exotic fruits to get vitamin C.
+
+ENTRY 04
+TITLE: Banana vs Apple
+TYPE: COMPARISON
+CONTENT: Bananas are notable for potassium and carbohydrates, while apples provide fiber and a different micronutrient profile. Both can fit into a balanced diet.
+TAKEAWAY: Choose based on your meal, preference and nutritional needs rather than declaring one universally superior.
+
+ENTRY 05
+TITLE: Papaya As A Fruit Choice
+TYPE: FOOD FACT
+CONTENT: Papaya provides vitamin C, carotenoids and other nutrients while being relatively easy to include as a snack or breakfast fruit.
+TAKEAWAY: Variety matters more than searching for one perfect fruit.
+
+ENTRY 06
+TITLE: Amla And Vitamin C
+TYPE: FOOD FACT
+CONTENT: Amla is known for being rich in vitamin C, although the exact amount varies with preparation and processing.
+TAKEAWAY: Traditional Indian foods can provide impressive micronutrient value.
+
+ENTRY 07
+TITLE: Watermelon And Hydration
+TYPE: FOOD FACT
+CONTENT: Watermelon contains a high proportion of water and can contribute to fluid intake while also providing carbohydrates and micronutrients.
+TAKEAWAY: Water-rich fruits can complement, but not completely replace, normal fluid intake.
+
+ENTRY 08
+TITLE: Apple vs Juice
+TYPE: COMPARISON
+CONTENT: An apple provides fiber and requires chewing, while apple juice is easier to consume quickly and usually contains much less fiber.
+TAKEAWAY: Whole fruit is generally more filling than fruit juice.
+
+ENTRY 09
+TITLE: Curd vs Milk
+TYPE: COMPARISON
+CONTENT: Both can provide protein and calcium, while curd also contains fermented dairy cultures. Nutritional values vary depending on the product and preparation.
+TAKEAWAY: Both can fit into a balanced diet.
+
+ENTRY 10
+TITLE: Paneer vs Tofu
+TYPE: COMPARISON
+CONTENT: Paneer provides protein and calcium but can also be relatively high in fat depending on preparation. Tofu provides plant-based protein and its nutrient profile depends on how it is made.
+TAKEAWAY: Compare the full nutritional profile and serving size rather than choosing based on the label alone.
+
+ENTRY 11
+TITLE: Eggs vs Paneer
+TYPE: COMPARISON
+CONTENT: Eggs provide protein and several micronutrients, while paneer provides protein and calcium. Their calorie and fat contents vary with portion and preparation.
+TAKEAWAY: Both can be useful protein foods in different meals.
+
+ENTRY 12
+TITLE: Eggs vs Dal
+TYPE: COMPARISON
+CONTENT: Eggs provide complete animal protein along with several micronutrients, while dal provides plant protein, carbohydrates, fiber and minerals.
+TAKEAWAY: They serve different nutritional roles and can both fit into a balanced diet.
+
+ENTRY 13
+TITLE: Chicken vs Fish
+TYPE: COMPARISON
+CONTENT: Chicken is a practical high-protein food, while many fish varieties also provide protein and some provide omega-3 fats.
+TAKEAWAY: Including different protein sources can increase dietary variety.
+
+ENTRY 14
+TITLE: Fish vs Fried Fish
+TYPE: COMPARISON
+CONTENT: The underlying fish may provide protein and micronutrients, while deep frying can substantially increase the meal's energy content depending on the coating and amount of oil absorbed.
+TAKEAWAY: Preparation method can change the nutritional profile significantly.
+
+ENTRY 15
+TITLE: Dal + Rice
+TYPE: COMBINATION
+CONTENT: Dal contributes plant protein and fiber while rice provides carbohydrates. Combining varied plant foods across meals supports a broader nutrient intake.
+TAKEAWAY: Traditional dal-rice meals can be part of a fitness-friendly diet.
+
+ENTRY 16
+TITLE: Sambar + Idli
+TYPE: COMBINATION
+CONTENT: Idli provides carbohydrates and some protein, while sambar can add lentils, vegetables and additional protein and fiber.
+TAKEAWAY: Adding sambar can make an idli-based meal more nutritionally diverse.
+
+ENTRY 17
+TITLE: Dosa + Sambar
+TYPE: COMBINATION
+CONTENT: Dosa primarily contributes carbohydrates with some protein, while sambar contributes lentils, vegetables and additional nutrients.
+TAKEAWAY: Pairing dosa with a protein-containing side creates a more balanced meal.
+
+ENTRY 18
+TITLE: Pesarattu vs Plain Dosa
+TYPE: COMPARISON
+CONTENT: Pesarattu is primarily made from green gram, while traditional dosa batter is primarily rice and urad dal. Their exact protein, calorie and carbohydrate contents depend on recipe and size.
+TAKEAWAY: Pesarattu can be a useful protein-containing breakfast option.
+
+ENTRY 19
+TITLE: Ragi vs White Rice
+TYPE: COMPARISON
+CONTENT: Ragi provides carbohydrates along with fiber and minerals, while white rice is an easily digested carbohydrate source. Neither is universally "better."
+TAKEAWAY: Choose portions and combinations based on your overall dietary needs.
+
+ENTRY 20
+TITLE: Oats vs Traditional Indian Breakfasts
+TYPE: COMPARISON
+CONTENT: Oats can provide fiber and carbohydrates, but traditional foods such as idli, dosa, upma and pesarattu can also fit well into a balanced diet depending on preparation and accompanying foods.
+TAKEAWAY: Healthy eating does not require replacing every traditional food with oats.
+
+ENTRY 21
+TITLE: Peanuts vs Almonds
+TYPE: COMPARISON
+CONTENT: Both provide fats, protein, minerals and energy. Peanuts are legumes botanically, while almonds are tree nuts.
+TAKEAWAY: Both can be useful nutrient-dense foods; portion size matters because they are energy-dense.
+
+ENTRY 22
+TITLE: Nuts vs Seeds
+TYPE: COMPARISON
+CONTENT: Nuts and seeds can both provide healthy fats, protein, fiber and minerals, with nutrient profiles varying widely between types.
+TAKEAWAY: Variety across nuts and seeds can broaden nutrient intake.
+
+ENTRY 23
+TITLE: Dal + Vegetables
+TYPE: COMBINATION
+CONTENT: Combining lentils with vegetables adds protein, fiber, vitamins, minerals and different plant compounds to the meal.
+TAKEAWAY: A simple dal-and-vegetable meal can be nutritionally diverse.
+
+ENTRY 24
+TITLE: Rice + Curd
+TYPE: COMBINATION
+CONTENT: Rice provides carbohydrates while curd contributes protein and calcium. Adding vegetables or dal can increase the meal's fiber and micronutrient variety.
+TAKEAWAY: A familiar Indian meal can become more balanced with complementary foods.
+
+ENTRY 25
+TITLE: Rice + Egg
+TYPE: COMBINATION
+CONTENT: Rice provides carbohydrates while eggs provide protein and micronutrients. Vegetables can be added for more fiber and micronutrient diversity.
+TAKEAWAY: Simple combinations can work well when the meal is balanced.
+
+ENTRY 26
+TITLE: Rice + Chicken
+TYPE: COMBINATION
+CONTENT: Rice supplies carbohydrates and chicken provides protein. Adding vegetables, dal or curd can increase the meal's nutritional variety.
+TAKEAWAY: The combination can support an active lifestyle when portions fit the individual's needs.
+
+ENTRY 27
+TITLE: Rice + Fish
+TYPE: COMBINATION
+CONTENT: Rice provides carbohydrates while fish provides protein and, depending on the species, omega-3 fats and other nutrients.
+TAKEAWAY: Fish can add both protein and nutritional variety to a rice-based meal.
+
+ENTRY 28
+TITLE: Vitamin C + Plant Iron
+TYPE: COMBINATION
+CONTENT: Vitamin C can improve the absorption of non-heme iron from plant foods. Pairing legumes or leafy vegetables with foods such as guava, citrus, tomato or amla can be useful.
+TAKEAWAY: Food combinations can influence nutrient absorption.
+
+ENTRY 29
+TITLE: Dal + Lemon
+TYPE: COMBINATION
+CONTENT: Lentils provide plant-based iron, while lemon provides vitamin C, which can support absorption of non-heme iron.
+TAKEAWAY: A small ingredient can sometimes improve the nutritional value of a meal combination.
+
+ENTRY 30
+TITLE: Spinach + Vitamin C Food
+TYPE: COMBINATION
+CONTENT: Leafy greens can provide iron and other nutrients, while vitamin-C-rich foods can improve non-heme iron absorption.
+TAKEAWAY: Think about food combinations, not just individual ingredients.
+
+ENTRY 31
+TITLE: Whole Fruit + Curd
+TYPE: COMBINATION
+CONTENT: Fruit contributes carbohydrates, fiber and micronutrients, while curd contributes protein and calcium.
+TAKEAWAY: Fruit and curd can form a practical snack or breakfast combination.
+
+ENTRY 32
+TITLE: Banana + Curd
+TYPE: COMBINATION
+CONTENT: Banana provides carbohydrates and potassium, while curd contributes protein and calcium.
+TAKEAWAY: This can be a simple post-workout or snack combination when it fits the person's overall nutrition plan.
+
+ENTRY 33
+TITLE: Oats + Milk
+TYPE: COMBINATION
+CONTENT: Oats provide carbohydrates and fiber, while milk contributes protein, calcium and other nutrients.
+TAKEAWAY: A simple combination can provide multiple macronutrients in one meal.
+
+ENTRY 34
+TITLE: Oats + Banana + Nuts
+TYPE: COMBINATION
+CONTENT: Oats contribute carbohydrates and fiber, banana contributes carbohydrates and potassium, and nuts contribute fats and some protein.
+TAKEAWAY: Combining different food groups can make a more balanced breakfast.
+
+ENTRY 35
+TITLE: Fruit + Nuts
+TYPE: COMBINATION
+CONTENT: Fruit provides carbohydrates, fiber and micronutrients, while nuts add fats, protein and energy.
+TAKEAWAY: Combining foods with different nutritional profiles can make a snack more satisfying.
+
+ENTRY 36
+TITLE: Vegetable Variety Matters
+TYPE: FOOD FACT
+CONTENT: Different vegetables contain different combinations of vitamins, minerals, fiber and plant compounds.
+TAKEAWAY: Eating several types of vegetables is generally more useful than relying on one "super vegetable."
+
+ENTRY 37
+TITLE: Dark Green Vegetables
+TYPE: FOOD FACT
+CONTENT: Leafy green vegetables can provide folate, vitamin K, carotenoids, fiber and minerals, although the exact profile varies by vegetable.
+TAKEAWAY: Include different greens rather than depending on one type.
+
+ENTRY 38
+TITLE: Tomato + Meal Combination
+TYPE: FOOD FACT
+CONTENT: Tomatoes contribute vitamin C, carotenoids and other plant compounds. Including them with meals can add both flavor and nutritional variety.
+TAKEAWAY: Vegetables do not need to be complicated to be useful.
+
+ENTRY 39
+TITLE: Potato Is Not Automatically Unhealthy
+TYPE: MYTH
+CONTENT: Potatoes provide carbohydrates, potassium and other nutrients. Their nutritional profile changes significantly depending on preparation, portion and added fats.
+TAKEAWAY: A boiled or baked potato is nutritionally different from a deep-fried potato preparation.
+
+ENTRY 40
+TITLE: Sweet Potato vs Potato
+TYPE: COMPARISON
+CONTENT: Both provide carbohydrates and potassium. Sweet potatoes can also provide significant carotenoids depending on the variety.
+TAKEAWAY: Both can fit into a balanced diet; preparation and portion matter.
+
+ENTRY 41
+TITLE: Homemade Meals vs Packaged Snacks
+TYPE: COMPARISON
+CONTENT: Homemade meals often make it easier to control ingredients and portions, while packaged snacks can vary greatly in calories, sodium, sugar and fat.
+TAKEAWAY: Read labels and consider the whole meal rather than assuming every packaged food is unhealthy.
+
+ENTRY 42
+TITLE: Protein Bar vs Eggs
+TYPE: COMPARISON
+CONTENT: A protein bar can be convenient and may provide substantial protein, while eggs provide protein along with naturally occurring micronutrients. Product formulations vary widely.
+TAKEAWAY: Convenience and nutritional value are different considerations.
+
+ENTRY 43
+TITLE: Protein Shake vs Whole-Food Meal
+TYPE: COMPARISON
+CONTENT: A protein shake can provide convenient protein, while a whole-food meal can provide protein along with fiber, micronutrients and greater food variety depending on its ingredients.
+TAKEAWAY: Protein shakes can complement meals but do not automatically replace balanced food.
+
+ENTRY 44
+TITLE: Vegetarian Protein Combinations
+TYPE: COMBINATION
+CONTENT: Vegetarian diets can include protein from dal, beans, chickpeas, soy foods, dairy, eggs where included, nuts and seeds.
+TAKEAWAY: Variety makes it easier to build a protein-rich vegetarian diet.
+
+ENTRY 45
+TITLE: Non-Vegetarian Meals Still Need Vegetables
+TYPE: MYTH
+CONTENT: Adding chicken, fish or eggs does not automatically make a meal nutritionally complete. Vegetables, fruits, whole grains or other plant foods can add fiber and micronutrient variety.
+TAKEAWAY: Protein is important, but a balanced meal contains more than protein alone.
+
+ENTRY 46
+TITLE: Breakfast Does Not Have To Be Western
+TYPE: FOOD FACT
+CONTENT: Idli, dosa, pesarattu, upma, poha, eggs, curd and other traditional foods can all form nutritious breakfasts depending on portions and accompanying foods.
+TAKEAWAY: Fitness nutrition can respect local food culture.
+
+ENTRY 47
+TITLE: Rice + Dal + Vegetable
+TYPE: COMBINATION
+CONTENT: Rice contributes carbohydrates, dal contributes protein and fiber, and vegetables contribute additional fiber, vitamins, minerals and plant compounds.
+TAKEAWAY: This simple three-part combination can create a nutritionally diverse meal.
+
+ENTRY 48
+TITLE: Fruit Variety Beats Fruit Ranking
+TYPE: MYTH
+CONTENT: There is no single fruit that is universally the healthiest. Different fruits provide different combinations of fiber, vitamin C, potassium, carotenoids and other nutrients.
+TAKEAWAY: Rotate different fruits instead of searching for one winner.
+
+ENTRY 49
+TITLE: More Expensive Food Is Not Automatically More Nutritious
+TYPE: MYTH
+CONTENT: Nutrient-rich foods can include affordable staples such as dal, eggs, seasonal fruits, vegetables, peanuts, curd and locally available grains.
+TAKEAWAY: Good nutrition does not have to mean expensive imported foods.
+
+ENTRY 50
+TITLE: The Best Food Combination Depends On The Goal
+TYPE: NUTRITION PRINCIPLE
+CONTENT: A useful meal combination depends on the person's goals, activity, appetite, dietary preferences, budget and total daily nutrition. The same food can be useful in different contexts.
+TAKEAWAY: Build meals around your actual needs rather than following universal "perfect food" combinations.
