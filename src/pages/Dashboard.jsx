@@ -396,7 +396,7 @@ export function Dashboard() {
       </div>
 
       {/* 4. AI-Powered Suggestions Section */}
-      <AISuggestions profile={profile} todayLogs={logs} targets={targets} />
+      <AISuggestions profile={profile} todayLogs={logs} targets={targets} selectedDate={selectedDate} />
 
       {/* 5. Add Food Item Modal */}
       <AddFoodModal

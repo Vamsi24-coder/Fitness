@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import { getFoodLogsRange } from '../lib/supabase';
 import { calculateCalories, calculateDailyTargets, summarizeLogs } from '../services/nutrition';
-import { AISuggestions } from '../components/AISuggestions';
 import {
   BarChart,
   Bar,
@@ -778,9 +777,6 @@ export function Stats() {
               </ResponsiveContainer>
             </div>
           </div>
-
-          {/* 6. Today's Fuel Plan Guidance */}
-          <AISuggestions profile={profile} todayLogs={logs} targets={targets} />
 
         </div>
       )}

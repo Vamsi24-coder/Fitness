@@ -1,5 +1,10 @@
 import { supabase } from '../lib/supabase.js';
 import { summarizeLogs } from './nutrition.js';
+import { 
+  generateInstantFuelPlan, 
+  getMealLogStatus, 
+  ORDERED_MEAL_PERIODS 
+} from './fuelPlanner.js';
 
 /**
  * Clean and parse JSON response from Gemini or fallback payload
@@ -33,7 +38,13 @@ function cleanAndParseJSON(rawText, fallbackObj = null) {
  * 2. Falls back to secure local dev / Vercel Serverless `/api/gemini`.
  * 3. Never loads or exposes GEMINI_API_KEY in the browser bundle.
  */
-async function callSecureGemini(action, payload = {}) {
+async function callSecureGemini(action, payload = {}, signal = null) {
+  if (signal?.aborted) {
+    const abortErr = new Error('AI request cancelled.');
+    abortErr.name = 'AbortError';
+    throw abortErr;
+  }
+
   // Strategy A: Supabase Edge Function
   try {
     const { data, error } = await supabase.functions.invoke('gemini-nutrition', {
@@ -47,6 +58,9 @@ async function callSecureGemini(action, payload = {}) {
       console.warn('[Gemini Edge Notice]:', data.error);
     }
   } catch (edgeErr) {
+    if (edgeErr.name === 'AbortError' || signal?.aborted) {
+      throw edgeErr;
+    }
     console.warn('[Gemini Edge Notice]:', edgeErr.message);
   }
 
@@ -64,6 +78,7 @@ async function callSecureGemini(action, payload = {}) {
       method: 'POST',
       headers,
       body: JSON.stringify({ action, ...payload }),
+      signal,
     });
 
     if (res.ok) {
@@ -78,6 +93,9 @@ async function callSecureGemini(action, payload = {}) {
       }
     }
   } catch (apiErr) {
+    if (apiErr.name === 'AbortError' || signal?.aborted) {
+      throw apiErr;
+    }
     console.warn('[Gemini Serverless Notice]:', apiErr.message);
   }
 
@@ -437,97 +455,89 @@ function getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, pro
  * Generate genuinely day-aware, culturally authentic Andhra Pradesh & South Indian
  * nutrition, meal-by-meal roadmap, and workout recovery guidance.
  */
-export async function generateNutritionSuggestions(profile, todayLogs = [], targets = {}) {
+/**
+ * Enhance an already-generated instant local fuel plan using Google Gemini AI in the background.
+ * - Non-blocking: caller already has the instant local plan rendered.
+ * - Respects AbortSignal for request cancellation when logs change.
+ * - Preserves authentic Andhra meals and day-aware context.
+ *
+ * @param {Object} instantPlan - The synchronously computed local fuel plan
+ * @param {Object} profile - User biometrics
+ * @param {Array} todayLogs - Today's food logs
+ * @param {Object} targets - Daily calorie/macro targets
+ * @param {AbortSignal} [signal] - Optional cancellation signal
+ * @returns {Promise<Object>} Enhanced fuel plan or the instant plan on failure
+ */
+export async function enhanceFuelPlanWithAI(instantPlan, profile, todayLogs = [], targets = {}, signal = null) {
+  if (!instantPlan) return null;
+  if (signal?.aborted) return instantPlan;
+
   const summary = summarizeLogs(todayLogs);
-
-  // Group today's logs by meal category
-  const mealsByCategory = {
-    Breakfast: [],
-    Lunch: [],
-    Snacks: [],
-    Dinner: [],
-  };
-
-  todayLogs.forEach((log) => {
-    const rawCat = (log.meal_category || 'Snacks').trim().toLowerCase();
-    if (rawCat === 'breakfast') mealsByCategory.Breakfast.push(log);
-    else if (rawCat === 'lunch') mealsByCategory.Lunch.push(log);
-    else if (rawCat === 'dinner') mealsByCategory.Dinner.push(log);
-    else mealsByCategory.Snacks.push(log);
-  });
-
-  const MEAL_ORDER = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
-  const eatenCategories = MEAL_ORDER.filter((cat) => mealsByCategory[cat].length > 0);
-  const unloggedCategories = MEAL_ORDER.filter((cat) => mealsByCategory[cat].length === 0);
-
-  // Determine dynamic stage and next meal based on what is logged
-  let stage = 'recommend_breakfast';
-  let nextCategory = 'Breakfast';
-
-  if (mealsByCategory.Breakfast.length > 0 && mealsByCategory.Lunch.length === 0) {
-    stage = 'recommend_lunch';
-    nextCategory = 'Lunch';
-  } else if (mealsByCategory.Lunch.length > 0 && mealsByCategory.Snacks.length === 0 && mealsByCategory.Dinner.length === 0) {
-    stage = 'recommend_snacks';
-    nextCategory = 'Evening Snacks';
-  } else if (mealsByCategory.Lunch.length > 0 && mealsByCategory.Dinner.length === 0) {
-    stage = 'recommend_dinner';
-    nextCategory = 'Dinner';
-  } else if (mealsByCategory.Dinner.length > 0) {
-    stage = 'day_complete';
-    nextCategory = 'DayComplete';
-  } else if (unloggedCategories.length > 0) {
-    nextCategory = unloggedCategories[0];
-    stage = `recommend_${nextCategory.toLowerCase()}`;
-  }
-
-  // Calculate remaining macros
-  const caloriesRemaining = Math.max(0, Math.round((targets.calories || 2000) - summary.calories));
-  const proteinGap = Math.round((targets.protein || 120) - summary.protein);
-  const carbsGap = Math.round((targets.carbs || 220) - summary.carbs);
-  const fatsGap = Math.round((targets.fats || 65) - summary.fats);
-  const fiberGap = Math.round((targets.fiber || 28) - summary.fiber);
+  const logStatus = instantPlan.logStatus || getMealLogStatus(todayLogs);
+  const { loggedMap, isLogged } = logStatus;
 
   // Format detailed breakdown of meals eaten today
-  const mealsEatenBreakdown = eatenCategories.map((cat) => {
-    const items = mealsByCategory[cat];
-    const catSummary = summarizeLogs(items);
-    const itemList = items.map((it) => `${it.food_name} (${it.quantity}${it.unit})`).join(', ');
-    return `* ${cat} [${catSummary.calories} kcal | ${catSummary.carbs}g C, ${catSummary.protein}g P, ${catSummary.fats}g F, ${catSummary.fiber}g Fiber]: ${itemList}`;
-  }).join('\n');
+  const mealsEatenBreakdown = Object.entries(loggedMap)
+    .filter(([_, items]) => items.length > 0)
+    .map(([cat, items]) => {
+      const catSummary = summarizeLogs(items);
+      const itemList = items.map((it) => `${it.food_name} (${it.quantity}${it.unit})`).join(', ');
+      return `* ${cat} [${catSummary.calories} kcal | ${catSummary.carbs}g C, ${catSummary.protein}g P, ${catSummary.fats}g F, ${catSummary.fiber}g Fiber]: ${itemList}`;
+    })
+    .join('\n');
+
+  const unloggedCategories = ORDERED_MEAL_PERIODS.filter((cat) => !isLogged[cat]);
 
   try {
-    const parsed = await callSecureGemini('generate_suggestions', {
-      profile,
-      targets,
-      stage,
-      nextCategory,
-      unloggedCategories,
-      mealsEatenBreakdown,
-      summary,
-      caloriesRemaining,
-      proteinGap,
-      carbsGap,
-      fatsGap,
-      fiberGap,
-    });
+    const parsed = await callSecureGemini(
+      'generate_suggestions',
+      {
+        profile,
+        targets,
+        stage: instantPlan.stage,
+        nextCategory: instantPlan.nextMeal?.category || 'Lunch',
+        unloggedCategories,
+        mealsEatenBreakdown,
+        summary,
+        caloriesRemaining: instantPlan.macroStatus?.caloriesRemaining ?? 0,
+        proteinGap: instantPlan.macroStatus?.proteinRemainingGrams ?? 0,
+        carbsGap: instantPlan.macroStatus?.carbsGap ?? 0,
+        fatsGap: instantPlan.macroStatus?.fatsGap ?? 0,
+        fiberGap: instantPlan.macroStatus?.fiberGap ?? 0,
+        currentPeriod: instantPlan.currentPeriod,
+      },
+      signal
+    );
 
     if (parsed && parsed.nextMeal) {
-      parsed.eatenCategories = eatenCategories;
-      parsed.summary = parsed.headline || parsed.summary || 'Custom Andhra Fuel Plan';
-      parsed.priorityTip = parsed.alreadyEatenDiagnosis || parsed.priorityTip;
-      parsed.workoutNutritionTip = parsed.workoutNutritionAdvice || parsed.workoutNutritionTip;
-      return parsed;
+      return {
+        ...instantPlan,
+        ...parsed,
+        isAiEnhanced: true,
+        generatedAt: Date.now(),
+        cacheKey: instantPlan.cacheKey,
+      };
     }
   } catch (err) {
-    console.warn('Secure nutrition suggestions fallback engaged:', err.message);
+    if (err.name === 'AbortError' || signal?.aborted) {
+      throw err;
+    }
+    console.warn('[Gemini Enhancement Notice]: Fallback to instant local plan:', err.message);
   }
 
-  // Graceful, authentic Andhra fallback plan
-  const fallback = getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, profile, eatenCategories);
-  fallback.eatenCategories = eatenCategories;
-  fallback.summary = fallback.headline;
-  fallback.priorityTip = fallback.alreadyEatenDiagnosis;
-  fallback.workoutNutritionTip = fallback.workoutNutritionAdvice;
-  return fallback;
+  return instantPlan;
+}
+
+/**
+ * Generate genuinely day-aware, culturally authentic Andhra Pradesh & South Indian
+ * nutrition, meal-by-meal roadmap, and workout recovery guidance.
+ */
+export async function generateNutritionSuggestions(profile, todayLogs = [], targets = {}, currentTime = new Date()) {
+  const instantPlan = generateInstantFuelPlan(profile, todayLogs, targets, currentTime);
+  try {
+    const enhanced = await enhanceFuelPlanWithAI(instantPlan, profile, todayLogs, targets);
+    return enhanced || instantPlan;
+  } catch (_e) {
+    return instantPlan;
+  }
 }

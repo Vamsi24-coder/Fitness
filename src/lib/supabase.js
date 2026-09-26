@@ -19,14 +19,19 @@ function sanitizeSupabaseKey(rawKey) {
 }
 
 // Configuration strictly from environment variables
-const supabaseUrl = sanitizeSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
-const supabaseAnonKey = sanitizeSupabaseKey(import.meta.env.VITE_SUPABASE_ANON_KEY);
+const rawEnvUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL) || (typeof process !== 'undefined' && process.env?.VITE_SUPABASE_URL) || '';
+const rawEnvKey = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_ANON_KEY) || (typeof process !== 'undefined' && process.env?.VITE_SUPABASE_ANON_KEY) || '';
+const supabaseUrl = sanitizeSupabaseUrl(rawEnvUrl);
+const supabaseAnonKey = sanitizeSupabaseKey(rawEnvKey);
+
+const effectiveUrl = supabaseUrl || 'https://dzfgdimeamocmrgkxjqh.supabase.co';
+const effectiveKey = supabaseAnonKey || 'sb_publishable_placeholder';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase URL or Anon Key is missing. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are configured.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(effectiveUrl, effectiveKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
