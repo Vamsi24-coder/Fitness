@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const MONTH_NAMES = [
@@ -99,19 +100,6 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
     onDateChange(new Date(y, m - 1, d));
   };
 
-  const openPicker = () => {
-    // Try native picker first if available, otherwise toggle interactive calendar popover
-    try {
-      if (nativeInputRef.current && typeof nativeInputRef.current.showPicker === 'function') {
-        nativeInputRef.current.showPicker();
-      } else {
-        setIsOpen(!isOpen);
-      }
-    } catch {
-      setIsOpen(!isOpen);
-    }
-  };
-
   const formattedSelected = selectedDate.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -129,98 +117,109 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
         tabIndex={-1}
       />
 
-      {/* Calendar Button */}
+      {/* Calendar Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         title="Open Calendar"
+        aria-label="Toggle calendar date picker"
+        aria-expanded={isOpen}
         className={`apple-btn w-9 h-9 rounded-2xl border flex items-center justify-center transition-all ${
           isOpen
-            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
+            ? 'bg-[#30d158]/20 border-[#30d158] text-[#30d158]'
             : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
         }`}
       >
         <CalendarIcon className="w-4 h-4" />
       </button>
 
-      {/* Interactive Popover Modal / Dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 top-12 z-50 w-72 apple-glass rounded-[24px] p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-          
-          {/* Calendar Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-white/5">
-            <button
-              type="button"
-              onClick={handlePrevMonth}
-              className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-xs font-bold text-white tracking-tight">
-              {MONTH_NAMES[viewMonth]} {viewYear}
-            </span>
-            <button
-              type="button"
-              onClick={handleNextMonth}
-              className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+      {/* Origin-Aware Spring Popover (Emil Kowalski Rule 5 & Apple Fluid Interfaces) */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+            style={{ transformOrigin: 'top right' }}
+            className="absolute right-0 top-12 z-50 w-72 apple-glass-card rounded-[26px] p-4 shadow-2xl border border-white/15"
+          >
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <button
+                type="button"
+                onClick={handlePrevMonth}
+                aria-label="Previous month"
+                className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="headline text-xs text-white">
+                {MONTH_NAMES[viewMonth]} {viewYear}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                aria-label="Next month"
+                className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
 
-          {/* Days of week header */}
-          <div className="grid grid-cols-7 gap-1 text-center my-2 text-[10px] caption-label text-slate-500">
-            {DAY_NAMES.map((name) => (
-              <span key={name}>{name}</span>
-            ))}
-          </div>
+            {/* Days of week header */}
+            <div className="grid grid-cols-7 gap-1 text-center my-2 text-[10px] caption-label text-slate-400">
+              {DAY_NAMES.map((name) => (
+                <span key={name}>{name}</span>
+              ))}
+            </div>
 
-          {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-1 text-center">
-            {daysArray.map((day, idx) => {
-              if (day === null) {
-                return <div key={`empty-${idx}`} className="w-8 h-8" />;
-              }
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 gap-1 text-center">
+              {daysArray.map((day, idx) => {
+                if (day === null) {
+                  return <div key={`empty-${idx}`} className="w-8 h-8" />;
+                }
 
-              const selected = isSelected(day);
-              const isTod = isTodayDate(day);
+                const selected = isSelected(day);
+                const isTod = isTodayDate(day);
 
-              return (
-                <button
-                  type="button"
-                  key={`day-${day}`}
-                  onClick={() => handleSelectDay(day)}
-                  className={`apple-btn w-8 h-8 rounded-xl text-xs font-semibold flex items-center justify-center relative transition-all tabular-numbers ${
-                    selected
-                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/40 font-bold'
-                      : isTod
-                      ? 'bg-white/10 text-emerald-400 border border-emerald-500/40'
-                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  <span>{day}</span>
-                  {isTod && !selected && (
-                    <span className="w-1 h-1 rounded-full bg-emerald-400 absolute bottom-1" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    type="button"
+                    key={`day-${day}`}
+                    onClick={() => handleSelectDay(day)}
+                    className={`apple-btn w-8 h-8 rounded-xl text-xs font-semibold flex items-center justify-center relative transition-all tabular-numbers ${
+                      selected
+                        ? 'bg-[#30d158] text-black shadow-md font-bold'
+                        : isTod
+                        ? 'bg-white/10 text-[#30d158] border border-[#30d158]/50'
+                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    <span>{day}</span>
+                    {isTod && !selected && (
+                      <span className="w-1 h-1 rounded-full bg-[#30d158] absolute bottom-1" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* Quick Footer Action: Jump to Today & Selected info */}
-          <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-xs">
-            <span className="text-[11px] text-slate-400 font-medium tabular-numbers">{formattedSelected}</span>
-            <button
-              type="button"
-              onClick={handleTodayClick}
-              className="apple-btn text-[11px] text-emerald-400 hover:text-emerald-300 font-bold hover:underline"
-            >
-              Jump to Today
-            </button>
-          </div>
-
-        </div>
-      )}
+            {/* Quick Footer Action: Jump to Today & Selected info */}
+            <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+              <span className="text-[11px] text-slate-400 font-medium tabular-numbers">{formattedSelected}</span>
+              <button
+                type="button"
+                onClick={handleTodayClick}
+                className="apple-btn text-[11px] text-[#30d158] hover:text-[#30d158]/90 font-bold"
+              >
+                Jump to Today
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

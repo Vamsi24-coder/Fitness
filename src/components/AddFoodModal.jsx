@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, 
   Sparkles, 
@@ -285,7 +286,13 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-start overflow-y-auto p-4 sm:p-6 animate-in fade-in duration-200">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-start overflow-y-auto p-4 sm:p-6"
+    >
       
       {/* Top Floating App Bar (Ensures underlying navbar is completely replaced) */}
       <div className="w-full max-w-2xl flex items-center justify-between py-3 mb-4 border-b border-white/10">
@@ -313,8 +320,13 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         </button>
       </div>
 
-      {/* Main Container Card (Apple Glass) */}
-      <div className="w-full max-w-2xl apple-glass-card rounded-[32px] p-6 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl">
+      {/* Main Container Card (Apple Glass) with Spring scale entrance */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+        className="w-full max-w-2xl apple-glass-card rounded-[32px] p-6 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl"
+      >
         
         {/* Error notification */}
         {errorMessage && (
@@ -376,10 +388,18 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         </div>
 
         {/* =========================================================================
-            TAB 1: GEMINI AI CONVERSATIONAL & AUTO-ESTIMATE (NO MANUAL CLUTTER)
+            TAB CONTENT WITH ANIMATE PRESENCE (NO JARRING FLICKER)
             ========================================================================= */}
-        {activeTab === 'auto' && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+        <AnimatePresence mode="wait">
+          {activeTab === 'auto' ? (
+            <motion.div
+              key="tab-auto"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className="space-y-5"
+            >
             
             {/* Input Prompt Box */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-950/90 to-emerald-950/20 border border-emerald-500/30">
@@ -552,7 +572,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                   <button
                     type="button"
                     onClick={() => setAiCalculatedResult(null)}
-                    className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200"
+                    className="apple-btn px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
                   >
                     Recalculate
                   </button>
@@ -560,23 +580,29 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                     type="button"
                     onClick={handleSaveAiResult}
                     disabled={isSubmitting}
-                    className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center space-x-1.5 disabled:opacity-50"
+                    className="apple-btn px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-1.5 disabled:opacity-50"
                   >
-                    {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                    {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
                     <span>Add to Food Log</span>
                   </button>
                 </div>
               </div>
             )}
 
-          </div>
-        )}
-
-        {/* =========================================================================
-            TAB 2: MANUAL ENTRY WITH OIL & FRUITS ADD-ONS (NO GEMINI OVERLAY)
-            ========================================================================= */}
-        {activeTab === 'manual' && (
-          <form onSubmit={handleSaveManual} className="space-y-5 animate-in fade-in duration-200">
+            </motion.div>
+          ) : (
+            /* =========================================================================
+               TAB 2: MANUAL ENTRY WITH OIL & FRUITS ADD-ONS (NO GEMINI OVERLAY)
+               ========================================================================= */
+            <motion.form
+              key="tab-manual"
+              onSubmit={handleSaveManual}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className="space-y-5"
+            >
             
             {/* Food Name */}
             <div>
@@ -808,24 +834,25 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-slate-200"
+                className="apple-btn px-4 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center space-x-2 disabled:opacity-50"
+                className="apple-btn px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-2 disabled:opacity-50"
               >
-                {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
                 <span>Save to Food Log</span>
               </button>
             </div>
-          </form>
+          </motion.form>
         )}
+        </AnimatePresence>
 
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 }

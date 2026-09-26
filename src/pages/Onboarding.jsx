@@ -296,69 +296,78 @@ export function Onboarding() {
                   </div>
 
                   {/* Intensity & Duration (Smoothly revealed when worksOut is true) */}
-                  {worksOut && (
-                    <div className="mt-5 pt-4 border-t border-white/10 space-y-4 animate-in fade-in duration-200">
-                      
-                      {/* 5. Workout Intensity */}
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-300 caption-label mb-2">
-                          5. Workout Intensity
-                        </label>
-                        <div className="grid grid-cols-3 gap-2.5">
-                          {[
-                            { label: 'Small', desc: 'Light yoga / walk', burn: '~3.5 METs' },
-                            { label: 'Medium', desc: 'Moderate lifting / jog', burn: '~6.0 METs' },
-                            { label: 'Intensive', desc: 'Heavy lifts / HIIT', burn: '~8.5 METs' },
-                          ].map((item) => {
-                            const isSelected = intensity === item.label;
-                            return (
-                              <button
-                                type="button"
-                                key={item.label}
-                                onClick={() => setIntensity(item.label)}
-                                className={`apple-btn p-3 text-left rounded-2xl transition-all ${
-                                  isSelected
-                                    ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
-                                    : 'bg-black/40 border border-white/5 text-slate-400 hover:text-slate-200'
-                                }`}
-                              >
-                                <span className="block text-xs font-bold">{item.label}</span>
-                                <span className="block text-[10px] text-slate-400 mt-0.5">{item.desc}</span>
-                                <span className="block text-[10px] text-[#30d158] font-mono mt-1">{item.burn}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* 6. Workout Duration */}
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="block text-xs font-semibold text-slate-300 caption-label">
-                            6. Workout Duration (minutes/day)
+                  <AnimatePresence>
+                    {worksOut && (
+                      <motion.div
+                        key="workout-details"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+                        className="mt-5 pt-4 border-t border-white/10 space-y-4 overflow-hidden"
+                      >
+                        
+                        {/* 5. Workout Intensity */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 caption-label mb-2">
+                            5. Workout Intensity
                           </label>
-                          <span className="text-xs font-bold text-[#30d158] tabular-numbers">
-                            {duration} minutes
-                          </span>
+                          <div className="grid grid-cols-3 gap-2.5">
+                            {[
+                              { label: 'Small', desc: 'Light yoga / walk', burn: '~3.5 METs' },
+                              { label: 'Medium', desc: 'Moderate lifting / jog', burn: '~6.0 METs' },
+                              { label: 'Intensive', desc: 'Heavy lifts / HIIT', burn: '~8.5 METs' },
+                            ].map((item) => {
+                              const isSelected = intensity === item.label;
+                              return (
+                                <button
+                                  type="button"
+                                  key={item.label}
+                                  onClick={() => setIntensity(item.label)}
+                                  className={`apple-btn p-3 text-left rounded-2xl transition-all ${
+                                    isSelected
+                                      ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
+                                      : 'bg-black/40 border border-white/5 text-slate-400 hover:text-slate-200'
+                                  }`}
+                                >
+                                  <span className="block text-xs font-bold">{item.label}</span>
+                                  <span className="block text-[10px] text-slate-400 mt-0.5">{item.desc}</span>
+                                  <span className="block text-[10px] text-[#30d158] font-mono mt-1">{item.burn}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="range"
-                            min="15"
-                            max="180"
-                            step="5"
-                            value={duration}
-                            onChange={(e) => setDuration(e.target.value)}
-                            className="flex-1 accent-[#30d158] h-2 bg-white/10 rounded-lg cursor-pointer"
-                          />
-                          <span className="px-3 py-1.5 rounded-xl apple-glass text-[#30d158] font-bold text-xs min-w-[65px] text-center tabular-numbers">
-                            {duration}m
-                          </span>
-                        </div>
-                      </div>
 
-                    </div>
-                  )}
+                        {/* 6. Workout Duration */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="block text-xs font-semibold text-slate-300 caption-label">
+                              6. Workout Duration (minutes/day)
+                            </label>
+                            <span className="text-xs font-bold text-[#30d158] tabular-numbers">
+                              {duration} minutes
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="range"
+                              min="15"
+                              max="180"
+                              step="5"
+                              value={duration}
+                              onChange={(e) => setDuration(e.target.value)}
+                              className="flex-1 accent-[#30d158] h-2 bg-white/10 rounded-lg cursor-pointer"
+                            />
+                            <span className="px-3 py-1.5 rounded-xl apple-glass text-[#30d158] font-bold text-xs min-w-[65px] text-center tabular-numbers">
+                              {duration}m
+                            </span>
+                          </div>
+                        </div>
+
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Real-time Dynamic Mini-Ticker */}

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Flame, Dumbbell, Wheat, Droplet, Sparkles } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Flame, Dumbbell, Wheat, Droplet, Check } from 'lucide-react';
 
 /**
  * Concentric Apple Fitness Activity Rings Widget
- * Follows Apple's WWDC Human Interface Guidelines for Activity Rings
+ * Follows Apple's WWDC Human Interface Guidelines for Activity Rings & Emil Kowalski Fluid Interfaces
  */
 export function AppleActivityRings({ summary, targets }) {
   const calories = Math.round(summary.calories || 0);
@@ -85,8 +86,8 @@ export function AppleActivityRings({ summary, targets }) {
       <div className="lg:col-span-6 apple-glass-card rounded-[28px] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
         
         {/* Ambient background bloom */}
-        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#ff2d55]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#30d158]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Concentric SVG Rings */}
         <div className="relative w-52 h-52 shrink-0 flex items-center justify-center">
@@ -120,7 +121,7 @@ export function AppleActivityRings({ summary, targets }) {
                     strokeLinecap="round"
                     style={{
                       filter: `drop-shadow(0 0 6px ${r.glow})`,
-                      transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transition: 'stroke-dashoffset 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   />
                 </g>
@@ -140,19 +141,18 @@ export function AppleActivityRings({ summary, targets }) {
 
         {/* Legend & Calorie Goal Status */}
         <div className="flex-1 w-full space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-white/5">
+          <div className="flex items-center justify-between pb-2 border-b border-white/10">
             <div>
               <span className="caption-label text-[10px] text-slate-400">Activity Rings</span>
               <h3 className="headline text-base text-white">Daily Performance</h3>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300 tabular-numbers">
+            <span className="px-2.5 py-0.5 rounded-full apple-glass-inset text-xs font-bold text-slate-200 tabular-numbers">
               {Math.round((calories / (targetCalories || 1)) * 100)}%
             </span>
           </div>
 
           <div className="space-y-2">
             {rings.map((r) => {
-              const Icon = r.icon;
               const percent = Math.round(r.pct * 100);
               return (
                 <div key={r.id} className="flex items-center justify-between text-xs py-0.5">
@@ -168,8 +168,8 @@ export function AppleActivityRings({ summary, targets }) {
                       <strong className="text-white">{r.current}</strong> / {r.target}{r.unit}
                     </span>
                     <span
-                      className="text-[10px] font-bold px-1.5 py-0.2 rounded font-mono tabular-numbers"
-                      style={{ color: r.color, backgroundColor: `${r.color}15` }}
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded tabular-numbers"
+                      style={{ color: r.color, backgroundColor: `${r.color}18` }}
                     >
                       {percent}%
                     </span>
@@ -179,9 +179,9 @@ export function AppleActivityRings({ summary, targets }) {
             })}
           </div>
 
-          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
             <span>Remaining today:</span>
-            <span className="font-bold text-amber-300 tabular-numbers">
+            <span className="font-bold text-[#ffd60a] tabular-numbers">
               {Math.max(0, targetCalories - calories)} kcal
             </span>
           </div>
@@ -197,8 +197,11 @@ export function AppleActivityRings({ summary, targets }) {
           const remaining = Math.max(0, r.target - r.current);
 
           return (
-            <div
+            <motion.div
               key={`card-${r.id}`}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
               className="apple-glass-card rounded-[24px] p-4 flex flex-col justify-between apple-btn hover:border-white/20 relative overflow-hidden group"
             >
               {/* Subtle top specular sheen */}
@@ -238,19 +241,23 @@ export function AppleActivityRings({ summary, targets }) {
                 {/* Continuous Liquid Progress Bar */}
                 <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden p-0.5 border border-white/5">
                   <div
-                    className="h-full rounded-full transition-all duration-700 ease-out"
+                    className="h-full rounded-full"
                     style={{
                       width: `${pctClamped}%`,
                       backgroundColor: r.color,
                       boxShadow: `0 0 10px ${r.glow}`,
+                      transition: 'width 350ms cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-500 font-medium mt-1.5 block tabular-numbers">
-                  {remaining > 0 ? `${remaining}${r.unit} remaining` : 'Target reached ✓'}
-                </span>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mt-1.5 tabular-numbers">
+                  <span>
+                    {remaining > 0 ? `${remaining}${r.unit} remaining` : 'Target reached'}
+                  </span>
+                  {remaining === 0 && <Check className="w-3 h-3 text-[#30d158]" />}
+                </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

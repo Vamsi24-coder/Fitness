@@ -11,15 +11,23 @@ import { Stats } from './pages/Stats';
 // Layout with persistent Navbar and background
 function MainLayout() {
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-black text-[#f5f5f7] flex flex-col selection:bg-[#30d158]/30 selection:text-[#30d158]">
       <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© {new Date().getFullYear()} NutriPulse — Supabase + Gemini AI Full Stack Health Platform</p>
-          <p className="text-slate-600">Built for precision nutrition & fitness tracking</p>
+      <footer className="border-t border-white/10 bg-black/80 py-8 text-center text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="font-medium text-slate-400">
+            © {new Date().getFullYear()} NutriPulse — Precision Nutrition & Fitness Intelligence
+          </p>
+          <div className="flex items-center space-x-3 text-[11px] text-slate-500">
+            <span className="caption-label text-[10px] text-[#30d158]">SUPABASE AUTH</span>
+            <span>•</span>
+            <span className="caption-label text-[10px] text-[#0a84ff]">GEMINI AI</span>
+            <span>•</span>
+            <span className="caption-label text-[10px] text-[#ff2d55]">APPLE DESIGN</span>
+          </div>
         </div>
       </footer>
     </div>

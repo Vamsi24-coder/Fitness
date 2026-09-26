@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, 
   RotateCw, 
@@ -64,116 +65,140 @@ export function AISuggestions({ profile, todayLogs, targets }) {
             </div>
           </div>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.94 }}
             onClick={fetchSuggestions}
             disabled={loading}
             className="apple-btn flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-50"
           >
             <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
             <span className="hidden sm:inline">{loading ? 'Analyzing...' : 'Refresh AI'}</span>
-          </button>
+          </motion.button>
         </div>
 
         {/* Content */}
         <div>
-          {loading && !suggestions ? (
-            <div className="space-y-4 py-4 animate-pulse">
-              <div className="h-16 bg-white/5 rounded-2xl" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="h-32 bg-white/5 rounded-2xl" />
-                <div className="h-32 bg-white/5 rounded-2xl" />
-              </div>
-            </div>
-          ) : error ? (
-            <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/50 text-xs text-rose-300 flex items-center space-x-2.5">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          ) : suggestions ? (
-            <div className="space-y-5">
-              
-              {/* Daily Performance & Priority Tip Banner */}
-              <div className="p-4 sm:p-5 rounded-2xl apple-glass-inset flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-start space-x-3.5">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-semibold text-slate-100 leading-snug">
-                      {suggestions.summary}
-                    </p>
-                    {suggestions.priorityTip && (
-                      <p className="text-xs text-emerald-300 mt-1 font-medium leading-relaxed">
-                        <strong className="text-slate-400 font-normal">Next Action: </strong>
-                        {suggestions.priorityTip}
-                      </p>
-                    )}
-                  </div>
+          <AnimatePresence mode="wait">
+            {loading && !suggestions ? (
+              <motion.div
+                key="loading-skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="space-y-4 py-4 animate-pulse"
+              >
+                <div className="h-16 bg-white/5 rounded-2xl" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="h-32 bg-white/5 rounded-2xl" />
+                  <div className="h-32 bg-white/5 rounded-2xl" />
                 </div>
-              </div>
-
-              {/* Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              </motion.div>
+            ) : error ? (
+              <motion.div
+                key="error-box"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 280 }}
+                className="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/50 text-xs text-rose-300 flex items-center space-x-2.5"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </motion.div>
+            ) : suggestions ? (
+              <motion.div
+                key="ai-content"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+                className="space-y-5"
+              >
                 
-                {/* Meal Recommendations */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col justify-between space-y-3">
-                  <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 caption-label">
-                    <Utensils className="w-3.5 h-3.5" />
-                    <span>Targeted Meal Ideas</span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {suggestions.mealRecommendations?.map((rec, i) => (
-                      <div
-                        key={i}
-                        className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1"
-                      >
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-slate-200">{rec.meal}</h4>
-                          {rec.estCalories && (
-                            <span className="text-[10px] text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full tabular-numbers">
-                              ~{rec.estCalories} kcal
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs font-bold text-emerald-300">{rec.foodIdea}</p>
-                        <p className="text-[11px] text-slate-400 leading-relaxed font-normal">
-                          {rec.macroReason}
+                {/* Daily Performance & Priority Tip Banner */}
+                <div className="p-4 sm:p-5 rounded-2xl apple-glass-inset flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-start space-x-3.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-100 leading-snug">
+                        {suggestions.summary}
+                      </p>
+                      {suggestions.priorityTip && (
+                        <p className="text-xs text-emerald-300 mt-1 font-medium leading-relaxed">
+                          <strong className="text-slate-400 font-normal">Next Action: </strong>
+                          {suggestions.priorityTip}
                         </p>
-                      </div>
-                    ))}
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Workout Nutrition & Recovery Timing */}
-                <div className="space-y-4">
+                {/* Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   
-                  <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5">
-                    <div className="flex items-center space-x-2 text-xs font-bold text-sky-400 caption-label">
-                      <Dumbbell className="w-3.5 h-3.5" />
-                      <span>Workout Nutrition Timing</span>
+                  {/* Meal Recommendations */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col justify-between space-y-3">
+                    <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 caption-label">
+                      <Utensils className="w-3.5 h-3.5" />
+                      <span>Targeted Meal Ideas</span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                      {suggestions.workoutNutritionTip}
-                    </p>
+
+                    <div className="space-y-3">
+                      {suggestions.mealRecommendations?.map((rec, i) => (
+                        <div
+                          key={i}
+                          className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1 transition-colors hover:bg-white/[0.05]"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-bold text-slate-200">{rec.meal}</h4>
+                            {rec.estCalories && (
+                              <span className="text-[10px] text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full tabular-numbers">
+                                ~{rec.estCalories} kcal
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-emerald-300">{rec.foodIdea}</p>
+                          <p className="text-[11px] text-slate-400 leading-relaxed font-normal">
+                            {rec.macroReason}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5">
-                    <div className="flex items-center space-x-2 text-xs font-bold text-teal-400 caption-label">
-                      <Droplet className="w-3.5 h-3.5" />
-                      <span>Hydration & Recovery Target</span>
+                  {/* Workout Nutrition & Recovery Timing */}
+                  <div className="space-y-4">
+                    
+                    <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center space-x-2 text-xs font-bold text-sky-400 caption-label">
+                        <Dumbbell className="w-3.5 h-3.5" />
+                        <span>Workout Nutrition Timing</span>
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                        {suggestions.workoutNutritionTip}
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                      {suggestions.hydrationAndRecovery}
-                    </p>
+
+                    <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center space-x-2 text-xs font-bold text-teal-400 caption-label">
+                        <Droplet className="w-3.5 h-3.5" />
+                        <span>Hydration & Recovery Target</span>
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                        {suggestions.hydrationAndRecovery}
+                      </p>
+                    </div>
+
                   </div>
 
                 </div>
 
-              </div>
-
-            </div>
-          ) : null}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </div>
 
       </div>

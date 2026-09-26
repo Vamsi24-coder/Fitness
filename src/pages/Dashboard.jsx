@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import { getFoodLogsByDate, deleteFoodLog } from '../lib/supabase';
 import { calculateDailyTargets, summarizeLogs } from '../services/nutrition';
@@ -20,6 +21,30 @@ import {
 
 const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
 
+const mealGridVariants = {
+  enter: (dir) => ({
+    opacity: 0,
+    x: dir > 0 ? 18 : dir < 0 ? -18 : 0,
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: 'spring',
+      damping: 26,
+      stiffness: 300,
+    },
+  },
+  exit: (dir) => ({
+    opacity: 0,
+    x: dir > 0 ? -18 : dir < 0 ? 18 : 0,
+    transition: {
+      duration: 0.15,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  }),
+};
+
 // Helper to format Date object into YYYY-MM-DD
 function formatDateToISO(date) {
   const y = date.getFullYear();
@@ -31,8 +56,9 @@ function formatDateToISO(date) {
 export function Dashboard() {
   const { user, profile, isDemoUser, isSchemaMissing, setIsSchemaMissing } = useAuth();
 
-  // Current viewed date
+  // Current viewed date and navigation direction for fluid transitions
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [direction, setDirection] = useState(0);
   const dateStr = formatDateToISO(selectedDate);
   const todayStr = formatDateToISO(new Date());
   const isToday = dateStr === todayStr;
@@ -111,8 +137,9 @@ export function Dashboard() {
     fetchLogs();
   }, [dateStr, user?.id, isDemoUser]);
 
-  // Date Navigation Handlers
+  // Date Navigation Handlers with directional intent
   const handlePrevDay = () => {
+    setDirection(-1);
     setSelectedDate((prev) => {
       const next = new Date(prev);
       next.setDate(next.getDate() - 1);
@@ -121,6 +148,7 @@ export function Dashboard() {
   };
 
   const handleNextDay = () => {
+    setDirection(1);
     setSelectedDate((prev) => {
       const next = new Date(prev);
       next.setDate(next.getDate() + 1);
@@ -128,14 +156,20 @@ export function Dashboard() {
     });
   };
 
-  const handleDatePick = (e) => {
-    if (!e.target.value) return;
-    const [y, m, d] = e.target.value.split('-').map(Number);
-    setSelectedDate(new Date(y, m - 1, d));
+  const handleCalendarDateChange = (newDate) => {
+    if (!newDate) return;
+    const currentDayTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()).getTime();
+    const newDayTime = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()).getTime();
+    setDirection(newDayTime > currentDayTime ? 1 : newDayTime < currentDayTime ? -1 : 0);
+    setSelectedDate(newDate);
   };
 
   const handleGoToToday = () => {
-    setSelectedDate(new Date());
+    const today = new Date();
+    const currentDayTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()).getTime();
+    const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    setDirection(todayTime > currentDayTime ? 1 : todayTime < currentDayTime ? -1 : 0);
+    setSelectedDate(today);
   };
 
   // Add Item Click
@@ -222,38 +256,41 @@ export function Dashboard() {
         {/* Date Navigation & Calendar Picker */}
         <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
           <div className="flex items-center space-x-1 apple-glass-inset rounded-2xl p-1 shadow-sm">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.92 }}
               onClick={handlePrevDay}
               title="Previous Day"
               className="apple-btn p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-            </button>
+            </motion.button>
             
             <span className="px-3 text-xs font-semibold text-slate-200 min-w-[110px] text-center tabular-numbers">
               {isToday ? 'Today' : formattedDisplayDate.split(',')[1]}
             </span>
 
-            <button
+            <motion.button
+              whileTap={{ scale: 0.92 }}
               onClick={handleNextDay}
               title="Next Day"
               className="apple-btn p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
 
           {/* Interactive Popover Calendar Picker */}
-          <CalendarPicker selectedDate={selectedDate} onDateChange={setSelectedDate} />
+          <CalendarPicker selectedDate={selectedDate} onDateChange={handleCalendarDateChange} />
 
           {/* Quick Add Food Button */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={() => handleOpenAddModal('Breakfast')}
             className="apple-btn flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/25"
           >
             <Plus className="w-4 h-4" />
             <span>Log Food</span>
-          </button>
+          </motion.button>
         </div>
 
       </div>
@@ -290,14 +327,15 @@ export function Dashboard() {
           <span className="text-slate-400">
             Goal: <strong className="text-amber-400 tabular-numbers">{targets.calories} kcal</strong>
           </span>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.94 }}
             type="button"
             onClick={() => setIsSettingsOpen(true)}
             className="apple-btn ml-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white font-semibold border border-white/10 transition-colors flex items-center space-x-1"
           >
             <SlidersHorizontal className="w-3 h-3 text-emerald-400" />
             <span>Edit</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -315,29 +353,46 @@ export function Dashboard() {
           </span>
         </div>
 
-        {loadingLogs ? (
-          <div className="py-12 flex justify-center items-center text-slate-500">
-            <Loader2 className="w-6 h-6 animate-spin text-emerald-400 mr-2" />
-            <span className="text-xs font-medium">Loading food logs...</span>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {MEAL_CATEGORIES.map((category) => {
-              const itemsForCategory = logs.filter(
-                (item) => item.meal_category?.toLowerCase() === category.toLowerCase()
-              );
-              return (
-                <MealCard
-                  key={category}
-                  category={category}
-                  items={itemsForCategory}
-                  onAddClick={handleOpenAddModal}
-                  onDeleteItem={handleDeleteItem}
-                />
-              );
-            })}
-          </div>
-        )}
+        <AnimatePresence mode="wait" custom={direction}>
+          {loadingLogs ? (
+            <motion.div
+              key="loading-spinner"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="py-12 flex justify-center items-center text-slate-500"
+            >
+              <Loader2 className="w-6 h-6 animate-spin text-emerald-400 mr-2" />
+              <span className="text-xs font-medium">Loading food logs...</span>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={dateStr}
+              custom={direction}
+              variants={mealGridVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"
+            >
+              {MEAL_CATEGORIES.map((category) => {
+                const itemsForCategory = logs.filter(
+                  (item) => item.meal_category?.toLowerCase() === category.toLowerCase()
+                );
+                return (
+                  <MealCard
+                    key={category}
+                    category={category}
+                    items={itemsForCategory}
+                    onAddClick={handleOpenAddModal}
+                    onDeleteItem={handleDeleteItem}
+                  />
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* 4. AI-Powered Suggestions Section */}

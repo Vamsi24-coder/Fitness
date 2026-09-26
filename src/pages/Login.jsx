@@ -91,7 +91,8 @@ export function Login() {
 
           <div className="space-y-4">
             {/* Google OAuth Button (Apple Sign In Style) */}
-            <button
+            <motion.button
+              whileTap={{ scale: 0.98 }}
               onClick={handleGoogleSignIn}
               disabled={loading}
               className="apple-btn w-full flex items-center justify-center space-x-3 px-5 py-4 rounded-2xl bg-white hover:bg-slate-100 text-black font-bold text-sm shadow-xl transition-all disabled:opacity-60"
@@ -121,7 +122,7 @@ export function Login() {
                   <span>Continue with Google</span>
                 </>
               )}
-            </button>
+            </motion.button>
 
             {/* Subtle Divider */}
             <div className="relative py-2">
@@ -137,7 +138,8 @@ export function Login() {
 
             {/* Instant Demo Access Buttons */}
             <div className="space-y-2.5">
-              <button
+              <motion.button
+                whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(true)}
                 className="apple-btn w-full flex items-center justify-between px-4 py-3 rounded-2xl apple-glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-200 transition-colors group"
@@ -152,12 +154,13 @@ export function Login() {
                   </div>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(false)}
-                className="apple-btn w-full flex items-center justify-between px-4 py-3 rounded-2xl apple-glass-inset hover:bg-white/5 border border-white/5 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
+                className="apple-btn w-full flex items-center justify-between px-4 py-3 rounded-2xl apple-glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
               >
                 <div className="flex items-center space-x-2.5">
                   <div className="w-7 h-7 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
@@ -169,7 +172,7 @@ export function Login() {
                   </div>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-all" />
-              </button>
+              </motion.button>
             </div>
 
           </div>

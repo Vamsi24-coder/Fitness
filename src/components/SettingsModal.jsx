@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, 
   Settings as SettingsIcon, 
@@ -95,7 +96,7 @@ export function SettingsModal({ isOpen, onClose }) {
         setSaveSuccess(true);
         setTimeout(() => {
           onClose();
-        }, 800);
+        }, 600);
         return;
       }
 
@@ -104,35 +105,47 @@ export function SettingsModal({ isOpen, onClose }) {
       setSaveSuccess(true);
       setTimeout(() => {
         onClose();
-      }, 800);
+      }, 600);
     } catch (err) {
       console.error('Failed to update profile settings:', err);
-      setErrorMessage(err.message || 'Failed to save settings to Supabase.');
+      setErrorMessage(err.message || 'Could not save profile changes.');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
-      <div 
-        className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 8 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+        className="relative w-full max-w-lg apple-glass-card rounded-[32px] border border-white/15 shadow-2xl overflow-hidden my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/80 bg-slate-900/60">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <SettingsIcon className="w-4 h-4" />
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#30d158]/15 border border-[#30d158]/30 flex items-center justify-center text-[#30d158]">
+              <SettingsIcon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-100">Profile & Fitness Settings</h3>
-              <p className="text-xs text-slate-400">Edit your biometric and workout parameters</p>
+              <h3 className="headline text-base text-white">Profile & Fitness Settings</h3>
+              <p className="text-xs text-slate-400">Calibrate your dynamic biometric blueprint</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+            aria-label="Close settings"
+            className="apple-btn p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -141,21 +154,21 @@ export function SettingsModal({ isOpen, onClose }) {
         {/* Form Body */}
         <form onSubmit={handleSave} className="p-6 space-y-5">
           {errorMessage && (
-            <div className="p-3 text-xs bg-rose-950/40 border border-rose-800/60 rounded-xl text-rose-300">
+            <div className="p-3.5 text-xs bg-rose-950/60 border border-rose-500/30 rounded-2xl text-rose-300">
               {errorMessage}
             </div>
           )}
 
           {saveSuccess && (
-            <div className="p-3 text-xs bg-emerald-950/50 border border-emerald-800/80 rounded-xl text-emerald-300 flex items-center space-x-2">
-              <Check className="w-4 h-4 text-emerald-400" />
+            <div className="p-3.5 text-xs bg-[#30d158]/15 border border-[#30d158]/40 rounded-2xl text-[#30d158] flex items-center space-x-2">
+              <Check className="w-4 h-4 text-[#30d158]" />
               <span>Profile updated! Recalibrating dashboard targets...</span>
             </div>
           )}
 
-          {/* 1. Gender */}
+          {/* 1. Biological Gender */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-300 caption-label mb-2">
               Biological Gender
             </label>
             <div className="grid grid-cols-3 gap-2.5">
@@ -164,10 +177,10 @@ export function SettingsModal({ isOpen, onClose }) {
                   type="button"
                   key={g}
                   onClick={() => setGender(g)}
-                  className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${
+                  className={`apple-btn py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
                     gender === g
-                      ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                      ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
+                      : 'apple-glass-inset text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   {g}
@@ -179,7 +192,7 @@ export function SettingsModal({ isOpen, onClose }) {
           {/* 2. Age & Weight */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 caption-label mb-1.5">
                 Age (years)
               </label>
               <input
@@ -189,12 +202,12 @@ export function SettingsModal({ isOpen, onClose }) {
                 required
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-slate-100 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="w-full px-3.5 py-2.5 apple-glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 caption-label mb-1.5">
                 Weight (kg)
               </label>
               <input
@@ -205,28 +218,28 @@ export function SettingsModal({ isOpen, onClose }) {
                 required
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-slate-100 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="w-full px-3.5 py-2.5 apple-glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
               />
             </div>
           </div>
 
           {/* 3. Workout Habit & Intensity */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+          <div className="p-4 rounded-2xl apple-glass-inset space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
-                  <Dumbbell className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-xs font-bold text-white flex items-center space-x-1.5">
+                  <Dumbbell className="w-3.5 h-3.5 text-[#30d158]" />
                   <span>Daily Workout Habit</span>
                 </span>
-                <span className="text-[11px] text-slate-500 block">Exercise or sports daily</span>
+                <span className="text-[11px] text-slate-400 block">Exercise or athletics daily</span>
               </div>
 
-              <div className="flex items-center space-x-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+              <div className="flex items-center space-x-1 apple-glass p-1 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setWorksOut(true)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    worksOut ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'
+                  className={`apple-btn px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    worksOut ? 'bg-[#30d158] text-black shadow-sm' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Yes
@@ -234,8 +247,8 @@ export function SettingsModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => setWorksOut(false)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    !worksOut ? 'bg-slate-700 text-slate-200' : 'text-slate-400'
+                  className={`apple-btn px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    !worksOut ? 'bg-white/15 text-white' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   No
@@ -246,8 +259,8 @@ export function SettingsModal({ isOpen, onClose }) {
             {worksOut && (
               <>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5">
-                    Intensity
+                  <label className="block text-xs font-semibold text-slate-300 caption-label mb-1.5">
+                    Workout Intensity
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {['Small', 'Medium', 'Intensive'].map((lvl) => (
@@ -255,10 +268,10 @@ export function SettingsModal({ isOpen, onClose }) {
                         type="button"
                         key={lvl}
                         onClick={() => setIntensity(lvl)}
-                        className={`py-1.5 px-2 text-xs font-medium rounded-lg border transition-all ${
+                        className={`apple-btn py-2 px-2 text-xs font-semibold rounded-xl transition-all ${
                           intensity === lvl
-                            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                            ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
+                            : 'bg-black/40 border border-white/5 text-slate-400 hover:text-slate-200'
                         }`}
                       >
                         {lvl}
@@ -268,9 +281,9 @@ export function SettingsModal({ isOpen, onClose }) {
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-semibold text-slate-400 mb-1">
-                    <span>Duration:</span>
-                    <span className="text-emerald-400">{duration} minutes/day</span>
+                  <div className="flex justify-between text-xs font-semibold text-slate-300 mb-1.5">
+                    <span className="caption-label">Duration:</span>
+                    <span className="text-[#30d158] tabular-numbers font-bold">{duration} minutes/day</span>
                   </div>
                   <input
                     type="range"
@@ -279,7 +292,7 @@ export function SettingsModal({ isOpen, onClose }) {
                     step="5"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    className="w-full accent-emerald-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    className="w-full accent-[#30d158] h-2 bg-white/10 rounded-lg cursor-pointer"
                   />
                 </div>
               </>
@@ -287,54 +300,54 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
 
           {/* Dynamic Targets Recalculation Preview */}
-          <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/20">
-            <div className="flex items-center justify-between text-xs font-bold mb-2">
-              <span className="text-slate-400">Recalculated Goal:</span>
-              <span className="text-amber-400 flex items-center space-x-1">
-                <Flame className="w-3.5 h-3.5" />
+          <div className="p-4 rounded-2xl apple-glass border border-white/10">
+            <div className="flex items-center justify-between text-xs font-bold mb-2.5">
+              <span className="caption-label text-slate-400">Recalculated Goal:</span>
+              <span className="text-[#ffd60a] flex items-center space-x-1 tabular-numbers font-extrabold">
+                <Flame className="w-3.5 h-3.5 text-[#ff2d55]" />
                 <span>{liveTargets.calories} kcal/day</span>
               </span>
             </div>
-            <div className="grid grid-cols-4 gap-1.5 text-center text-[10px]">
-              <div className="bg-slate-900 p-1.5 rounded">
-                <span className="text-slate-500 block">Protein</span>
-                <span className="font-bold text-emerald-400">{liveTargets.protein}g</span>
+            <div className="grid grid-cols-4 gap-2 text-center text-[10px]">
+              <div className="apple-glass-inset p-2 rounded-xl">
+                <span className="text-slate-400 block caption-label text-[9px]">Protein</span>
+                <span className="font-bold text-[#30d158] tabular-numbers text-xs">{liveTargets.protein}g</span>
               </div>
-              <div className="bg-slate-900 p-1.5 rounded">
-                <span className="text-slate-500 block">Carbs</span>
-                <span className="font-bold text-sky-400">{liveTargets.carbs}g</span>
+              <div className="apple-glass-inset p-2 rounded-xl">
+                <span className="text-slate-400 block caption-label text-[9px]">Carbs</span>
+                <span className="font-bold text-[#0a84ff] tabular-numbers text-xs">{liveTargets.carbs}g</span>
               </div>
-              <div className="bg-slate-900 p-1.5 rounded">
-                <span className="text-slate-500 block">Fats</span>
-                <span className="font-bold text-amber-400">{liveTargets.fats}g</span>
+              <div className="apple-glass-inset p-2 rounded-xl">
+                <span className="text-slate-400 block caption-label text-[9px]">Fats</span>
+                <span className="font-bold text-[#ffd60a] tabular-numbers text-xs">{liveTargets.fats}g</span>
               </div>
-              <div className="bg-slate-900 p-1.5 rounded">
-                <span className="text-slate-500 block">Fiber</span>
-                <span className="font-bold text-purple-400">{liveTargets.fiber}g</span>
+              <div className="apple-glass-inset p-2 rounded-xl">
+                <span className="text-slate-400 block caption-label text-[9px]">Fiber</span>
+                <span className="font-bold text-[#bf5af2] tabular-numbers text-xs">{liveTargets.fiber}g</span>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+              className="apple-btn px-4 py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="apple-btn flex items-center space-x-2 px-6 py-2.5 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black text-xs font-bold shadow-lg disabled:opacity-50"
             >
-              {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              {saving && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
               <span>{saving ? 'Saving...' : 'Save Profile Changes'}</span>
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
