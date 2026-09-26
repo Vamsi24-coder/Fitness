@@ -1,8 +1,28 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Configuration from environment variables with fallbacks to user-provided values
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://dzfgdimeamocmrgkxjqh.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_-b5hpCcpgIKRAqV_II-JLg_Z9EvVRxG';
+// Robust URL sanitization to handle accidental concatenation of Vercel domains or trailing paths
+function sanitizeSupabaseUrl(rawUrl) {
+  const fallback = 'https://dzfgdimeamocmrgkxjqh.supabase.co';
+  if (!rawUrl || typeof rawUrl !== 'string') return fallback;
+  const trimmed = rawUrl.trim();
+  
+  // Extract the true Supabase project domain (e.g. https://dzfgdimeamocmrgkxjqh.supabase.co)
+  const match = trimmed.match(/(https?:\/\/[a-z0-9-]+(?:\.supabase\.co|\.supabase\.in))/i);
+  if (match) {
+    return match[1];
+  }
+  return trimmed.replace(/\/+$/, '');
+}
+
+function sanitizeSupabaseKey(rawKey) {
+  const fallback = 'sb_publishable_-b5hpCcpgIKRAqV_II-JLg_Z9EvVRxG';
+  if (!rawKey || typeof rawKey !== 'string') return fallback;
+  return rawKey.trim().replace(/^["']|["']$/g, '');
+}
+
+// Configuration from environment variables with safe fallback sanitization
+const supabaseUrl = sanitizeSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
+const supabaseAnonKey = sanitizeSupabaseKey(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
