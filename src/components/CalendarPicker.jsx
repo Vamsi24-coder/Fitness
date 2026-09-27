@@ -112,6 +112,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
       <input
         ref={nativeInputRef}
         type="date"
+        aria-label="Select date"
         className="sr-only"
         onChange={handleNativeChange}
         tabIndex={-1}

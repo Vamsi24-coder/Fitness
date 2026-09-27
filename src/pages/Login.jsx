@@ -75,7 +75,7 @@ export function Login() {
           <h1 className="display-title text-3xl sm:text-4xl text-white">
             Nutri<span className="bg-gradient-to-r from-[#30d158] via-[#0a84ff] to-[#bf5af2] bg-clip-text text-transparent">Pulse</span>
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-slate-400 font-medium max-w-sm mx-auto">
+          <p className="mt-2 text-xs sm:text-sm text-slate-300 font-medium max-w-sm mx-auto">
             Intelligent nutrition and macro analytics powered by Supabase and Nutrition AI
           </p>
         </div>
@@ -101,7 +101,7 @@ export function Login() {
                 <Loader2 className="w-5 h-5 animate-spin text-black" />
               ) : (
                 <>
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -130,7 +130,7 @@ export function Login() {
                 <div className="w-full border-t border-white/10" />
               </div>
               <div className="relative flex justify-center text-[11px] uppercase">
-                <span className="bg-[#121216] px-3 text-slate-500 font-semibold caption-label">
+                <span className="bg-[#121216] px-3 text-slate-400 font-semibold caption-label">
                   Or Instant Demo Preview
                 </span>
               </div>
@@ -150,28 +150,28 @@ export function Login() {
                   </div>
                   <div className="text-left">
                     <span className="block text-white font-bold">Explore Full Dashboard</span>
-                    <span className="text-[10px] text-slate-400">Preloaded biometrics & sample meal logs</span>
+                    <span className="text-[10px] text-slate-300">Preloaded biometrics & sample meal logs</span>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
               </motion.button>
 
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(false)}
-                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
+                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-colors group"
               >
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-7 h-7 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
+                  <div className="w-7 h-7 rounded-xl bg-white/5 flex items-center justify-center text-slate-300">
                     <Target className="w-3.5 h-3.5" />
                   </div>
                   <div className="text-left">
-                    <span className="block text-slate-300 font-medium">Test Dynamic Onboarding</span>
-                    <span className="text-[10px] text-slate-500">Formulate custom blueprint from scratch</span>
+                    <span className="block text-slate-200 font-medium">Test Dynamic Onboarding</span>
+                    <span className="text-[10px] text-slate-400">Formulate custom blueprint from scratch</span>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-all" />
+                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-all" />
               </motion.button>
             </div>
 
@@ -181,15 +181,15 @@ export function Login() {
           <div className="pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
             <div className="glass p-2.5 rounded-xl">
               <span className="caption-label text-[9px] text-[#30d158] block font-bold">NUTRITION AI</span>
-              <span className="text-[10px] text-slate-400 font-medium">Smart Food AI</span>
+              <span className="text-[10px] text-slate-300 font-medium">Smart Food AI</span>
             </div>
             <div className="glass p-2.5 rounded-xl">
               <span className="caption-label text-[9px] text-[#0a84ff] block font-bold">DYNAMIC</span>
-              <span className="text-[10px] text-slate-400 font-medium">MET BMR Calcs</span>
+              <span className="text-[10px] text-slate-300 font-medium">MET BMR Calcs</span>
             </div>
             <div className="glass p-2.5 rounded-xl">
               <span className="caption-label text-[9px] text-[#ff2d55] block font-bold">RINGS</span>
-              <span className="text-[10px] text-slate-400 font-medium">Fitness Rings</span>
+              <span className="text-[10px] text-slate-300 font-medium">Fitness Rings</span>
             </div>
           </div>
 

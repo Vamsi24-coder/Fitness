@@ -33,25 +33,29 @@ export function GoogleSetupNotice({ supabaseUrl = 'https://dzfgdimeamocmrgkxjqh.
             Setup Required: Enable Google Provider
           </span>
         </div>
-        <button className="text-amber-400 hover:text-amber-300">
+        <button 
+          type="button" 
+          aria-label={isOpen ? "Collapse Google setup instructions" : "Expand Google setup instructions"}
+          className="text-amber-400 hover:text-amber-300 p-1"
+        >
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
       {isOpen && (
-        <div className="mt-3 pt-3 border-t border-amber-500/20 space-y-2.5 text-slate-300">
-          <p className="leading-relaxed">
+        <div className="mt-3 pt-3 border-t border-amber-500/20 space-y-2.5 text-slate-200">
+          <p className="leading-relaxed text-slate-200">
             Google OAuth must be enabled in your Supabase dashboard to sign in with your real Google account:
           </p>
 
-          <ol className="list-decimal pl-4 space-y-1.5 text-slate-300">
+          <ol className="list-decimal pl-4 space-y-1.5 text-slate-200">
             <li>
               Open{' '}
               <a
                 href="https://supabase.com/dashboard/project/dzfgdimeamocmrgkxjqh/auth/providers"
                 target="_blank"
                 rel="noreferrer"
-                className="text-emerald-400 underline inline-flex items-center space-x-0.5"
+                className="text-emerald-400 underline inline-flex items-center space-x-0.5 font-medium"
               >
                 <span>Supabase Auth Providers</span>
                 <ExternalLink className="w-3 h-3 ml-0.5" />
@@ -65,7 +69,8 @@ export function GoogleSetupNotice({ supabaseUrl = 'https://dzfgdimeamocmrgkxjqh.
                 <button
                   type="button"
                   onClick={copyCallbackUrl}
-                  className="text-slate-400 hover:text-white shrink-0"
+                  aria-label="Copy Redirect URI"
+                  className="text-slate-300 hover:text-white shrink-0 p-1"
                   title="Copy Redirect URI"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -75,7 +80,7 @@ export function GoogleSetupNotice({ supabaseUrl = 'https://dzfgdimeamocmrgkxjqh.
             <li>Paste your Google Client ID & Secret into Supabase and click Save.</li>
           </ol>
 
-          <p className="text-[11px] text-amber-300/80 pt-1">
+          <p className="text-[11px] text-amber-300 pt-1">
             💡 <em>You can also click "Explore with Demo Account" below to test the full onboarding, dashboard, modals, stats charts, and Nutrition AI right now!</em>
           </p>
         </div>

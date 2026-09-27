@@ -110,6 +110,7 @@ export function Navbar() {
               type="button"
               onClick={() => setIsSettingsOpen(true)}
               title="Settings & Edit Details"
+              aria-label="Settings & Edit Details"
               className="btn-press p-2.5 rounded-xl glass-inset text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <SettingsIcon className="w-4 h-4" />
@@ -134,8 +135,10 @@ export function Navbar() {
 
               {/* Logout Button */}
               <button
+                type="button"
                 onClick={logout}
                 title="Sign Out"
+                aria-label="Sign Out"
                 className="btn-press p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
               >
                 <LogOut className="w-4 h-4" />

@@ -42,11 +42,13 @@ export function AuthProvider({ children }) {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       const currentUser = currentSession?.user ?? null;
-      setUser(currentUser);
 
       if (currentUser) {
+        setIsDemoUser(false);
+        setUser(currentUser);
         fetchAndSetProfile(currentUser.id).finally(() => setLoading(false));
-      } else {
+      } else if (!isDemoUser) {
+        setUser(null);
         setProfileChecked(true);
         setLoading(false);
       }
@@ -58,13 +60,15 @@ export function AuthProvider({ children }) {
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       setSession(newSession);
       const currentUser = newSession?.user ?? null;
-      setUser(currentUser);
 
       if (currentUser) {
+        setIsDemoUser(false);
+        setUser(currentUser);
         setLoading(true);
         await fetchAndSetProfile(currentUser.id);
         setLoading(false);
       } else if (!isDemoUser) {
+        setUser(null);
         setProfile(null);
         setProfileChecked(true);
         setLoading(false);
