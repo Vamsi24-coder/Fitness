@@ -111,9 +111,15 @@ test.describe('Login Page Layout & Simplification Verifications', () => {
     await expect(googleBtn).toBeVisible();
   });
 
-  test('LOGIN-07 Google OAuth setup notice remains available', async ({ page }) => {
+  test('LOGIN-07 Google OAuth setup notice is completely absent', async ({ page }) => {
     const notice = page.getByText('Setup Required: Enable Google Provider');
-    await expect(notice).toBeVisible();
+    expect(await notice.count()).toBe(0);
+    const text1 = page.getByText('Google OAuth must be enabled in your Supabase dashboard');
+    expect(await text1.count()).toBe(0);
+    const text2 = page.getByText('Supabase Auth Providers');
+    expect(await text2.count()).toBe(0);
+    const text3 = page.getByText('Authorized Redirect URI');
+    expect(await text3.count()).toBe(0);
   });
 
   test('LOGIN-08 Dynamic Onboarding button functionality works', async ({ page }) => {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
-import { GoogleSetupNotice } from '../components/GoogleSetupNotice';
 import { 
   Activity, 
   ArrowRight, 
@@ -154,11 +153,6 @@ export function Login() {
 
           </div>
 
-        </div>
-
-        {/* Google Setup Guide Dropdown */}
-        <div className="mt-6">
-          <GoogleSetupNotice />
         </div>
 
       </motion.div>
