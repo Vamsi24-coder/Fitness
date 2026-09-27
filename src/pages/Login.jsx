@@ -5,14 +5,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { GoogleSetupNotice } from '../components/GoogleSetupNotice';
 import { 
   Activity, 
-  Sparkles, 
-  ShieldCheck, 
-  Flame, 
   ArrowRight, 
   Loader2,
-  Zap,
-  Target,
-  Smartphone
+  Target
 } from 'lucide-react';
 
 export function Login() {
@@ -65,7 +60,7 @@ export function Login() {
           <motion.div 
             whileHover={{ scale: 1.05 }}
             transition={{ type: 'spring', damping: 15 }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-[22px] bg-gradient-to-tr from-[#30d158] via-[#0a84ff] to-[#ff2d55] p-0.5 shadow-2xl shadow-[#30d158]/20 mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-[22px] bg-gradient-to-tr from-[#30d158] via-[#0a84ff] to-[#bf5af2] p-0.5 shadow-2xl shadow-[#30d158]/20 mb-4"
           >
             <div className="w-full h-full bg-black rounded-[20px] flex items-center justify-center">
               <Activity className="w-8 h-8 text-[#30d158]" />
@@ -136,61 +131,27 @@ export function Login() {
               </div>
             </div>
 
-            {/* Instant Demo Access Buttons */}
-            <div className="space-y-2.5">
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                onClick={() => handleDemoSignIn(true)}
-                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-200 transition-colors group"
-              >
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-7 h-7 rounded-xl bg-[#30d158]/15 border border-[#30d158]/30 flex items-center justify-center text-[#30d158]">
-                    <Sparkles className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="text-left">
-                    <span className="block text-white font-bold">Explore Full Dashboard</span>
-                    <span className="text-[10px] text-slate-300">Preloaded biometrics & sample meal logs</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-              </motion.button>
-
+            {/* Instant Demo Access Button */}
+            <div>
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(false)}
-                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-colors group"
+                className="btn-press w-full flex items-center justify-between px-4 py-3.5 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-colors group"
               >
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-7 h-7 rounded-xl bg-white/5 flex items-center justify-center text-slate-300">
-                    <Target className="w-3.5 h-3.5" />
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#30d158]/15 border border-[#30d158]/30 flex items-center justify-center text-[#30d158]">
+                    <Target className="w-4 h-4" />
                   </div>
                   <div className="text-left">
-                    <span className="block text-slate-200 font-medium">Test Dynamic Onboarding</span>
+                    <span className="block text-white font-bold text-xs">Test Dynamic Onboarding</span>
                     <span className="text-[10px] text-slate-400">Formulate custom blueprint from scratch</span>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-all" />
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
               </motion.button>
             </div>
 
-          </div>
-
-          {/* Feature Highlights Row */}
-          <div className="pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
-            <div className="glass p-2.5 rounded-xl">
-              <span className="caption-label text-[9px] text-[#30d158] block font-bold">NUTRITION AI</span>
-              <span className="text-[10px] text-slate-300 font-medium">Smart Food AI</span>
-            </div>
-            <div className="glass p-2.5 rounded-xl">
-              <span className="caption-label text-[9px] text-[#0a84ff] block font-bold">DYNAMIC</span>
-              <span className="text-[10px] text-slate-300 font-medium">MET BMR Calcs</span>
-            </div>
-            <div className="glass p-2.5 rounded-xl">
-              <span className="caption-label text-[9px] text-[#ff2d55] block font-bold">RINGS</span>
-              <span className="text-[10px] text-slate-300 font-medium">Fitness Rings</span>
-            </div>
           </div>
 
         </div>
