@@ -319,7 +319,9 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
 
         <button
           onClick={onClose}
-          className="btn-press p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+          title="Close Modal"
+          aria-label="Close Modal"
+          className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -330,7 +332,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         initial={{ opacity: 0, scale: 0.96, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-        className="w-full max-w-2xl glass-card rounded-[32px] p-6 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl"
+        className="w-full max-w-2xl glass-card rounded-[32px] p-4 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl"
       >
         
         {/* Error notification */}
@@ -345,13 +347,13 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
           <label className="block text-xs font-semibold text-slate-300 caption-label mb-2.5">
             Target Meal Category
           </label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map((cat) => (
               <button
                 type="button"
                 key={cat}
                 onClick={() => setMealCategory(cat)}
-                className={`btn-press py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
+                className={`btn-press py-2.5 px-3 min-h-[44px] flex items-center justify-center text-xs font-semibold rounded-2xl transition-all ${
                   mealCategory === cat
                     ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-md'
                     : 'glass-inset text-slate-400 hover:text-slate-200'
@@ -364,11 +366,11 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         </div>
 
         {/* 2. THE PAGE SWITCH: [ ⚡ Nutrition AI Auto-Estimate ] vs [ ✍️ Manual Entry with Add-ons ] */}
-        <div className="p-1 glass-inset rounded-2xl grid grid-cols-2 gap-1">
+        <div className="p-1 glass-inset rounded-2xl flex flex-col sm:grid sm:grid-cols-2 gap-1">
           <button
             type="button"
             onClick={() => setActiveTab('auto')}
-            className={`btn-press py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
+            className={`btn-press py-3 px-4 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'auto'
                 ? 'bg-white text-black shadow-lg'
                 : 'text-slate-400 hover:text-white'
@@ -381,7 +383,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
           <button
             type="button"
             onClick={() => setActiveTab('manual')}
-            className={`btn-press py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
+            className={`btn-press py-3 px-4 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'manual'
                 ? 'bg-white text-black shadow-lg'
                 : 'text-slate-400 hover:text-white'

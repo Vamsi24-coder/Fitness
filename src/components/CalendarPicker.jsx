@@ -125,7 +125,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
         title="Open Calendar"
         aria-label="Toggle calendar date picker"
         aria-expanded={isOpen}
-        className={`btn-press w-9 h-9 rounded-2xl border flex items-center justify-center transition-all ${
+        className={`btn-press min-w-[44px] min-h-[44px] rounded-2xl border flex items-center justify-center transition-all ${
           isOpen
             ? 'bg-[#30d158]/20 border-[#30d158] text-[#30d158]'
             : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
@@ -143,7 +143,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ type: 'spring', damping: 25, stiffness: 320 }}
             style={{ transformOrigin: 'top right' }}
-            className="absolute right-0 top-12 z-50 w-72 glass-card rounded-[26px] p-4 shadow-2xl border border-white/15"
+            className="absolute right-0 top-12 z-50 w-72 max-w-[calc(100vw-32px)] glass-card rounded-[26px] p-4 shadow-2xl border border-white/15"
           >
             {/* Calendar Header */}
             <div className="flex items-center justify-between pb-3 border-b border-white/10">

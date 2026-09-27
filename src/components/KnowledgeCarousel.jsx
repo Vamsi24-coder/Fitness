@@ -291,7 +291,7 @@ function KnowledgeCard({
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous insight"
-                className="btn-press w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
+                className="btn-press min-w-[44px] min-h-[44px] rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -299,7 +299,7 @@ function KnowledgeCard({
                 type="button"
                 onClick={handleNext}
                 aria-label="Next insight"
-                className="btn-press w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
+                className="btn-press min-w-[44px] min-h-[44px] rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

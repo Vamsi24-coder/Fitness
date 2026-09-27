@@ -111,7 +111,7 @@ export function Navbar() {
               onClick={() => setIsSettingsOpen(true)}
               title="Settings & Edit Details"
               aria-label="Settings & Edit Details"
-              className="btn-press p-2.5 rounded-xl glass-inset text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center p-2.5 rounded-xl glass-inset text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <SettingsIcon className="w-4 h-4" />
             </button>
@@ -139,7 +139,7 @@ export function Navbar() {
                 onClick={logout}
                 title="Sign Out"
                 aria-label="Sign Out"
-                className="btn-press p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
+                className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -149,10 +149,10 @@ export function Navbar() {
         </div>
 
         {/* Mobile Navigation Dock */}
-        <div className="md:hidden flex border-t border-white/10 bg-black/80 px-4 py-2 justify-around backdrop-blur-xl">
+        <div className="md:hidden flex border-t border-white/10 bg-black/80 px-2 py-1.5 justify-around backdrop-blur-xl">
           <Link
             to="/dashboard"
-            className={`btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+            className={`btn-press flex items-center justify-center space-x-1.5 px-3 py-2 min-h-[44px] rounded-xl text-xs font-semibold ${
               isCurrent('/dashboard') ? 'bg-white/15 text-white' : 'text-slate-400'
             }`}
           >
@@ -161,7 +161,7 @@ export function Navbar() {
           </Link>
           <Link
             to="/stats"
-            className={`btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+            className={`btn-press flex items-center justify-center space-x-1.5 px-3 py-2 min-h-[44px] rounded-xl text-xs font-semibold ${
               isCurrent('/stats') ? 'bg-white/15 text-white' : 'text-slate-400'
             }`}
           >
@@ -171,7 +171,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setIsSettingsOpen(true)}
-            className="btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
+            className="btn-press flex items-center justify-center space-x-1.5 px-3 py-2 min-h-[44px] rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
           >
             <SettingsIcon className="w-4 h-4" />
             <span>Settings</span>

@@ -254,18 +254,19 @@ export function Dashboard() {
         </div>
 
         {/* Date Navigation & Calendar Picker */}
-        <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex flex-wrap sm:flex-nowrap items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end gap-y-2">
           <div className="flex items-center space-x-1 glass-inset rounded-2xl p-1 shadow-sm">
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={handlePrevDay}
               title="Previous Day"
-              className="btn-press p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Previous Day"
+              className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </motion.button>
             
-            <span className="px-3 text-xs font-semibold text-slate-200 min-w-[110px] text-center tabular-numbers">
+            <span className="px-2 sm:px-3 text-xs font-semibold text-slate-200 min-w-[90px] sm:min-w-[110px] text-center tabular-numbers">
               {isToday ? 'Today' : formattedDisplayDate.split(',')[1]}
             </span>
 
@@ -273,7 +274,8 @@ export function Dashboard() {
               whileTap={{ scale: 0.92 }}
               onClick={handleNextDay}
               title="Next Day"
-              className="btn-press p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Next Day"
+              className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </motion.button>
@@ -286,7 +288,7 @@ export function Dashboard() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => handleOpenAddModal('Breakfast')}
-            className="btn-press flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/25"
+            className="btn-press flex items-center justify-center space-x-1.5 px-4 py-2.5 min-h-[44px] rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/25"
           >
             <Plus className="w-4 h-4" />
             <span>Log Food</span>

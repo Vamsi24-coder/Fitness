@@ -82,7 +82,8 @@ export function MealCard({ category, items = [], onAddClick, onDeleteItem }) {
             <button
               onClick={() => onAddClick(category)}
               title={`Add food to ${category}`}
-              className="btn-press px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white flex items-center space-x-1.5 shadow-sm"
+              aria-label={`Add food to ${category}`}
+              className="btn-press px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white flex items-center justify-center space-x-1.5 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Add</span>
@@ -119,7 +120,7 @@ export function MealCard({ category, items = [], onAddClick, onDeleteItem }) {
               <p className="text-xs text-slate-400 mb-2 font-medium">Nothing logged for {category}</p>
               <button
                 onClick={() => onAddClick(category)}
-                className="btn-press inline-flex items-center space-x-1 text-xs text-[#30d158] hover:text-[#30d158]/80 font-bold"
+                className="btn-press inline-flex items-center justify-center min-h-[44px] px-3 space-x-1 text-xs text-[#30d158] hover:text-[#30d158]/80 font-bold"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Log food item</span>
@@ -167,7 +168,7 @@ export function MealCard({ category, items = [], onAddClick, onDeleteItem }) {
                       onClick={() => onDeleteItem(item.id)}
                       title="Remove item"
                       aria-label={`Remove ${item.food_name}`}
-                      className="btn-press opacity-60 group-hover:opacity-100 p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
+                      className="btn-press min-w-[44px] min-h-[44px] flex items-center justify-center opacity-70 group-hover:opacity-100 p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -183,7 +184,7 @@ export function MealCard({ category, items = [], onAddClick, onDeleteItem }) {
       {items.length > 0 && (
         <button
           onClick={() => onAddClick(category)}
-          className="btn-press mt-3.5 w-full py-2 text-center text-xs font-semibold text-slate-300 hover:text-white glass-inset rounded-xl transition-all border border-white/5 hover:border-white/15"
+          className="btn-press mt-3.5 w-full min-h-[44px] flex items-center justify-center py-2.5 text-center text-xs font-semibold text-slate-300 hover:text-white glass-inset rounded-xl transition-all border border-white/5 hover:border-white/15"
         >
           + Add another item
         </button>

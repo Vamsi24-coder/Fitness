@@ -342,7 +342,7 @@ export function Stats() {
               <button
                 key={tab.id}
                 onClick={() => setTimeframe(tab.id)}
-                className={`btn-press relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                className={`btn-press relative flex-1 sm:flex-initial min-h-[44px] flex items-center justify-center px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
                   active
                     ? 'text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
