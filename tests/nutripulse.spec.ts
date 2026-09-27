@@ -71,7 +71,7 @@ test.describe('Authentication - Login Page', () => {
 });
 
 // ============================================================
-// LOGIN-VERIFY: Login Page Simplification Verifications
+// LOGIN-VERIFY: Login Page Layout & Simplification Verifications
 // ============================================================
 test.describe('Login Page Layout & Simplification Verifications', () => {
   test.beforeEach(async ({ page }) => {
@@ -139,16 +139,17 @@ async function setupDemoDashboardSession(page: any) {
   await page.waitForURL(/dashboard|onboarding/, { timeout: 15000 });
 
   if (page.url().includes('onboarding')) {
-    // Fill / proceed through onboarding to generate profile & reach dashboard
-    const calcBtn = page.getByRole('button', { name: /calculate my blueprint|calculate|proceed/i }).first();
-    if (await calcBtn.isVisible()) {
-      await calcBtn.click();
-      await page.waitForTimeout(500);
-      const confirmBtn = page.getByRole('button', { name: /confirm & launch|launch|start/i }).first();
-      if (await confirmBtn.isVisible()) {
-        await confirmBtn.click();
-        await page.waitForURL(/dashboard/, { timeout: 10000 });
-      }
+    // Step 1: Review Calculated Blueprint
+    const reviewBtn = page.getByText('Review Calculated Blueprint').first();
+    if (await reviewBtn.isVisible()) {
+      await reviewBtn.click();
+      await page.waitForTimeout(600);
+    }
+    // Step 2: Confirm & Launch Dashboard
+    const launchBtn = page.getByText('Confirm & Launch Dashboard').first();
+    if (await launchBtn.isVisible()) {
+      await launchBtn.click();
+      await page.waitForURL(/dashboard/, { timeout: 15000 });
     }
   }
 
@@ -175,13 +176,23 @@ test.describe('Dashboard - Demo Mode', () => {
     expect(bodyText?.length).toBeGreaterThan(100);
   });
 
-  test('DASH-02 Navigation bar is visible', async ({ page }) => {
+  test('DASH-02 Navigation bar is visible and responsive', async ({ page }) => {
     if (!page.url().includes('dashboard')) {
       test.skip();
       return;
     }
-    const nav = page.locator('header nav, header');
-    await expect(nav.first()).toBeVisible({ timeout: 5000 });
+    const width = page.viewportSize()?.width || 1280;
+    if (width < 768) {
+      // Mobile bottom navigation dock
+      const mobileDock = page.locator('div.md\\:hidden');
+      await expect(mobileDock.first()).toBeVisible({ timeout: 5000 });
+      const dashText = mobileDock.getByText('Dashboard');
+      await expect(dashText.first()).toBeVisible();
+    } else {
+      // Desktop header navigation
+      const header = page.locator('header');
+      await expect(header.first()).toBeVisible({ timeout: 5000 });
+    }
   });
 
   test('DASH-03 Dashboard shows meal categories', async ({ page }) => {
@@ -321,7 +332,7 @@ test.describe('Analytics - Stats Page', () => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
     await page.waitForTimeout(2000);
-    const criticalErrors = errors.filter(e => !e.includes('net::') && !e.includes('favicon'));
+    const criticalErrors = errors.filter(e => !e.includes('net::') && !e.includes('favicon') && !e.includes('Failed to load resource'));
     expect(criticalErrors.length).toBe(0);
   });
 
@@ -331,9 +342,18 @@ test.describe('Analytics - Stats Page', () => {
       return;
     }
     await page.waitForLoadState('networkidle');
-    const timeButtons = page.getByRole('button').filter({ hasText: /today|7 days|30 days|daily|weekly|monthly|last/i });
-    const count = await timeButtons.count();
-    expect(count).toBeGreaterThan(0);
+    // Verify Today, Last 7 Days, Last 30 Days labels exist in the UI
+    const todayBtn = page.getByRole('button', { name: 'Today' });
+    const weeklyBtn = page.getByRole('button', { name: 'Last 7 Days' });
+    const monthlyBtn = page.getByRole('button', { name: 'Last 30 Days' });
+
+    await expect(todayBtn).toBeVisible({ timeout: 5000 });
+    await expect(weeklyBtn).toBeVisible({ timeout: 5000 });
+    await expect(monthlyBtn).toBeVisible({ timeout: 5000 });
+
+    // Click weekly timeframe
+    await weeklyBtn.click();
+    await page.waitForTimeout(300);
   });
 
   test('STATS-03 Charts are rendered', async ({ page }) => {

@@ -218,6 +218,8 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
             whileTap={{ scale: 0.94 }}
             onClick={handleManualRefresh}
             disabled={isRefining}
+            title="Refresh Plan"
+            aria-label="Refresh Plan"
             className="btn-press flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-60 transition-colors"
           >
             <RotateCw className={`w-3.5 h-3.5 ${isRefining ? 'animate-spin text-emerald-400' : ''}`} />
