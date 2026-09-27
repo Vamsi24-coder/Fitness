@@ -180,59 +180,81 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
       <div className="glass-card rounded-[27px] p-6 sm:p-7 relative z-10 space-y-6">
         
         {/* 1. Header (Brand: Today's Fuel Plan • Smart Nutrition) */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/5">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#0a84ff] p-0.5 shadow-lg shadow-emerald-500/20">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-white/5">
+          <div className="flex items-start space-x-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#0a84ff] p-0.5 shadow-lg shadow-emerald-500/20 shrink-0 mt-0.5 sm:mt-0">
               <div className="w-full h-full bg-black/90 rounded-[14px] flex items-center justify-center">
                 <Sparkles className={`w-5 h-5 text-emerald-300 ${isRefining ? 'animate-spin' : ''}`} style={{ animationDuration: '3.5s' }} />
               </div>
             </div>
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="headline text-base sm:text-lg text-white">
                   Today's Fuel Plan
                 </h2>
-                {isRefining ? (
-                  <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 caption-label animate-pulse">
-                    <Sparkles className="w-3 h-3 text-emerald-300" />
-                    <span>AI REFINING</span>
-                  </span>
-                ) : plan.isAiEnhanced ? (
-                  <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 caption-label shadow-sm shadow-emerald-500/10">
-                    <Sparkles className="w-3 h-3 text-emerald-300" />
-                    <span>AI CALIBRATED</span>
-                  </span>
-                ) : (
-                  <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-white/10 border border-white/15 text-slate-300 caption-label">
-                    INSTANT SMART PLAN
-                  </span>
-                )}
+                <div className="hidden sm:inline-flex">
+                  {isRefining ? (
+                    <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 caption-label animate-pulse">
+                      <Sparkles className="w-3 h-3 text-emerald-300" />
+                      <span>AI REFINING</span>
+                    </span>
+                  ) : plan.isAiEnhanced ? (
+                    <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 caption-label shadow-sm shadow-emerald-500/10">
+                      <Sparkles className="w-3 h-3 text-emerald-300" />
+                      <span>AI CALIBRATED</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-white/10 border border-white/15 text-slate-300 caption-label">
+                      INSTANT SMART PLAN
+                    </span>
+                  )}
+                </div>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 mt-0.5">
                 Personalized Andhra nutrition & workout recovery tailored to your day
               </p>
             </div>
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.94 }}
-            onClick={handleManualRefresh}
-            disabled={isRefining}
-            title="Refresh Plan"
-            aria-label="Refresh Plan"
-            className="btn-press flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-60 transition-colors"
-          >
-            <RotateCw className={`w-3.5 h-3.5 ${isRefining ? 'animate-spin text-emerald-400' : ''}`} />
-            <span className="hidden sm:inline">{isRefining ? 'Refining...' : 'Refresh Plan'}</span>
-          </motion.button>
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto pt-1 sm:pt-0">
+            <div className="sm:hidden">
+              {isRefining ? (
+                <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 caption-label animate-pulse">
+                  <Sparkles className="w-3 h-3 text-emerald-300" />
+                  <span>AI REFINING</span>
+                </span>
+              ) : plan.isAiEnhanced ? (
+                <span className="flex items-center space-x-1 px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 caption-label shadow-sm shadow-emerald-500/10">
+                  <Sparkles className="w-3 h-3 text-emerald-300" />
+                  <span>AI CALIBRATED</span>
+                </span>
+              ) : (
+                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-white/10 border border-white/15 text-slate-300 caption-label">
+                  INSTANT SMART PLAN
+                </span>
+              )}
+            </div>
+
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={handleManualRefresh}
+              disabled={isRefining}
+              title="Refresh Plan"
+              aria-label="Refresh Plan"
+              className="btn-press flex items-center space-x-2 px-3.5 py-2 min-h-[44px] rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-60 transition-colors shrink-0"
+            >
+              <RotateCw className={`w-3.5 h-3.5 ${isRefining ? 'animate-spin text-emerald-400' : ''}`} />
+              <span>{isRefining ? 'Refining...' : 'Refresh Plan'}</span>
+            </motion.button>
+          </div>
         </div>
 
         {/* 2. Today's Meal Progression Tracker with Past, Current & Upcoming Awareness */}
-        <div className="p-3 rounded-2xl glass-inset flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="p-3 sm:p-3.5 rounded-2xl glass-inset flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
           <div className="flex items-center space-x-1.5 text-slate-400 font-semibold caption-label text-[10px]">
             <span>DAY LOGGED:</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
             {ORDERED_MEAL_PERIODS.map((cat, idx) => {
               const isLogged = loggedCategorySet.has(cat.toLowerCase());
               const isCurrent = cat === currentPeriod;
@@ -255,16 +277,18 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
               return (
                 <div
                   key={cat}
-                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold transition-all border ${pillStyle}`}
+                  className={`flex items-center justify-between sm:justify-start space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all border w-full sm:w-auto min-h-[36px] sm:min-h-0 ${pillStyle}`}
                 >
-                  {isLogged ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  ) : (
-                    <Clock className="w-3.5 h-3.5 shrink-0 opacity-70" />
-                  )}
-                  <span>{cat}</span>
+                  <div className="flex items-center space-x-1.5 min-w-0">
+                    {isLogged ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    ) : (
+                      <Clock className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                    )}
+                    <span className="truncate">{cat}</span>
+                  </div>
                   {badgeText && (
-                    <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-black/40 text-current caption-label ml-0.5">
+                    <span className="text-[9px] font-bold px-1 py-0.2 rounded bg-black/40 text-current caption-label ml-1 shrink-0">
                       {badgeText}
                     </span>
                   )}
