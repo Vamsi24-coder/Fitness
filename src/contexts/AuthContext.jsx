@@ -150,6 +150,10 @@ export function AuthProvider({ children }) {
     setLoading(false);
   };
 
+  if (typeof window !== 'undefined') {
+    window.activateDemoMode = activateDemoMode;
+  }
+
   const value = {
     user,
     session,

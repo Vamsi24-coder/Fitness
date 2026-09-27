@@ -25,7 +25,7 @@ import {
 import { calculateDailyTargets } from '../services/nutrition';
 
 export function Onboarding() {
-  const { user, isDemoUser, refreshProfile, setProfile, isSchemaMissing, setIsSchemaMissing } = useAuth();
+  const { user, isDemoUser, logout, refreshProfile, setProfile, isSchemaMissing, setIsSchemaMissing } = useAuth();
   const navigate = useNavigate();
 
   // Step state: 1 = Form Inputs, 2 = Calculated Blueprint Reveal Page
@@ -384,14 +384,30 @@ export function Onboarding() {
                   </div>
                 </div>
 
-                {/* Next Step Button */}
-                <button
-                  type="submit"
-                  className="btn-press w-full py-4 px-6 rounded-2xl bg-white text-black hover:bg-slate-100 font-bold text-sm shadow-xl flex items-center justify-center space-x-2"
-                >
-                  <span>Review Calculated Blueprint</span>
-                  <ArrowRight className="w-4 h-4 text-black" />
-                </button>
+                {/* Action Buttons: Back to Login & Review Blueprint */}
+                <div className="flex items-center space-x-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (isDemoUser) {
+                        await logout();
+                      }
+                      navigate('/login');
+                    }}
+                    className="btn-press flex items-center space-x-1.5 px-5 py-4 rounded-2xl glass text-slate-300 hover:text-white text-xs font-bold"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Back to Login</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="btn-press flex-1 py-4 px-6 rounded-2xl bg-white text-black hover:bg-slate-100 font-bold text-sm shadow-xl flex items-center justify-center space-x-2"
+                  >
+                    <span>Review Calculated Blueprint</span>
+                    <ArrowRight className="w-4 h-4 text-black" />
+                  </button>
+                </div>
               </form>
             </motion.div>
           ) : (
@@ -560,27 +576,31 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="btn-press flex items-center space-x-1.5 px-5 py-3.5 rounded-2xl glass text-slate-300 hover:text-white text-xs font-bold"
+                  className={`btn-press flex items-center justify-center space-x-1.5 py-3.5 rounded-2xl glass text-slate-300 hover:text-white text-xs font-bold ${
+                    isDemoUser ? 'w-full px-6' : 'px-5'
+                  }`}
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Adjust Inputs</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={handleFinalSave}
-                  disabled={loading}
-                  className="btn-press flex-1 py-3.5 px-6 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-sm shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {loading ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-black" />
-                  ) : (
-                    <>
-                      <span>Confirm & Launch Dashboard</span>
-                      <ArrowRight className="w-4 h-4 text-black" />
-                    </>
-                  )}
-                </button>
+                {!isDemoUser && (
+                  <button
+                    type="button"
+                    onClick={handleFinalSave}
+                    disabled={loading}
+                    className="btn-press flex-1 py-3.5 px-6 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-sm shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-black" />
+                    ) : (
+                      <>
+                        <span>Confirm & Launch Dashboard</span>
+                        <ArrowRight className="w-4 h-4 text-black" />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
             </motion.div>

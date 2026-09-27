@@ -122,11 +122,37 @@ test.describe('Login Page Layout & Simplification Verifications', () => {
     expect(await text3.count()).toBe(0);
   });
 
-  test('LOGIN-08 Dynamic Onboarding button functionality works', async ({ page }) => {
+  test('LOGIN-08 Dynamic Onboarding button functionality works and Back to Login returns to login page', async ({ page }) => {
     const demoButton = page.getByText('Test Dynamic Onboarding').first();
     await demoButton.click();
-    await page.waitForURL(/onboarding|dashboard/, { timeout: 10000 });
-    expect(page.url()).toMatch(/onboarding|dashboard/);
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+    expect(page.url()).toContain('/onboarding');
+
+    // Test Back to Login button on Step 1
+    const backBtn = page.getByText('Back to Login').first();
+    await expect(backBtn).toBeVisible();
+    await backBtn.click();
+    await page.waitForURL(/login/, { timeout: 10000 });
+    expect(page.url()).toContain('/login');
+  });
+
+  test('LOGIN-09 Demo Onboarding Step 2 serves as final preview without launch button', async ({ page }) => {
+    const demoButton = page.getByText('Test Dynamic Onboarding').first();
+    await demoButton.click();
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+
+    // Click Review Calculated Blueprint
+    const reviewBtn = page.getByText('Review Calculated Blueprint').first();
+    await reviewBtn.click();
+    await page.waitForTimeout(400);
+
+    // Verify Adjust Inputs button exists
+    const adjustBtn = page.getByText('Adjust Inputs').first();
+    await expect(adjustBtn).toBeVisible();
+
+    // Verify Confirm & Launch Dashboard is completely absent in demo mode
+    const launchBtn = page.getByText('Confirm & Launch Dashboard');
+    expect(await launchBtn.count()).toBe(0);
   });
 });
 
@@ -134,25 +160,13 @@ test.describe('Login Page Layout & Simplification Verifications', () => {
 async function setupDemoDashboardSession(page: any) {
   await page.goto('/login');
   await page.waitForLoadState('networkidle');
-  const demoButton = page.getByText('Test Dynamic Onboarding').first();
-  await demoButton.click();
-  await page.waitForURL(/dashboard|onboarding/, { timeout: 15000 });
-
-  if (page.url().includes('onboarding')) {
-    // Step 1: Review Calculated Blueprint
-    const reviewBtn = page.getByText('Review Calculated Blueprint').first();
-    if (await reviewBtn.isVisible()) {
-      await reviewBtn.click();
-      await page.waitForTimeout(600);
+  await page.evaluate(() => {
+    if ((window as any).activateDemoMode) {
+      (window as any).activateDemoMode(true);
     }
-    // Step 2: Confirm & Launch Dashboard
-    const launchBtn = page.getByText('Confirm & Launch Dashboard').first();
-    if (await launchBtn.isVisible()) {
-      await launchBtn.click();
-      await page.waitForURL(/dashboard/, { timeout: 15000 });
-    }
-  }
-
+  });
+  await page.goto('/dashboard');
+  await page.waitForLoadState('networkidle');
   await page.getByText(/Authenticating with NutriPulse/i).waitFor({ state: 'detached', timeout: 10000 }).catch(() => {});
   await page.locator('main').waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 }
