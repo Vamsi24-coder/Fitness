@@ -128,14 +128,14 @@ export function Onboarding() {
   return (
     <div className="min-h-screen bg-black text-white py-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex items-center justify-center">
       
-      {/* Apple Ambient Backlight Glow */}
+      {/* Ambient Backlight Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-gradient-to-tr from-[#ff2d55]/10 via-[#30d158]/10 to-[#0a84ff]/10 rounded-full blur-3xl pointer-events-none opacity-60" />
 
       <div className="max-w-2xl w-full relative z-10">
         
         {/* Step Indicator Header (iOS Setup Assistant Style) */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full apple-glass-inset text-xs font-semibold text-[#30d158] mb-3.5 shadow-sm">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full glass-inset text-xs font-semibold text-[#30d158] mb-3.5 shadow-sm">
             <span className="caption-label text-[10px]">STEP {currentStep} OF 2</span>
             <span className="text-slate-600">•</span>
             <span className="text-slate-200">
@@ -165,7 +165,7 @@ export function Onboarding() {
           </div>
         )}
 
-        {/* Step Switcher with Apple Spring Motion */}
+        {/* Step Switcher with Fluid Motion */}
         <AnimatePresence mode="wait">
           {currentStep === 1 ? (
             /* ========================================================
@@ -177,7 +177,7 @@ export function Onboarding() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98, y: -10 }}
               transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-              className="apple-glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl"
+              className="glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl"
             >
               <form onSubmit={handleProceedToBlueprint} className="space-y-6">
                 
@@ -194,10 +194,10 @@ export function Onboarding() {
                           type="button"
                           key={g}
                           onClick={() => setGender(g)}
-                          className={`apple-btn py-3 px-4 rounded-2xl text-sm font-semibold transition-all relative ${
+                          className={`btn-press py-3 px-4 rounded-2xl text-sm font-semibold transition-all relative ${
                             isSelected
                               ? 'bg-white/15 text-white border border-white/20 shadow-md'
-                              : 'apple-glass-inset text-slate-400 hover:text-white hover:bg-white/5'
+                              : 'glass-inset text-slate-400 hover:text-white hover:bg-white/5'
                           }`}
                         >
                           {isSelected && (
@@ -225,7 +225,7 @@ export function Onboarding() {
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                         placeholder="26"
-                        className="w-full px-4 py-3.5 apple-glass-inset rounded-2xl text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
+                        className="w-full px-4 py-3.5 glass-inset rounded-2xl text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
                         yrs
@@ -247,7 +247,7 @@ export function Onboarding() {
                         value={weight}
                         onChange={(e) => setWeight(e.target.value)}
                         placeholder="72.0"
-                        className="w-full px-4 py-3.5 apple-glass-inset rounded-2xl text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
+                        className="w-full px-4 py-3.5 glass-inset rounded-2xl text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
                         kg
@@ -257,7 +257,7 @@ export function Onboarding() {
                 </div>
 
                 {/* 3. Daily Workout Switch */}
-                <div className="p-5 rounded-2xl apple-glass-inset">
+                <div className="p-5 rounded-2xl glass-inset">
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="text-sm font-bold text-white flex items-center space-x-2">
@@ -269,11 +269,11 @@ export function Onboarding() {
                       </p>
                     </div>
 
-                    <div className="flex items-center space-x-1 apple-glass p-1 rounded-xl">
+                    <div className="flex items-center space-x-1 glass p-1 rounded-xl">
                       <button
                         type="button"
                         onClick={() => setWorksOut(true)}
-                        className={`apple-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        className={`btn-press px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           worksOut
                             ? 'bg-[#30d158] text-black shadow-sm'
                             : 'text-slate-400 hover:text-white'
@@ -284,7 +284,7 @@ export function Onboarding() {
                       <button
                         type="button"
                         onClick={() => setWorksOut(false)}
-                        className={`apple-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        className={`btn-press px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           !worksOut
                             ? 'bg-white/20 text-white shadow-sm'
                             : 'text-slate-400 hover:text-white'
@@ -324,7 +324,7 @@ export function Onboarding() {
                                   type="button"
                                   key={item.label}
                                   onClick={() => setIntensity(item.label)}
-                                  className={`apple-btn p-3 text-left rounded-2xl transition-all ${
+                                  className={`btn-press p-3 text-left rounded-2xl transition-all ${
                                     isSelected
                                       ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
                                       : 'bg-black/40 border border-white/5 text-slate-400 hover:text-slate-200'
@@ -359,7 +359,7 @@ export function Onboarding() {
                               onChange={(e) => setDuration(e.target.value)}
                               className="flex-1 accent-[#30d158] h-2 bg-white/10 rounded-lg cursor-pointer"
                             />
-                            <span className="px-3 py-1.5 rounded-xl apple-glass text-[#30d158] font-bold text-xs min-w-[65px] text-center tabular-numbers">
+                            <span className="px-3 py-1.5 rounded-xl glass text-[#30d158] font-bold text-xs min-w-[65px] text-center tabular-numbers">
                               {duration}m
                             </span>
                           </div>
@@ -371,7 +371,7 @@ export function Onboarding() {
                 </div>
 
                 {/* Real-time Dynamic Mini-Ticker */}
-                <div className="p-4 rounded-2xl apple-glass border border-white/10 flex items-center justify-between text-xs">
+                <div className="p-4 rounded-2xl glass border border-white/10 flex items-center justify-between text-xs">
                   <span className="flex items-center space-x-2 text-slate-300 font-medium">
                     <Activity className="w-4 h-4 text-[#30d158]" />
                     <span>Real-time Dynamic Calorie Target:</span>
@@ -387,7 +387,7 @@ export function Onboarding() {
                 {/* Next Step Button */}
                 <button
                   type="submit"
-                  className="apple-btn w-full py-4 px-6 rounded-2xl bg-white text-black hover:bg-slate-100 font-bold text-sm shadow-xl flex items-center justify-center space-x-2"
+                  className="btn-press w-full py-4 px-6 rounded-2xl bg-white text-black hover:bg-slate-100 font-bold text-sm shadow-xl flex items-center justify-center space-x-2"
                 >
                   <span>Review Calculated Blueprint</span>
                   <ArrowRight className="w-4 h-4 text-black" />
@@ -404,7 +404,7 @@ export function Onboarding() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98, y: -10 }}
               transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-              className="apple-glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl space-y-6"
+              className="glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl space-y-6"
             >
               
               {/* Header Badge */}
@@ -426,7 +426,7 @@ export function Onboarding() {
               </div>
 
               {/* Total Daily Calorie Card with Formula Breakdown */}
-              <div className="p-6 rounded-[24px] apple-glass-inset border border-white/10 relative overflow-hidden">
+              <div className="p-6 rounded-[24px] glass-inset border border-white/10 relative overflow-hidden">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="caption-label text-[11px] text-slate-400 block">
@@ -446,11 +446,11 @@ export function Onboarding() {
 
                 {/* Formula Factors Breakdown */}
                 <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center justify-between apple-glass p-3 rounded-xl">
+                  <div className="flex items-center justify-between glass p-3 rounded-xl">
                     <span className="text-slate-400">Basal Metabolic Rate (BMR):</span>
                     <span className="tabular-numbers font-bold text-white">{dynamicBlueprint.bmr} kcal</span>
                   </div>
-                  <div className="flex items-center justify-between apple-glass p-3 rounded-xl">
+                  <div className="flex items-center justify-between glass p-3 rounded-xl">
                     <span className="text-slate-400">
                       Workout Burn ({dynamicBlueprint.factors.duration}m {dynamicBlueprint.factors.intensity}):
                     </span>
@@ -469,7 +469,7 @@ export function Onboarding() {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {/* Protein */}
-                  <div className="p-4 rounded-2xl apple-glass border-t border-t-white/10 flex flex-col justify-between">
+                  <div className="p-4 rounded-2xl glass border-t border-t-white/10 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="caption-label text-[10px] text-[#30d158] flex items-center space-x-1">
@@ -487,7 +487,7 @@ export function Onboarding() {
                   </div>
 
                   {/* Carbs */}
-                  <div className="p-4 rounded-2xl apple-glass border-t border-t-white/10 flex flex-col justify-between">
+                  <div className="p-4 rounded-2xl glass border-t border-t-white/10 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="caption-label text-[10px] text-[#0a84ff] flex items-center space-x-1">
@@ -505,7 +505,7 @@ export function Onboarding() {
                   </div>
 
                   {/* Fats */}
-                  <div className="p-4 rounded-2xl apple-glass border-t border-t-white/10 flex flex-col justify-between">
+                  <div className="p-4 rounded-2xl glass border-t border-t-white/10 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="caption-label text-[10px] text-[#ffd60a] flex items-center space-x-1">
@@ -523,7 +523,7 @@ export function Onboarding() {
                   </div>
 
                   {/* Fiber */}
-                  <div className="p-4 rounded-2xl apple-glass border-t border-t-white/10 flex flex-col justify-between">
+                  <div className="p-4 rounded-2xl glass border-t border-t-white/10 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="caption-label text-[10px] text-[#bf5af2] flex items-center space-x-1">
@@ -543,7 +543,7 @@ export function Onboarding() {
               </div>
 
               {/* Input Factor Review Pill Bar */}
-              <div className="p-3.5 rounded-2xl apple-glass-inset text-xs text-slate-400 flex flex-wrap items-center justify-between gap-2">
+              <div className="p-3.5 rounded-2xl glass-inset text-xs text-slate-400 flex flex-wrap items-center justify-between gap-2">
                 <span className="font-semibold text-slate-300">Biometric Factors:</span>
                 <div className="flex items-center space-x-2">
                   <span className="bg-white/10 px-2.5 py-0.5 rounded-lg text-slate-200 font-medium">{gender}</span>
@@ -560,7 +560,7 @@ export function Onboarding() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="apple-btn flex items-center space-x-1.5 px-5 py-3.5 rounded-2xl apple-glass text-slate-300 hover:text-white text-xs font-bold"
+                  className="btn-press flex items-center space-x-1.5 px-5 py-3.5 rounded-2xl glass text-slate-300 hover:text-white text-xs font-bold"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Adjust Inputs</span>
@@ -570,7 +570,7 @@ export function Onboarding() {
                   type="button"
                   onClick={handleFinalSave}
                   disabled={loading}
-                  className="apple-btn flex-1 py-3.5 px-6 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-sm shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="btn-press flex-1 py-3.5 px-6 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-sm shadow-xl flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="w-5 h-5 animate-spin text-black" />

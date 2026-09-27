@@ -76,7 +76,7 @@ export function GoogleSetupNotice({ supabaseUrl = 'https://dzfgdimeamocmrgkxjqh.
           </ol>
 
           <p className="text-[11px] text-amber-300/80 pt-1">
-            💡 <em>You can also click "Explore with Demo Account" below to test the full onboarding, dashboard, modals, stats charts, and Gemini AI right now!</em>
+            💡 <em>You can also click "Explore with Demo Account" below to test the full onboarding, dashboard, modals, stats charts, and Nutrition AI right now!</em>
           </p>
         </div>
       )}

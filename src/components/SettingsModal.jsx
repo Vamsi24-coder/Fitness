@@ -128,7 +128,7 @@ export function SettingsModal({ isOpen, onClose }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 8 }}
         transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-        className="relative w-full max-w-lg apple-glass-card rounded-[32px] border border-white/15 shadow-2xl overflow-hidden my-8"
+        className="relative w-full max-w-lg glass-card rounded-[32px] border border-white/15 shadow-2xl overflow-hidden my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -145,7 +145,7 @@ export function SettingsModal({ isOpen, onClose }) {
           <button
             onClick={onClose}
             aria-label="Close settings"
-            className="apple-btn p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="btn-press p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -177,10 +177,10 @@ export function SettingsModal({ isOpen, onClose }) {
                   type="button"
                   key={g}
                   onClick={() => setGender(g)}
-                  className={`apple-btn py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
+                  className={`btn-press py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
                     gender === g
                       ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
-                      : 'apple-glass-inset text-slate-400 hover:text-slate-200'
+                      : 'glass-inset text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   {g}
@@ -202,7 +202,7 @@ export function SettingsModal({ isOpen, onClose }) {
                 required
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full px-3.5 py-2.5 apple-glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
+                className="w-full px-3.5 py-2.5 glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
               />
             </div>
 
@@ -218,13 +218,13 @@ export function SettingsModal({ isOpen, onClose }) {
                 required
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-full px-3.5 py-2.5 apple-glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
+                className="w-full px-3.5 py-2.5 glass-inset rounded-xl text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 tabular-numbers"
               />
             </div>
           </div>
 
           {/* 3. Workout Habit & Intensity */}
-          <div className="p-4 rounded-2xl apple-glass-inset space-y-4">
+          <div className="p-4 rounded-2xl glass-inset space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-white flex items-center space-x-1.5">
@@ -234,11 +234,11 @@ export function SettingsModal({ isOpen, onClose }) {
                 <span className="text-[11px] text-slate-400 block">Exercise or athletics daily</span>
               </div>
 
-              <div className="flex items-center space-x-1 apple-glass p-1 rounded-xl">
+              <div className="flex items-center space-x-1 glass p-1 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setWorksOut(true)}
-                  className={`apple-btn px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`btn-press px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                     worksOut ? 'bg-[#30d158] text-black shadow-sm' : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -247,7 +247,7 @@ export function SettingsModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => setWorksOut(false)}
-                  className={`apple-btn px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`btn-press px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                     !worksOut ? 'bg-white/15 text-white' : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -268,7 +268,7 @@ export function SettingsModal({ isOpen, onClose }) {
                         type="button"
                         key={lvl}
                         onClick={() => setIntensity(lvl)}
-                        className={`apple-btn py-2 px-2 text-xs font-semibold rounded-xl transition-all ${
+                        className={`btn-press py-2 px-2 text-xs font-semibold rounded-xl transition-all ${
                           intensity === lvl
                             ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-sm'
                             : 'bg-black/40 border border-white/5 text-slate-400 hover:text-slate-200'
@@ -300,7 +300,7 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
 
           {/* Dynamic Targets Recalculation Preview */}
-          <div className="p-4 rounded-2xl apple-glass border border-white/10">
+          <div className="p-4 rounded-2xl glass border border-white/10">
             <div className="flex items-center justify-between text-xs font-bold mb-2.5">
               <span className="caption-label text-slate-400">Recalculated Goal:</span>
               <span className="text-[#ffd60a] flex items-center space-x-1 tabular-numbers font-extrabold">
@@ -309,19 +309,19 @@ export function SettingsModal({ isOpen, onClose }) {
               </span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center text-[10px]">
-              <div className="apple-glass-inset p-2 rounded-xl">
+              <div className="glass-inset p-2 rounded-xl">
                 <span className="text-slate-400 block caption-label text-[9px]">Protein</span>
                 <span className="font-bold text-[#30d158] tabular-numbers text-xs">{liveTargets.protein}g</span>
               </div>
-              <div className="apple-glass-inset p-2 rounded-xl">
+              <div className="glass-inset p-2 rounded-xl">
                 <span className="text-slate-400 block caption-label text-[9px]">Carbs</span>
                 <span className="font-bold text-[#0a84ff] tabular-numbers text-xs">{liveTargets.carbs}g</span>
               </div>
-              <div className="apple-glass-inset p-2 rounded-xl">
+              <div className="glass-inset p-2 rounded-xl">
                 <span className="text-slate-400 block caption-label text-[9px]">Fats</span>
                 <span className="font-bold text-[#ffd60a] tabular-numbers text-xs">{liveTargets.fats}g</span>
               </div>
-              <div className="apple-glass-inset p-2 rounded-xl">
+              <div className="glass-inset p-2 rounded-xl">
                 <span className="text-slate-400 block caption-label text-[9px]">Fiber</span>
                 <span className="font-bold text-[#bf5af2] tabular-numbers text-xs">{liveTargets.fiber}g</span>
               </div>
@@ -333,14 +333,14 @@ export function SettingsModal({ isOpen, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="apple-btn px-4 py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
+              className="btn-press px-4 py-2.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="apple-btn flex items-center space-x-2 px-6 py-2.5 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black text-xs font-bold shadow-lg disabled:opacity-50"
+              className="btn-press flex items-center space-x-2 px-6 py-2.5 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black text-xs font-bold shadow-lg disabled:opacity-50"
             >
               {saving && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
               <span>{saving ? 'Saving...' : 'Save Profile Changes'}</span>

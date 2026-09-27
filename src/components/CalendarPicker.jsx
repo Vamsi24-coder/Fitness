@@ -124,7 +124,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
         title="Open Calendar"
         aria-label="Toggle calendar date picker"
         aria-expanded={isOpen}
-        className={`apple-btn w-9 h-9 rounded-2xl border flex items-center justify-center transition-all ${
+        className={`btn-press w-9 h-9 rounded-2xl border flex items-center justify-center transition-all ${
           isOpen
             ? 'bg-[#30d158]/20 border-[#30d158] text-[#30d158]'
             : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
@@ -133,7 +133,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
         <CalendarIcon className="w-4 h-4" />
       </button>
 
-      {/* Origin-Aware Spring Popover (Emil Kowalski Rule 5 & Apple Fluid Interfaces) */}
+      {/* Origin-Aware Spring Popover (Fluid Interfaces) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -142,7 +142,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ type: 'spring', damping: 25, stiffness: 320 }}
             style={{ transformOrigin: 'top right' }}
-            className="absolute right-0 top-12 z-50 w-72 apple-glass-card rounded-[26px] p-4 shadow-2xl border border-white/15"
+            className="absolute right-0 top-12 z-50 w-72 glass-card rounded-[26px] p-4 shadow-2xl border border-white/15"
           >
             {/* Calendar Header */}
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -150,7 +150,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
                 type="button"
                 onClick={handlePrevMonth}
                 aria-label="Previous month"
-                className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
+                className="btn-press p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -161,7 +161,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
                 type="button"
                 onClick={handleNextMonth}
                 aria-label="Next month"
-                className="apple-btn p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
+                className="btn-press p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -189,7 +189,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
                     type="button"
                     key={`day-${day}`}
                     onClick={() => handleSelectDay(day)}
-                    className={`apple-btn w-8 h-8 rounded-xl text-xs font-semibold flex items-center justify-center relative transition-all tabular-numbers ${
+                    className={`btn-press w-8 h-8 rounded-xl text-xs font-semibold flex items-center justify-center relative transition-all tabular-numbers ${
                       selected
                         ? 'bg-[#30d158] text-black shadow-md font-bold'
                         : isTod
@@ -212,7 +212,7 @@ export function CalendarPicker({ selectedDate, onDateChange }) {
               <button
                 type="button"
                 onClick={handleTodayClick}
-                className="apple-btn text-[11px] text-[#30d158] hover:text-[#30d158]/90 font-bold"
+                className="btn-press text-[11px] text-[#30d158] hover:text-[#30d158]/90 font-bold"
               >
                 Jump to Today
               </button>

@@ -50,7 +50,7 @@ export function Login() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       
-      {/* Apple Ambient Chromatic Backlight */}
+      {/* Ambient Chromatic Backlight */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#ff2d55]/15 via-[#30d158]/15 to-[#0a84ff]/15 rounded-full blur-3xl pointer-events-none opacity-70" />
 
       <motion.div 
@@ -76,12 +76,12 @@ export function Login() {
             Nutri<span className="bg-gradient-to-r from-[#30d158] via-[#0a84ff] to-[#bf5af2] bg-clip-text text-transparent">Pulse</span>
           </h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-400 font-medium max-w-sm mx-auto">
-            Apple-grade intelligent nutrition and macro analytics powered by Supabase and Gemini AI
+            Intelligent nutrition and macro analytics powered by Supabase and Nutrition AI
           </p>
         </div>
 
         {/* Login Glass Card */}
-        <div className="mt-8 apple-glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl space-y-6">
+        <div className="mt-8 glass-card rounded-[32px] p-6 sm:p-8 border-t border-t-white/15 shadow-2xl space-y-6">
           
           {errorMsg && (
             <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-500/30 text-xs text-rose-300 backdrop-blur-md">
@@ -90,12 +90,12 @@ export function Login() {
           )}
 
           <div className="space-y-4">
-            {/* Google OAuth Button (Apple Sign In Style) */}
+            {/* Google OAuth Button */}
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="apple-btn w-full flex items-center justify-center space-x-3 px-5 py-4 rounded-2xl bg-white hover:bg-slate-100 text-black font-bold text-sm shadow-xl transition-all disabled:opacity-60"
+              className="btn-press w-full flex items-center justify-center space-x-3 px-5 py-4 rounded-2xl bg-white hover:bg-slate-100 text-black font-bold text-sm shadow-xl transition-all disabled:opacity-60"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin text-black" />
@@ -142,7 +142,7 @@ export function Login() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(true)}
-                className="apple-btn w-full flex items-center justify-between px-4 py-3 rounded-2xl apple-glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-200 transition-colors group"
+                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-200 transition-colors group"
               >
                 <div className="flex items-center space-x-2.5">
                   <div className="w-7 h-7 rounded-xl bg-[#30d158]/15 border border-[#30d158]/30 flex items-center justify-center text-[#30d158]">
@@ -160,7 +160,7 @@ export function Login() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={() => handleDemoSignIn(false)}
-                className="apple-btn w-full flex items-center justify-between px-4 py-3 rounded-2xl apple-glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
+                className="btn-press w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-inset hover:bg-white/5 border border-white/10 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors group"
               >
                 <div className="flex items-center space-x-2.5">
                   <div className="w-7 h-7 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
@@ -179,17 +179,17 @@ export function Login() {
 
           {/* Feature Highlights Row */}
           <div className="pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
-            <div className="apple-glass p-2.5 rounded-xl">
-              <span className="caption-label text-[9px] text-[#30d158] block font-bold">GEMINI 2.0</span>
+            <div className="glass p-2.5 rounded-xl">
+              <span className="caption-label text-[9px] text-[#30d158] block font-bold">NUTRITION AI</span>
               <span className="text-[10px] text-slate-400 font-medium">Smart Food AI</span>
             </div>
-            <div className="apple-glass p-2.5 rounded-xl">
+            <div className="glass p-2.5 rounded-xl">
               <span className="caption-label text-[9px] text-[#0a84ff] block font-bold">DYNAMIC</span>
               <span className="text-[10px] text-slate-400 font-medium">MET BMR Calcs</span>
             </div>
-            <div className="apple-glass p-2.5 rounded-xl">
+            <div className="glass p-2.5 rounded-xl">
               <span className="caption-label text-[9px] text-[#ff2d55] block font-bold">RINGS</span>
-              <span className="text-[10px] text-slate-400 font-medium">Apple Fitness</span>
+              <span className="text-[10px] text-slate-400 font-medium">Fitness Rings</span>
             </div>
           </div>
 

@@ -174,10 +174,10 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
   const currentPeriodIndex = ORDERED_MEAL_PERIODS.indexOf(currentPeriod);
 
   return (
-    <div className="relative rounded-[28px] p-px overflow-hidden apple-intelligence-glow group">
+    <div className="relative rounded-[28px] p-px overflow-hidden intelligence-glow group">
       
-      {/* Underlying Apple Glass Container */}
-      <div className="apple-glass-card rounded-[27px] p-6 sm:p-7 relative z-10 space-y-6">
+      {/* Underlying Glass Container */}
+      <div className="glass-card rounded-[27px] p-6 sm:p-7 relative z-10 space-y-6">
         
         {/* 1. Header (Brand: Today's Fuel Plan • Smart Nutrition) */}
         <div className="flex items-center justify-between pb-4 border-b border-white/5">
@@ -218,7 +218,7 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
             whileTap={{ scale: 0.94 }}
             onClick={handleManualRefresh}
             disabled={isRefining}
-            className="apple-btn flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-60 transition-colors"
+            className="btn-press flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold text-white shadow-sm disabled:opacity-60 transition-colors"
           >
             <RotateCw className={`w-3.5 h-3.5 ${isRefining ? 'animate-spin text-emerald-400' : ''}`} />
             <span className="hidden sm:inline">{isRefining ? 'Refining...' : 'Refresh Plan'}</span>
@@ -226,7 +226,7 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
         </div>
 
         {/* 2. Today's Meal Progression Tracker with Past, Current & Upcoming Awareness */}
-        <div className="p-3 rounded-2xl apple-glass-inset flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="p-3 rounded-2xl glass-inset flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center space-x-1.5 text-slate-400 font-semibold caption-label text-[10px]">
             <span>DAY LOGGED:</span>
           </div>
@@ -281,7 +281,7 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
           className="space-y-5"
         >
           {/* 3A. Status & Macro Deficit Diagnosis Banner */}
-          <div className="p-4 sm:p-5 rounded-2xl apple-glass-inset border border-white/10 space-y-3">
+          <div className="p-4 sm:p-5 rounded-2xl glass-inset border border-white/10 space-y-3">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-white/5">
               <div className="flex items-center space-x-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse" />

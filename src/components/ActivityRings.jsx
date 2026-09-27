@@ -3,10 +3,10 @@ import { motion } from 'motion/react';
 import { Flame, Dumbbell, Wheat, Droplet, Check } from 'lucide-react';
 
 /**
- * Concentric Apple Fitness Activity Rings Widget
- * Follows Apple's WWDC Human Interface Guidelines for Activity Rings & Emil Kowalski Fluid Interfaces
+ * Concentric Fitness Activity Rings Widget
+ * Precision fluid motion and high-contrast macro tracking rings
  */
-export function AppleActivityRings({ summary, targets }) {
+export function ActivityRings({ summary, targets }) {
   const calories = Math.round(summary.calories || 0);
   const targetCalories = targets.calories || 2000;
   const calPct = Math.min(1.5, calories / (targetCalories || 1));
@@ -82,8 +82,8 @@ export function AppleActivityRings({ summary, targets }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
       
-      {/* 1. Main Apple Activity Rings Widget (Hero Card) */}
-      <div className="lg:col-span-6 apple-glass-card rounded-[28px] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+      {/* 1. Main Activity Rings Widget (Hero Card) */}
+      <div className="lg:col-span-6 glass-card rounded-[28px] p-6 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
         
         {/* Ambient background bloom */}
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#ff2d55]/10 rounded-full blur-3xl pointer-events-none" />
@@ -146,7 +146,7 @@ export function AppleActivityRings({ summary, targets }) {
               <span className="caption-label text-[10px] text-slate-400">Activity Rings</span>
               <h3 className="headline text-base text-white">Daily Performance</h3>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full apple-glass-inset text-xs font-bold text-slate-200 tabular-numbers">
+            <span className="px-2.5 py-0.5 rounded-full glass-inset text-xs font-bold text-slate-200 tabular-numbers">
               {Math.round((calories / (targetCalories || 1)) * 100)}%
             </span>
           </div>
@@ -189,7 +189,7 @@ export function AppleActivityRings({ summary, targets }) {
 
       </div>
 
-      {/* 2. Macro Capsules Grid (Apple Health Style Tiles) */}
+      {/* 2. Macro Capsules Grid (Health Style Tiles) */}
       <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
         {rings.map((r) => {
           const Icon = r.icon;
@@ -202,7 +202,7 @@ export function AppleActivityRings({ summary, targets }) {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="apple-glass-card rounded-[24px] p-4 flex flex-col justify-between apple-btn hover:border-white/20 relative overflow-hidden group"
+              className="glass-card rounded-[24px] p-4 flex flex-col justify-between btn-press hover:border-white/20 relative overflow-hidden group"
             >
               {/* Subtle top specular sheen */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />

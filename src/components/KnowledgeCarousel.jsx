@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { 
   Dumbbell, 
-  Apple, 
+  Citrus, 
   Sparkles, 
   ChevronLeft, 
   ChevronRight, 
@@ -182,10 +182,10 @@ function KnowledgeCard({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onClick={handleNext}
-      className="relative rounded-[28px] p-px overflow-hidden apple-intelligence-glow group cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] transition-all"
+      className="relative rounded-[28px] p-px overflow-hidden intelligence-glow group cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff] transition-all"
     >
-      {/* Underlying Apple Glass Surface */}
-      <div className="apple-glass-card rounded-[27px] p-6 sm:p-7 relative z-10 flex flex-col justify-between min-h-[360px] sm:min-h-[380px] space-y-6">
+      {/* Underlying Glass Surface */}
+      <div className="glass-card rounded-[27px] p-6 sm:p-7 relative z-10 flex flex-col justify-between min-h-[360px] sm:min-h-[380px] space-y-6">
         
         {/* Top Bar: Card Section Title + Autoplay/Pause State Badge */}
         <div className="flex items-center justify-between pb-3.5 border-b border-white/5">
@@ -291,7 +291,7 @@ function KnowledgeCard({
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous insight"
-                className="apple-btn w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
+                className="btn-press w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -299,7 +299,7 @@ function KnowledgeCard({
                 type="button"
                 onClick={handleNext}
                 aria-label="Next insight"
-                className="apple-btn w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
+                className="btn-press w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -357,7 +357,7 @@ export function KnowledgeCarouselSection() {
         {/* RIGHT CARD: Food Facts & Comparisons */}
         <KnowledgeCard
           title="Food Facts & Comparisons"
-          icon={Apple}
+          icon={Citrus}
           accentGradient="bg-gradient-to-tr from-emerald-500 via-teal-400 to-amber-400"
           entries={foodEntries}
           sessionKey="food"

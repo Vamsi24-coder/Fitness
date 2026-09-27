@@ -17,9 +17,9 @@ CONTENT: Both can provide vitamin C, but guava is often especially rich in vitam
 TAKEAWAY: You do not need expensive exotic fruits to get vitamin C.
 
 ENTRY 04
-TITLE: Banana vs Apple
+TITLE: Banana vs Orange
 TYPE: COMPARISON
-CONTENT: Bananas are notable for potassium and carbohydrates, while apples provide fiber and a different micronutrient profile. Both can fit into a balanced diet.
+CONTENT: Bananas are notable for potassium and carbohydrates, while oranges provide vitamin C, hydration and a different micronutrient profile. Both can fit into a balanced diet.
 TAKEAWAY: Choose based on your meal, preference and nutritional needs rather than declaring one universally superior.
 
 ENTRY 05
@@ -41,9 +41,9 @@ CONTENT: Watermelon contains a high proportion of water and can contribute to fl
 TAKEAWAY: Water-rich fruits can complement, but not completely replace, normal fluid intake.
 
 ENTRY 08
-TITLE: Apple vs Juice
+TITLE: Whole Fruit vs Fruit Juice
 TYPE: COMPARISON
-CONTENT: An apple provides fiber and requires chewing, while apple juice is easier to consume quickly and usually contains much less fiber.
+CONTENT: Whole fresh fruit provides fiber and requires chewing, while fruit juice is easier to consume quickly and usually contains much less fiber.
 TAKEAWAY: Whole fruit is generally more filling than fruit juice.
 
 ENTRY 09

@@ -40,13 +40,13 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
-// Apple Health signature color palette
-const APPLE_COLORS = {
-  Calories: '#ff2d55', // Apple Move / Coral-Red
-  Protein: '#30d158',  // Apple Exercise / Neon Green
-  Carbs: '#0a84ff',    // Apple Stand / Cyan-Blue
-  Fats: '#ffd60a',     // Apple Gold / Amber
-  Fiber: '#bf5af2',    // Apple Mind / Purple
+// Health metric signature color palette
+const METRIC_COLORS = {
+  Calories: '#ff2d55', // Calories / Coral-Red
+  Protein: '#30d158',  // Protein / Neon Green
+  Carbs: '#0a84ff',    // Carbs / Cyan-Blue
+  Fats: '#ffd60a',     // Fats / Amber
+  Fiber: '#bf5af2',    // Fiber / Purple
 };
 
 const CATEGORY_COLORS = {
@@ -63,12 +63,12 @@ function formatDateToISO(d) {
   return `${y}-${m}-${day}`;
 }
 
-// Apple Glass Tooltip for Charts
-function AppleChartTooltip({ active, payload, label, unit = 'kcal', isCurrency = false }) {
+// Glass Tooltip for Charts
+function ChartTooltip({ active, payload, label, unit = 'kcal', isCurrency = false }) {
   if (!active || !payload || !payload.length) return null;
 
   return (
-    <div className="apple-glass rounded-2xl p-3.5 shadow-2xl border border-white/15 text-xs min-w-[150px] pointer-events-none backdrop-blur-2xl">
+    <div className="glass rounded-2xl p-3.5 shadow-2xl border border-white/15 text-xs min-w-[150px] pointer-events-none backdrop-blur-2xl">
       <div className="text-[11px] font-semibold text-slate-400 caption-label mb-1.5 border-b border-white/10 pb-1">
         {label}
       </div>
@@ -126,7 +126,7 @@ export function Stats() {
         setLoading(true);
 
         if (isDemoUser) {
-          // Generate realistic mock logs across days for rich Apple Health interactive charts
+          // Generate realistic mock logs across days for rich interactive charts
           const mockData = [];
           const days = timeframe === 'daily' ? 1 : timeframe === 'weekly' ? 7 : 30;
 
@@ -271,21 +271,21 @@ export function Stats() {
     { 
       name: 'Protein', 
       value: Math.round(totalProteinCals), 
-      color: APPLE_COLORS.Protein,
+      color: METRIC_COLORS.Protein,
       percent: totalMacroCals > 0 ? Math.round((totalProteinCals / totalMacroCals) * 100) : 0,
       grams: Math.round(overallSummary.protein),
     },
     { 
       name: 'Carbs', 
       value: Math.round(totalCarbCals), 
-      color: APPLE_COLORS.Carbs,
+      color: METRIC_COLORS.Carbs,
       percent: totalMacroCals > 0 ? Math.round((totalCarbCals / totalMacroCals) * 100) : 0,
       grams: Math.round(overallSummary.carbs),
     },
     { 
       name: 'Fats', 
       value: Math.round(totalFatCals), 
-      color: APPLE_COLORS.Fats,
+      color: METRIC_COLORS.Fats,
       percent: totalMacroCals > 0 ? Math.round((totalFatCals / totalMacroCals) * 100) : 0,
       grams: Math.round(overallSummary.fats),
     },
@@ -309,12 +309,12 @@ export function Stats() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
       
-      {/* 1. Apple Health Trends Header & Timeframe Switcher */}
+      {/* 1. Health Trends Header & Timeframe Switcher */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 apple-glass-card rounded-[28px] p-5 sm:p-6"
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card rounded-[28px] p-5 sm:p-6"
       >
         <div className="flex items-center space-x-3.5">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#30d158]/20 via-[#0a84ff]/20 to-[#bf5af2]/20 border border-white/10 flex items-center justify-center shadow-inner">
@@ -330,8 +330,8 @@ export function Stats() {
           </div>
         </div>
 
-        {/* Apple Segmented Control */}
-        <div className="flex items-center space-x-1 apple-glass-inset p-1.5 rounded-2xl w-full sm:w-auto">
+        {/* Segmented Control */}
+        <div className="flex items-center space-x-1 glass-inset p-1.5 rounded-2xl w-full sm:w-auto">
           {[
             { id: 'daily', label: 'Today' },
             { id: 'weekly', label: 'Last 7 Days' },
@@ -342,7 +342,7 @@ export function Stats() {
               <button
                 key={tab.id}
                 onClick={() => setTimeframe(tab.id)}
-                className={`apple-btn relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                className={`btn-press relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
                   active
                     ? 'text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
@@ -362,14 +362,14 @@ export function Stats() {
         </div>
       </motion.div>
 
-      {/* 2. Apple Health Metric Highlight Cards */}
+      {/* 2. Health Metric Highlight Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
         
         {/* Calories Card */}
         <motion.div 
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', damping: 20 }}
-          className="p-5 rounded-[24px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between"
+          className="p-5 rounded-[24px] glass-card border-t border-t-white/15 flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -394,7 +394,7 @@ export function Stats() {
         <motion.div 
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', damping: 20 }}
-          className="p-5 rounded-[24px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between"
+          className="p-5 rounded-[24px] glass-card border-t border-t-white/15 flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -419,7 +419,7 @@ export function Stats() {
         <motion.div 
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', damping: 20 }}
-          className="p-5 rounded-[24px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between"
+          className="p-5 rounded-[24px] glass-card border-t border-t-white/15 flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -444,7 +444,7 @@ export function Stats() {
         <motion.div 
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', damping: 20 }}
-          className="p-5 rounded-[24px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between"
+          className="p-5 rounded-[24px] glass-card border-t border-t-white/15 flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -469,7 +469,7 @@ export function Stats() {
         <motion.div 
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', damping: 20 }}
-          className="p-5 rounded-[24px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between col-span-2 lg:col-span-1"
+          className="p-5 rounded-[24px] glass-card border-t border-t-white/15 flex flex-col justify-between col-span-2 lg:col-span-1"
         >
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -496,14 +496,14 @@ export function Stats() {
         <div className="py-24 flex flex-col justify-center items-center text-slate-500 space-y-3">
           <Loader2 className="w-8 h-8 animate-spin text-[#30d158]" />
           <span className="text-xs font-semibold caption-label tracking-wider text-slate-400">
-            Synthesizing Apple Health Analytics...
+            Synthesizing Health Analytics...
           </span>
         </div>
       ) : (
         <div className="space-y-6 sm:space-y-8">
           
-          {/* 3. Main Calorie Intake Area / Bar Chart (Apple Health Style) */}
-          <div className="p-6 sm:p-7 rounded-[28px] apple-glass-card border-t border-t-white/15">
+          {/* 3. Main Calorie Intake Area / Bar Chart */}
+          <div className="p-6 sm:p-7 rounded-[28px] glass-card border-t border-t-white/15">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
               <div>
                 <h3 className="headline text-lg sm:text-xl text-white flex items-center space-x-2">
@@ -531,7 +531,7 @@ export function Stats() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyTrendData} margin={{ top: 15, right: 10, left: -20, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="appleCalorieGradient" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="calorieGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#ff2d55" stopOpacity={0.95} />
                       <stop offset="100%" stopColor="#ff2d55" stopOpacity={0.4} />
                     </linearGradient>
@@ -551,7 +551,7 @@ export function Stats() {
                     axisLine={false}
                     tickFormatter={(v) => `${v}`}
                   />
-                  <Tooltip content={<AppleChartTooltip unit="kcal" />} />
+                  <Tooltip content={<ChartTooltip unit="kcal" />} />
                   <ReferenceLine
                     y={targets.calories}
                     stroke="rgba(255, 255, 255, 0.35)"
@@ -561,7 +561,7 @@ export function Stats() {
                   <Bar 
                     dataKey="calories" 
                     name="Intake"
-                    fill="url(#appleCalorieGradient)" 
+                    fill="url(#calorieGradient)" 
                     radius={[8, 8, 2, 2]} 
                     maxBarSize={timeframe === 'monthly' ? 16 : 38} 
                   />
@@ -574,7 +574,7 @@ export function Stats() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* Macro Ratio Donut */}
-            <div className="p-6 sm:p-7 rounded-[28px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between">
+            <div className="p-6 sm:p-7 rounded-[28px] glass-card border-t border-t-white/15 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="headline text-base sm:text-lg text-white flex items-center space-x-2">
@@ -614,7 +614,7 @@ export function Stats() {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip content={<AppleChartTooltip unit="kcal" />} />
+                        <Tooltip content={<ChartTooltip unit="kcal" />} />
                       </PieChart>
                     </ResponsiveContainer>
                     
@@ -633,7 +633,7 @@ export function Stats() {
                     {macroPieData.map((macro) => (
                       <div 
                         key={macro.name} 
-                        className="flex items-center justify-between sm:justify-start space-x-4 apple-glass-inset px-3.5 py-2 rounded-xl text-xs"
+                        className="flex items-center justify-between sm:justify-start space-x-4 glass-inset px-3.5 py-2 rounded-xl text-xs"
                       >
                         <div className="flex items-center space-x-2">
                           <span 
@@ -654,7 +654,7 @@ export function Stats() {
             </div>
 
             {/* Meal Category Breakdown */}
-            <div className="p-6 sm:p-7 rounded-[28px] apple-glass-card border-t border-t-white/15 flex flex-col justify-between">
+            <div className="p-6 sm:p-7 rounded-[28px] glass-card border-t border-t-white/15 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="headline text-base sm:text-lg text-white flex items-center space-x-2">
@@ -687,7 +687,7 @@ export function Stats() {
                       tickLine={false} 
                       axisLine={false} 
                     />
-                    <Tooltip content={<AppleChartTooltip unit="kcal" />} />
+                    <Tooltip content={<ChartTooltip unit="kcal" />} />
                     <Bar dataKey="calories" name="Calories" radius={[8, 8, 2, 2]} maxBarSize={44}>
                       {categoryBarData.map((entry, index) => (
                         <Cell key={`cat-${index}`} fill={entry.fill} />
@@ -700,8 +700,8 @@ export function Stats() {
 
           </div>
 
-          {/* 5. Macro Timeline Progression (Apple Health Monotone Curves) */}
-          <div className="p-6 sm:p-7 rounded-[28px] apple-glass-card border-t border-t-white/15">
+          {/* 5. Macro Timeline Progression */}
+          <div className="p-6 sm:p-7 rounded-[28px] glass-card border-t border-t-white/15">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="headline text-lg sm:text-xl text-white">
@@ -746,32 +746,32 @@ export function Stats() {
                     axisLine={false}
                     tickFormatter={(v) => `${v}g`}
                   />
-                  <Tooltip content={<AppleChartTooltip unit="g" />} />
+                  <Tooltip content={<ChartTooltip unit="g" />} />
                   <Line
                     type="monotone"
                     dataKey="protein"
                     name="Protein"
-                    stroke={APPLE_COLORS.Protein}
+                    stroke={METRIC_COLORS.Protein}
                     strokeWidth={2.5}
-                    dot={{ r: 3, fill: APPLE_COLORS.Protein, strokeWidth: 0 }}
+                    dot={{ r: 3, fill: METRIC_COLORS.Protein, strokeWidth: 0 }}
                     activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="carbs"
                     name="Carbs"
-                    stroke={APPLE_COLORS.Carbs}
+                    stroke={METRIC_COLORS.Carbs}
                     strokeWidth={2.5}
-                    dot={{ r: 3, fill: APPLE_COLORS.Carbs, strokeWidth: 0 }}
+                    dot={{ r: 3, fill: METRIC_COLORS.Carbs, strokeWidth: 0 }}
                     activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="fats"
                     name="Fats"
-                    stroke={APPLE_COLORS.Fats}
+                    stroke={METRIC_COLORS.Fats}
                     strokeWidth={2.5}
-                    dot={{ r: 3, fill: APPLE_COLORS.Fats, strokeWidth: 0 }}
+                    dot={{ r: 3, fill: METRIC_COLORS.Fats, strokeWidth: 0 }}
                     activeDot={{ r: 6, stroke: '#000', strokeWidth: 2 }}
                   />
                 </LineChart>

@@ -25,12 +25,12 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full apple-glass border-b border-white/10 shadow-lg">
+      <header className="sticky top-0 z-40 w-full glass border-b border-white/10 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Logo and Brand */}
           <div className="flex items-center space-x-6">
-            <Link to="/dashboard" className="flex items-center space-x-2.5 group apple-btn">
+            <Link to="/dashboard" className="flex items-center space-x-2.5 group btn-press">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#30d158] via-[#0a84ff] to-[#bf5af2] p-0.5 shadow-md shadow-[#30d158]/20 transition-transform">
                 <div className="w-full h-full bg-black rounded-[14px] flex items-center justify-center">
                   <Activity className="w-5 h-5 text-[#30d158]" />
@@ -41,16 +41,16 @@ export function Navbar() {
                   Nutri<span className="bg-gradient-to-r from-[#30d158] to-[#0a84ff] bg-clip-text text-transparent">Pulse</span>
                 </span>
                 <span className="hidden sm:inline-block px-2 py-0.5 text-[9px] font-bold tracking-wider text-[#30d158] caption-label bg-white/5 border border-white/10 rounded-full">
-                  APPLE DESIGN
+                  FLUID DESIGN
                 </span>
               </div>
             </Link>
 
-            {/* Navigation Tabs (Apple Segmented Bar) */}
-            <nav className="hidden md:flex items-center space-x-1 apple-glass-inset p-1 rounded-2xl">
+            {/* Navigation Tabs (Segmented Bar) */}
+            <nav className="hidden md:flex items-center space-x-1 glass-inset p-1 rounded-2xl">
               <Link
                 to="/dashboard"
-                className={`apple-btn relative flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`btn-press relative flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isCurrent('/dashboard')
                     ? 'text-white'
                     : 'text-slate-400 hover:text-slate-200'
@@ -69,7 +69,7 @@ export function Navbar() {
 
               <Link
                 to="/stats"
-                className={`apple-btn relative flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`btn-press relative flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isCurrent('/stats')
                     ? 'text-white'
                     : 'text-slate-400 hover:text-slate-200'
@@ -95,7 +95,7 @@ export function Navbar() {
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
                 title="Edit Fitness Profile & Goals"
-                className="apple-btn hidden lg:flex items-center space-x-2 px-3.5 py-1.5 rounded-full apple-glass-inset hover:bg-white/10 text-xs text-slate-300 transition-colors group"
+                className="btn-press hidden lg:flex items-center space-x-2 px-3.5 py-1.5 rounded-full glass-inset hover:bg-white/10 text-xs text-slate-300 transition-colors group"
               >
                 <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-sm shadow-[#30d158]/50 animate-pulse" />
                 <span className="tabular-numbers font-semibold text-white">{profile.weight} kg</span>
@@ -110,7 +110,7 @@ export function Navbar() {
               type="button"
               onClick={() => setIsSettingsOpen(true)}
               title="Settings & Edit Details"
-              className="apple-btn p-2.5 rounded-xl apple-glass-inset text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="btn-press p-2.5 rounded-xl glass-inset text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <SettingsIcon className="w-4 h-4" />
             </button>
@@ -136,7 +136,7 @@ export function Navbar() {
               <button
                 onClick={logout}
                 title="Sign Out"
-                className="apple-btn p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
+                className="btn-press p-2 rounded-xl text-slate-400 hover:text-[#ff2d55] hover:bg-[#ff2d55]/10 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -149,7 +149,7 @@ export function Navbar() {
         <div className="md:hidden flex border-t border-white/10 bg-black/80 px-4 py-2 justify-around backdrop-blur-xl">
           <Link
             to="/dashboard"
-            className={`apple-btn flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+            className={`btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
               isCurrent('/dashboard') ? 'bg-white/15 text-white' : 'text-slate-400'
             }`}
           >
@@ -158,7 +158,7 @@ export function Navbar() {
           </Link>
           <Link
             to="/stats"
-            className={`apple-btn flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+            className={`btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${
               isCurrent('/stats') ? 'bg-white/15 text-white' : 'text-slate-400'
             }`}
           >
@@ -168,7 +168,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setIsSettingsOpen(true)}
-            className="apple-btn flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
+            className="btn-press flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
           >
             <SettingsIcon className="w-4 h-4" />
             <span>Settings</span>

@@ -456,7 +456,7 @@ function getAndhraFallbackSuggestions(nextCategory, stage, summary, targets, pro
  * nutrition, meal-by-meal roadmap, and workout recovery guidance.
  */
 /**
- * Enhance an already-generated instant local fuel plan using Google Gemini AI in the background.
+ * Enhance an already-generated instant local fuel plan using Nutrition AI in the background.
  * - Non-blocking: caller already has the instant local plan rendered.
  * - Respects AbortSignal for request cancellation when logs change.
  * - Preserves authentic Andhra meals and day-aware context.

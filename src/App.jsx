@@ -24,9 +24,9 @@ function MainLayout() {
           <div className="flex items-center space-x-3 text-[11px] text-slate-500">
             <span className="caption-label text-[10px] text-[#30d158]">SUPABASE AUTH</span>
             <span>•</span>
-            <span className="caption-label text-[10px] text-[#0a84ff]">GEMINI AI</span>
+            <span className="caption-label text-[10px] text-[#0a84ff]">NUTRITION AI</span>
             <span>•</span>
-            <span className="caption-label text-[10px] text-[#ff2d55]">APPLE DESIGN</span>
+            <span className="caption-label text-[10px] text-[#ff2d55]">FLUID DESIGN</span>
           </div>
         </div>
       </footer>

@@ -15,7 +15,7 @@ import {
   HelpCircle, 
   MessageSquare, 
   Plus, 
-  Apple, 
+  Citrus, 
   CheckCircle2 
 } from 'lucide-react';
 import { calculateCalories } from '../services/nutrition';
@@ -26,14 +26,14 @@ import { useAuth } from '../contexts/AuthContext';
 export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', dateStr, onLogAdded }) {
   const { user, isDemoUser } = useAuth();
 
-  // Mode Tab Switch: 'auto' (Gemini AI) vs 'manual' (Manual Entry with Add-ons)
+  // Mode Tab Switch: 'auto' (Nutrition AI) vs 'manual' (Manual Entry with Add-ons)
   const [activeTab, setActiveTab] = useState('auto');
 
   // Category
   const [mealCategory, setMealCategory] = useState(initialCategory);
 
   // --------------------------------------------------------------------------
-  // AUTO / GEMINI STATE
+  // AUTO / NUTRITION AI STATE
   // --------------------------------------------------------------------------
   const [naturalInput, setNaturalInput] = useState('');
   const [isAiProcessing, setIsAiProcessing] = useState(false);
@@ -86,9 +86,9 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
   if (!isOpen) return null;
 
   // --------------------------------------------------------------------------
-  // GEMINI CONVERSATIONAL INTELLIGENCE HANDLERS (AUTO TAB)
+  // NUTRITION AI CONVERSATIONAL INTELLIGENCE HANDLERS (AUTO TAB)
   // --------------------------------------------------------------------------
-  const handleStartGeminiAnalysis = async (inputText) => {
+  const handleStartAIAnalysis = async (inputText) => {
     const text = (inputText || naturalInput).trim();
     if (!text) {
       setErrorMessage('Please type what you ate (e.g., "3 dosa", "1 bowl oatmeal", "caesar salad").');
@@ -109,7 +109,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
       const response = await analyzeFoodWithClarification(text, '', mealCategory);
 
       if (!response) {
-        setErrorMessage('Unable to process food with Gemini. Please try again or switch to Manual Entry.');
+        setErrorMessage('Unable to process food with Nutrition AI. Please try again or switch to Manual Entry.');
         return;
       }
 
@@ -120,7 +120,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         setAiCalculatedResult(response);
       }
     } catch (err) {
-      console.error('Gemini processing error:', err);
+      console.error('Nutrition AI processing error:', err);
       setErrorMessage('AI processing encountered a temporary issue. You can switch to Manual Entry.');
     } finally {
       setIsAiProcessing(false);
@@ -169,7 +169,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
   const FRUIT_TOPPING_PRESETS = [
     { id: 'banana', name: '1 Medium Banana', carbs: 27, protein: 1.3, fats: 0.3, fiber: 3.1 },
     { id: 'berries', name: '1/2 Cup Berries', carbs: 11, protein: 0.7, fats: 0.3, fiber: 3.5 },
-    { id: 'apple', name: '1 Medium Apple', carbs: 25, protein: 0.5, fats: 0.3, fiber: 4.4 },
+    { id: 'guava', name: '1 Medium Guava', carbs: 24, protein: 1.4, fats: 0.4, fiber: 5.4 },
     { id: 'honey', name: '1 Tbsp Honey/Sugar', carbs: 17, protein: 0, fats: 0, fiber: 0 },
     { id: 'nuts', name: '1 Tbsp Almonds/Nuts', carbs: 3, protein: 3, fats: 7, fiber: 1.5 },
   ];
@@ -304,7 +304,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
         <button
           type="button"
           onClick={onClose}
-          className="apple-btn flex items-center space-x-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+          className="btn-press flex items-center space-x-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
@@ -319,18 +319,18 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
 
         <button
           onClick={onClose}
-          className="apple-btn p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+          className="btn-press p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Main Container Card (Apple Glass) with Spring scale entrance */}
+      {/* Main Container Card with Spring scale entrance */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-        className="w-full max-w-2xl apple-glass-card rounded-[32px] p-6 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl"
+        className="w-full max-w-2xl glass-card rounded-[32px] p-6 sm:p-8 space-y-6 border-t border-t-white/15 shadow-2xl"
       >
         
         {/* Error notification */}
@@ -351,10 +351,10 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                 type="button"
                 key={cat}
                 onClick={() => setMealCategory(cat)}
-                className={`apple-btn py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
+                className={`btn-press py-2.5 px-3 text-xs font-semibold rounded-2xl transition-all ${
                   mealCategory === cat
                     ? 'bg-white/15 border border-[#30d158]/50 text-white shadow-md'
-                    : 'apple-glass-inset text-slate-400 hover:text-slate-200'
+                    : 'glass-inset text-slate-400 hover:text-slate-200'
                 }`}
               >
                 {cat}
@@ -363,25 +363,25 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
           </div>
         </div>
 
-        {/* 2. THE PAGE SWITCH: [ ⚡ Gemini AI Auto-Estimate ] vs [ ✍️ Manual Entry with Add-ons ] */}
-        <div className="p-1 apple-glass-inset rounded-2xl grid grid-cols-2 gap-1">
+        {/* 2. THE PAGE SWITCH: [ ⚡ Nutrition AI Auto-Estimate ] vs [ ✍️ Manual Entry with Add-ons ] */}
+        <div className="p-1 glass-inset rounded-2xl grid grid-cols-2 gap-1">
           <button
             type="button"
             onClick={() => setActiveTab('auto')}
-            className={`apple-btn py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
+            className={`btn-press py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'auto'
                 ? 'bg-white text-black shadow-lg'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Sparkles className="w-4 h-4 text-[#bf5af2]" />
-            <span>⚡ Gemini AI Auto-Estimate</span>
+            <span>⚡ Nutrition AI Auto-Estimate</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('manual')}
-            className={`apple-btn py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
+            className={`btn-press py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'manual'
                 ? 'bg-white text-black shadow-lg'
                 : 'text-slate-400 hover:text-white'
@@ -410,7 +410,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
             <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-950/90 to-emerald-950/20 border border-emerald-500/30">
               <label className="block text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center space-x-1.5">
                 <MessageSquare className="w-3.5 h-3.5" />
-                <span>Tell Gemini What You Ate</span>
+                <span>Tell Nutrition AI What You Ate</span>
               </label>
 
               <div className="flex flex-col sm:flex-row gap-2.5">
@@ -422,7 +422,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
-                      handleStartGeminiAnalysis();
+                      handleStartAIAnalysis();
                     }
                   }}
                   placeholder="e.g., 3 dosa, grilled chicken breast, 1 bowl oatmeal..."
@@ -430,7 +430,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                 />
                 <button
                   type="button"
-                  onClick={() => handleStartGeminiAnalysis()}
+                  onClick={() => handleStartAIAnalysis()}
                   disabled={isAiProcessing || !naturalInput.trim()}
                   className="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-1.5 disabled:opacity-50 transition-all shrink-0"
                 >
@@ -457,7 +457,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                     key={sample}
                     onClick={() => {
                       setNaturalInput(sample);
-                      handleStartGeminiAnalysis(sample);
+                      handleStartAIAnalysis(sample);
                     }}
                     className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[10px] text-slate-400 hover:text-emerald-300 transition-colors"
                   >
@@ -467,14 +467,14 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
               </div>
             </div>
 
-            {/* UPGRADE 3: Gemini Asking Clarification Questions (e.g. for "3 dosa") */}
+            {/* UPGRADE 3: Nutrition AI Asking Clarification Questions (e.g. for "3 dosa") */}
             {clarificationData && (
               <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-4 animate-in fade-in duration-200">
                 <div className="flex items-start space-x-2.5">
                   <HelpCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-amber-300">
-                      Gemini needs a few details for {clarificationData.food_summary || 'this meal'}:
+                      Nutrition AI needs a few details for {clarificationData.food_summary || 'this meal'}:
                     </h4>
                     <p className="text-xs text-slate-300 mt-0.5">
                       {clarificationData.message}
@@ -527,13 +527,13 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
               </div>
             )}
 
-            {/* Gemini Calculation Result Presentation */}
+            {/* Nutrition AI Calculation Result Presentation */}
             {aiCalculatedResult && (
               <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-500/40 shadow-xl space-y-4 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                   <div>
                     <span className="text-[10px] text-emerald-400 uppercase tracking-wider font-bold block">
-                      Gemini Verified Calculation
+                      Nutrition AI Verified Calculation
                     </span>
                     <h3 className="text-sm sm:text-base font-bold text-slate-100 mt-0.5">
                       {aiCalculatedResult.food_name}
@@ -578,7 +578,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                   <button
                     type="button"
                     onClick={() => setAiCalculatedResult(null)}
-                    className="apple-btn px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                    className="btn-press px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
                   >
                     Recalculate
                   </button>
@@ -586,7 +586,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
                     type="button"
                     onClick={handleSaveAiResult}
                     disabled={isSubmitting}
-                    className="apple-btn px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-1.5 disabled:opacity-50"
+                    className="btn-press px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-1.5 disabled:opacity-50"
                   >
                     {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
                     <span>Add to Food Log</span>
@@ -598,7 +598,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
             </motion.div>
           ) : (
             /* =========================================================================
-               TAB 2: MANUAL ENTRY WITH OIL & FRUITS ADD-ONS (NO GEMINI OVERLAY)
+               TAB 2: MANUAL ENTRY WITH OIL & FRUITS ADD-ONS (DIRECT MACRO CALCULATION)
                ========================================================================= */
             <motion.form
               key="tab-manual"
@@ -705,7 +705,7 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
             <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-emerald-400 flex items-center space-x-1.5">
-                  <Apple className="w-3.5 h-3.5" />
+                  <Citrus className="w-3.5 h-3.5" />
                   <span>Add Fruits, Honey, or Toppings?</span>
                 </span>
                 <span className="text-[10px] text-slate-400">
@@ -840,14 +840,14 @@ export function AddFoodModal({ isOpen, onClose, initialCategory = 'Breakfast', d
               <button
                 type="button"
                 onClick={onClose}
-                className="apple-btn px-4 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
+                className="btn-press px-4 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="apple-btn px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-2 disabled:opacity-50"
+                className="btn-press px-6 py-2.5 rounded-xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-2 disabled:opacity-50"
               >
                 {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />}
                 <span>Save to Food Log</span>

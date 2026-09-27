@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import { getFoodLogsByDate, deleteFoodLog } from '../lib/supabase';
 import { calculateDailyTargets, summarizeLogs } from '../services/nutrition';
-import { AppleActivityRings } from '../components/AppleActivityRings';
+import { ActivityRings } from '../components/ActivityRings';
 import { MealCard } from '../components/MealCard';
 import { AddFoodModal } from '../components/AddFoodModal';
 import { AISuggestions } from '../components/AISuggestions';
@@ -225,8 +225,8 @@ export function Dashboard() {
         <DatabaseSchemaAlert onResolved={() => setIsSchemaMissing(false)} />
       )}
 
-      {/* 1. Date Header & Controls (Apple Glass Top Bar) */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 apple-glass-card rounded-[26px] p-5">
+      {/* 1. Date Header & Controls (Glass Top Bar) */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card rounded-[26px] p-5">
         
         {/* Date Title & Badge */}
         <div>
@@ -241,7 +241,7 @@ export function Dashboard() {
             ) : (
               <button
                 onClick={handleGoToToday}
-                className="apple-btn px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-colors"
+                className="btn-press px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-colors"
               >
                 Jump to Today
               </button>
@@ -255,12 +255,12 @@ export function Dashboard() {
 
         {/* Date Navigation & Calendar Picker */}
         <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
-          <div className="flex items-center space-x-1 apple-glass-inset rounded-2xl p-1 shadow-sm">
+          <div className="flex items-center space-x-1 glass-inset rounded-2xl p-1 shadow-sm">
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={handlePrevDay}
               title="Previous Day"
-              className="apple-btn p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="btn-press p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </motion.button>
@@ -273,7 +273,7 @@ export function Dashboard() {
               whileTap={{ scale: 0.92 }}
               onClick={handleNextDay}
               title="Next Day"
-              className="apple-btn p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="btn-press p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </motion.button>
@@ -286,7 +286,7 @@ export function Dashboard() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => handleOpenAddModal('Breakfast')}
-            className="apple-btn flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/25"
+            className="btn-press flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/25"
           >
             <Plus className="w-4 h-4" />
             <span>Log Food</span>
@@ -295,8 +295,8 @@ export function Dashboard() {
 
       </div>
 
-      {/* Dynamic Profile Target Blueprint Banner (Apple Health Style) */}
-      <div className="p-4 rounded-[24px] apple-glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+      {/* Dynamic Profile Target Blueprint Banner */}
+      <div className="p-4 rounded-[24px] glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20 shrink-0">
             <Sparkles className="w-4 h-4" />
@@ -315,7 +315,7 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 text-[11px] apple-glass-inset px-3.5 py-1.5 rounded-xl self-stretch sm:self-auto justify-between sm:justify-end">
+        <div className="flex items-center space-x-3 text-[11px] glass-inset px-3.5 py-1.5 rounded-xl self-stretch sm:self-auto justify-between sm:justify-end">
           <span className="text-slate-400">
             BMR: <strong className="text-slate-200 tabular-numbers">{targets.bmr} kcal</strong>
           </span>
@@ -331,7 +331,7 @@ export function Dashboard() {
             whileTap={{ scale: 0.94 }}
             type="button"
             onClick={() => setIsSettingsOpen(true)}
-            className="apple-btn ml-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white font-semibold border border-white/10 transition-colors flex items-center space-x-1"
+            className="btn-press ml-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white font-semibold border border-white/10 transition-colors flex items-center space-x-1"
           >
             <SlidersHorizontal className="w-3 h-3 text-emerald-400" />
             <span>Edit</span>
@@ -339,8 +339,8 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* 2. Apple Activity Rings & Macro Capsules */}
-      <AppleActivityRings summary={summary} targets={targets} />
+      {/* 2. Activity Rings & Macro Capsules */}
+      <ActivityRings summary={summary} targets={targets} />
 
       {/* 3. Meal Categories Grid (Breakfast, Snacks, Lunch, Dinner) */}
       <div>

@@ -1,6 +1,6 @@
 # 🥗 NutriPulse — Full-Stack AI Nutrition & Fitness Platform
 
-NutriPulse is a modern, full-stack nutrition and workout tracking web application powered by **React**, **Tailwind CSS**, **Supabase (PostgreSQL + Auth)**, and **Google Gemini AI**.
+NutriPulse is a modern, full-stack nutrition and workout tracking web application powered by **React**, **Tailwind CSS**, **Supabase (PostgreSQL + Auth)**, and **Nutrition AI**.
 
 ---
 
@@ -26,7 +26,7 @@ NutriPulse is a modern, full-stack nutrition and workout tracking web applicatio
 4. **Add Food Item Modal:**
    - Captures Food name, Quantity + Unit, Carbs (g), Protein (g), Fats (g), and Fiber (g).
    - Real-time automatic calorie calculation: `(carbs × 4) + (protein × 4) + (fats × 9)`.
-   - **✨ AI Auto-Estimate Button**: Powered by Gemini API to automatically fill in macro values from a natural language food description (e.g., *"1 cup Greek yogurt with honey"*).
+   - **✨ AI Auto-Estimate Button**: Powered by Nutrition AI to automatically fill in macro values from a natural language food description (e.g., *"1 cup Greek yogurt with honey"*).
 
 5. **Visual Analytics & Statistics Page:**
    - Timeframe switcher: **Daily**, **Last 7 Days (Weekly)**, and **Last 30 Days (Monthly)**.
@@ -36,7 +36,7 @@ NutriPulse is a modern, full-stack nutrition and workout tracking web applicatio
      - Meal Category Distribution (Breakfast vs Lunch vs Snacks vs Dinner)
      - Multi-line macronutrient trend over time
 
-6. **Gemini AI Nutrition Coach:**
+6. **Nutrition AI Coach:**
    - Analyzes user's physiological profile + workout intensity + day's logged food + macro gaps.
    - Generates actionable meal ideas to bridge protein/carb gaps, pre/post-workout meal timing, and hydration tips.
 
@@ -46,7 +46,7 @@ NutriPulse is a modern, full-stack nutrition and workout tracking web applicatio
 
 - **Frontend:** React 19, Tailwind CSS, Lucide React, Recharts, React Router v7
 - **Backend / Database / Auth:** Supabase (PostgreSQL, Row Level Security, Auth)
-- **AI Integration:** Google Gemini API (`gemini-flash-latest`, `gemini-3.5-flash-lite`, `gemini-3.8-flash`)
+- **AI Integration:** Nutrition AI (Supabase Edge Function backend)
 - **Build Tool:** Vite
 
 ---
