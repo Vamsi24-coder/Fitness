@@ -28,15 +28,28 @@ import {
   getSuggestedTargetWeight 
 } from '../services/nutrition';
 
-const COMMON_ALLERGIES = [
+// Exercise options for the smart multi-select question
+const EXERCISE_OPTIONS = [
+  { id: 'gym', label: 'Gym', desc: 'Weights, machines, gym cardio' },
+  { id: 'home_workouts', label: 'Home Workouts', desc: 'Bodyweight, calisthenics, resistance bands' },
+  { id: 'outdoor', label: 'Outdoor Exercise', desc: 'Running, cycling, brisk walking' },
+  { id: 'sports', label: 'Sports', desc: 'Badminton, cricket, football, swimming, tennis' },
+  { id: 'none', label: "I Don't Exercise Regularly", desc: 'Focus only on daily movement & nutrition' },
+];
+
+// Categorized food allergies and avoidances
+const ALLERGY_INTOLERANCES = [
   { id: 'dairy', label: 'Dairy / Lactose' },
   { id: 'peanuts', label: 'Peanuts' },
-  { id: 'tree_nuts', label: 'Tree Nuts' },
+  { id: 'tree_nuts', label: 'Tree Nuts (Almonds, Walnuts)' },
   { id: 'gluten', label: 'Gluten / Wheat' },
   { id: 'soy', label: 'Soy' },
   { id: 'eggs', label: 'Eggs' },
   { id: 'shellfish', label: 'Shellfish' },
-  { id: 'seafood', label: 'Seafood' },
+  { id: 'seafood', label: 'Fish / Seafood' },
+];
+
+const FOODS_TO_AVOID = [
   { id: 'pork', label: 'Pork' },
   { id: 'beef', label: 'Beef' },
 ];
@@ -57,7 +70,8 @@ export function CompleteProfileModal({ isOpen, onClose }) {
   const [dailyActivityLevel, setDailyActivityLevel] = useState('mostly_sitting');
   const [walkingDuration, setWalkingDuration] = useState('15_30');
 
-  // 3. Training & Gym
+  // 3. Training & Gym (Smart Exercise Mode)
+  const [exerciseTypes, setExerciseTypes] = useState(['gym']);
   const [worksOut, setWorksOut] = useState(true);
   const [workoutFrequency, setWorkoutFrequency] = useState(4);
   const [intensity, setIntensity] = useState('Medium');
@@ -112,12 +126,26 @@ export function CompleteProfileModal({ isOpen, onClose }) {
       setDailyActivityLevel(profile.daily_activity_level || 'mostly_sitting');
       setWalkingDuration(profile.walking_duration || '15_30');
 
-      setWorksOut(profile.works_out !== undefined ? Boolean(profile.works_out) : true);
+      // Exercise sync
+      let loadedExercises = ['gym'];
+      if (Array.isArray(profile.exercise_types) && profile.exercise_types.length > 0) {
+        loadedExercises = profile.exercise_types;
+      } else if (profile.works_out === false) {
+        loadedExercises = ['none'];
+      } else if (profile.goes_to_gym) {
+        loadedExercises = ['gym'];
+      } else if (profile.works_out) {
+        loadedExercises = ['home_workouts'];
+      }
+      setExerciseTypes(loadedExercises);
+
+      const isWorkingOut = loadedExercises.some((t) => t !== 'none');
+      setWorksOut(isWorkingOut);
       setWorkoutFrequency(profile.workout_frequency || 4);
       setIntensity(profile.intensity || 'Medium');
       setDuration(String(profile.duration || 45));
 
-      setGoesToGym(profile.goes_to_gym !== undefined ? Boolean(profile.goes_to_gym) : false);
+      setGoesToGym(loadedExercises.includes('gym'));
       setGymFrequency(profile.gym_frequency || 4);
       setGymDuration(String(profile.gym_duration || 60));
       setCardioDuration(String(profile.cardio_duration || 15));
@@ -184,6 +212,7 @@ export function CompleteProfileModal({ isOpen, onClose }) {
     height: parsedHeightCm,
     height_cm: parsedHeightCm,
     height_unit: heightUnit,
+    exercise_types: exerciseTypes,
     works_out: worksOut,
     workout_frequency: worksOut ? workoutFrequency : 0,
     intensity: worksOut ? intensity : 'Small',
@@ -222,6 +251,31 @@ export function CompleteProfileModal({ isOpen, onClose }) {
       setHeightCm(String(Math.round(currentCm)));
     }
     setHeightUnit(newUnit);
+  };
+
+  const toggleExerciseType = (typeId) => {
+    if (typeId === 'none') {
+      setExerciseTypes(['none']);
+      setWorksOut(false);
+      setGoesToGym(false);
+      return;
+    }
+    setExerciseTypes((prev) => {
+      const filtered = prev.filter((t) => t !== 'none');
+      let next;
+      if (filtered.includes(typeId)) {
+        next = filtered.filter((t) => t !== typeId);
+        if (next.length === 0) {
+          next = ['none'];
+        }
+      } else {
+        next = [...filtered, typeId];
+      }
+      const hasActive = next.some((t) => t !== 'none');
+      setWorksOut(hasActive);
+      setGoesToGym(next.includes('gym'));
+      return next;
+    });
   };
 
   const toggleCardioType = (type) => {
@@ -517,11 +571,143 @@ export function CompleteProfileModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* 4. Primary Goal & Target Weight */}
+          {/* 4. Smart Exercise Routine */}
+          <div className="p-3.5 rounded-2xl glass-inset space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-white caption-label flex items-center space-x-1.5">
+                <Dumbbell className="w-3.5 h-3.5 text-[#30d158]" />
+                <span>4. How do you usually exercise?</span>
+              </label>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                Multi-select forms of exercise or sports that apply to you
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1.5">
+              {EXERCISE_OPTIONS.map((opt) => {
+                const isSelected = exerciseTypes.includes(opt.id);
+                const isNone = opt.id === 'none';
+                return (
+                  <button
+                    type="button"
+                    key={opt.id}
+                    onClick={() => toggleExerciseType(opt.id)}
+                    className={`btn-press p-2 rounded-xl text-left transition-all ${
+                      isSelected
+                        ? isNone
+                          ? 'bg-white/20 border border-white/40 text-white shadow-sm'
+                          : 'bg-[#30d158]/20 border border-[#30d158] text-white shadow-sm'
+                        : 'glass text-slate-400 hover:text-white'
+                    } ${isNone ? 'col-span-2' : ''}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">{opt.label}</span>
+                      {isSelected && <Check className="w-3 h-3 text-[#30d158] shrink-0" />}
+                    </div>
+                    <span className="block text-[9px] text-slate-400 mt-0.5">{opt.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {worksOut && (
+              <div className="pt-2.5 border-t border-white/10 space-y-2.5">
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-300 caption-label mb-1">
+                    Days per week: {workoutFrequency}d
+                  </label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                      <button
+                        type="button"
+                        key={d}
+                        onClick={() => setWorkoutFrequency(d)}
+                        className={`btn-press py-1 rounded-lg text-xs font-bold ${
+                          workoutFrequency === d ? 'bg-[#30d158] text-black' : 'glass text-slate-400'
+                        }`}
+                      >
+                        {d}d
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-300 caption-label mb-1">
+                    Intensity: {intensity}
+                  </label>
+                  <div className="grid grid-cols-3 gap-1">
+                    {['Small', 'Medium', 'Intensive'].map((item) => (
+                      <button
+                        type="button"
+                        key={item}
+                        onClick={() => setIntensity(item)}
+                        className={`btn-press py-1.5 px-1 rounded-lg text-[10px] font-semibold ${
+                          intensity === item ? 'bg-white/20 text-white border border-white/30' : 'glass text-slate-400'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between text-[10px] mb-1">
+                    <span className="text-slate-300 font-semibold">Typical duration:</span>
+                    <span className="text-[#30d158] font-bold tabular-numbers">{duration} mins</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="15"
+                    max="180"
+                    step="5"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    className="w-full accent-[#30d158] h-1.5 bg-white/10 rounded-lg cursor-pointer"
+                  />
+                </div>
+
+                {goesToGym && (
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-[#ffd60a]/20 space-y-2">
+                    <span className="text-[10px] font-bold text-[#ffd60a] block">Gym Session Energy Details</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[9px] text-slate-400 mb-0.5">Session Length</label>
+                        <select
+                          value={gymDuration}
+                          onChange={(e) => setGymDuration(e.target.value)}
+                          className="w-full px-2 py-1 glass rounded-lg text-xs text-white"
+                        >
+                          {['30', '45', '60', '75', '90', '120'].map((m) => (
+                            <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[9px] text-slate-400 mb-0.5">Cardio Portion</label>
+                        <select
+                          value={cardioDuration}
+                          onChange={(e) => setCardioDuration(e.target.value)}
+                          className="w-full px-2 py-1 glass rounded-lg text-xs text-white"
+                        >
+                          {['0', '15', '30', '45', '60'].map((m) => (
+                            <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 5. Primary Goal & Target Weight */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 caption-label mb-2 flex items-center space-x-1.5">
               <Flame className="w-3.5 h-3.5 text-[#ff2d55]" />
-              <span>4. Primary Body Goal</span>
+              <span>5. Primary Body Goal</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -678,11 +864,11 @@ export function CompleteProfileModal({ isOpen, onClose }) {
             )}
           </div>
 
-          {/* 5. Diet Preference */}
+          {/* 6. Diet Preference */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 caption-label mb-2 flex items-center space-x-1.5">
               <Utensils className="w-3.5 h-3.5 text-[#30d158]" />
-              <span>5. Dietary Preference</span>
+              <span>6. Dietary Preference</span>
             </label>
             <div className="grid grid-cols-3 gap-1.5">
               {[
@@ -706,34 +892,81 @@ export function CompleteProfileModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* 6. Food Allergies / Foods to Avoid */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 caption-label mb-2 flex items-center space-x-1.5">
+          {/* 7. Food Allergies / Foods to Avoid */}
+          <div className="space-y-2.5">
+            <label className="block text-xs font-semibold text-slate-300 caption-label flex items-center space-x-1.5">
               <ShieldAlert className="w-3.5 h-3.5 text-[#ff2d55]" />
-              <span>6. Foods to Avoid / Allergies</span>
+              <span>7. Foods to Avoid / Allergies</span>
             </label>
-            <div className="flex flex-wrap gap-1.5">
+
+            <div>
               <button
                 type="button"
                 onClick={() => toggleAllergy('none')}
-                className={`btn-press px-2.5 py-1 rounded-lg text-[11px] font-bold ${
+                className={`btn-press px-3 py-1.5 rounded-xl text-xs font-bold ${
                   allergies.includes('none') ? 'bg-[#30d158] text-black' : 'glass text-slate-400'
                 }`}
               >
-                None
+                None (No Allergies)
               </button>
-              {COMMON_ALLERGIES.map((a) => (
-                <button
-                  type="button"
-                  key={a.id}
-                  onClick={() => toggleAllergy(a.id)}
-                  className={`btn-press px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
-                    allergies.includes(a.id) ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white' : 'glass text-slate-400'
-                  }`}
-                >
-                  {a.label}
-                </button>
-              ))}
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Allergies & Intolerances
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {ALLERGY_INTOLERANCES.map((a) => (
+                  <button
+                    type="button"
+                    key={a.id}
+                    onClick={() => toggleAllergy(a.id)}
+                    className={`btn-press px-2 py-1 rounded-lg text-[10px] font-semibold ${
+                      allergies.includes(a.id) ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white font-bold' : 'glass text-slate-400'
+                    }`}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Foods Chosen to Avoid
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {FOODS_TO_AVOID.map((a) => (
+                  <button
+                    type="button"
+                    key={a.id}
+                    onClick={() => toggleAllergy(a.id)}
+                    className={`btn-press px-2 py-1 rounded-lg text-[10px] font-semibold ${
+                      allergies.includes(a.id) ? 'bg-[#ff9f0a]/30 border border-[#ff9f0a] text-white font-bold' : 'glass text-slate-400'
+                    }`}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Allergy Adder */}
+            <div className="flex items-center space-x-2 pt-1">
+              <input
+                type="text"
+                value={customAllergy}
+                onChange={(e) => setCustomAllergy(e.target.value)}
+                placeholder="Add custom avoidance..."
+                className="flex-1 px-2.5 py-1.5 glass rounded-lg text-xs text-white focus:outline-none placeholder:text-slate-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomAllergy}
+                className="btn-press px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200"
+              >
+                Add
+              </button>
             </div>
           </div>
 

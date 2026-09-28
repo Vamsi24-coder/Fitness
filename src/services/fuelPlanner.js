@@ -126,225 +126,617 @@ export function getDayPeriodsSplit(currentPeriod) {
 }
 
 /**
- * Authentic Andhra Pradesh & South Indian meal templates calibrated with realistic portions
+ * Authentic Andhra Pradesh & South Indian meal templates categorized by DIET TYPE
+ * Strictly enforced for Vegetarian, Non-vegetarian, Eggetarian, and Vegan.
  */
+export const DIET_MEAL_TEMPLATES = {
+  non_vegetarian: {
+    Breakfast: {
+      standard: {
+        category: 'Breakfast',
+        title: '2 Pesarattu with Allam (Ginger) Chutney & 1 Boiled Egg',
+        itemsAndPortions: [
+          '2 medium Pesarattu (whole green gram moong dal crepes)',
+          '2 tbsp Allam (Ginger) Chutney',
+          '1 boiled egg with crushed black pepper',
+          '1 tall glass warm water or spiced ragi java',
+        ],
+        estimatedMacros: { calories: 380, carbs: 44, protein: 22, fats: 9, fiber: 9 },
+        whyThisWorks: 'Whole moong dal delivers sustained complex carbs and 9g prebiotic fiber, paired with egg protein for a steady metabolic start.',
+        quickAlternative: '3 Idlis with Drumstick Sambar & Coconut Chutney + 1 boiled egg',
+      },
+      highProtein: {
+        category: 'Breakfast',
+        title: 'Moong Dal Pesarattu with 2 Boiled Eggs & Allam Chutney',
+        itemsAndPortions: [
+          '2 medium whole moong Pesarattu',
+          '2 whole boiled eggs with crushed black pepper',
+          '2 tbsp fresh ginger (allam) & coconut chutney',
+          '1 cup warm spiced ragi porridge',
+        ],
+        estimatedMacros: { calories: 450, carbs: 45, protein: 29, fats: 14, fiber: 10 },
+        whyThisWorks: 'Supplies 29g high-biological-value protein to accelerate post-restoration muscle synthesis and keep satiety elevated.',
+        quickAlternative: 'Andhra Egg Porutu (3 eggs scrambled with green chillies & onions) + 2 Phulkas',
+      },
+    },
+    Lunch: {
+      standard: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, Boiled Eggs & Curd',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 medium bowl Palakura Pappu (Spinach Dal)',
+          '2 boiled eggs with black pepper',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: { calories: 510, carbs: 58, protein: 26, fats: 14, fiber: 8 },
+        whyThisWorks: 'Traditional Andhra lunch balanced with measured rice, iron-rich spinach dal, and egg protein to prevent afternoon glucose crashes.',
+        quickAlternative: '2 Phulkas with Andhra Egg Porutu and cucumber slices',
+      },
+      highProtein: {
+        category: 'Lunch',
+        title: 'Controlled Sona Masoori Rice with Andhra Kodi Kura & Spinach Dal',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '150g Andhra Chicken Curry (Kodi Kura with controlled oil)',
+          '1 small bowl Palakura Pappu',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: { calories: 560, carbs: 52, protein: 38, fats: 16, fiber: 7 },
+        whyThisWorks: 'Delivers 38g complete animal & legume protein to accelerate training repair while measuring rice for tight carb control.',
+        quickAlternative: '3 Phulkas with Chepala Pulusu (Andhra Fish Curry) and raw cucumber salad',
+      },
+      calorieControlled: {
+        category: 'Lunch',
+        title: '2 Phulkas with Thick Tomato Pappu, Boiled Egg Whites & Salad',
+        itemsAndPortions: [
+          '2 oil-free wheat Phulkas',
+          '1 generous bowl Tomato Pappu (lentils with tomatoes & spices)',
+          '3 boiled egg whites with roasted cumin',
+          '1 bowl sliced cucumbers & tomatoes with lemon squeeze',
+        ],
+        estimatedMacros: { calories: 420, carbs: 50, protein: 24, fats: 8, fiber: 9 },
+        whyThisWorks: 'High volume and fiber from lentils and fresh salad maximize fullness on a controlled calorie budget.',
+        quickAlternative: '1 cup steamed brown rice with vegetable chaaru and 2 boiled eggs',
+      },
+    },
+    Snacks: {
+      standard: {
+        category: 'Evening Snacks',
+        title: 'Chilled Spiced Buttermilk & Roasted Chana (Putnalu)',
+        itemsAndPortions: [
+          '1 tall glass spiced buttermilk (majjiga with crushed ginger, curry leaves, hing)',
+          '35g roasted chana / putnalu (or 2 boiled eggs with pepper)',
+          '1 small banana or guava for active electrolyte replenishment',
+        ],
+        estimatedMacros: { calories: 220, carbs: 22, protein: 15, fats: 6, fiber: 5 },
+        whyThisWorks: 'Electrolyte-rich majjiga aids digestive cooling in warm climates while roasted chana delivers crunch and 15g protein.',
+        quickAlternative: 'Moong sprouts salad with chopped onion, tomato, and lemon juice',
+      },
+      preWorkout: {
+        category: 'Evening Snacks',
+        title: '2 Boiled Eggs with Black Pepper & Chilled Majjiga',
+        itemsAndPortions: [
+          '2 boiled eggs sprinkled with black pepper and roasted cumin',
+          '1 tall glass spiced majjiga (buttermilk)',
+          '1 small banana (if workout is within 45 mins)',
+        ],
+        estimatedMacros: { calories: 230, carbs: 18, protein: 16, fats: 9, fiber: 3 },
+        whyThisWorks: 'Easily digestible protein and electrolytes hydrate muscle tissue before training without causing stomach fullness.',
+        quickAlternative: '1 cup Boiled Chickpeas / Sundal with mustard seed tempering',
+      },
+    },
+    Dinner: {
+      standard: {
+        category: 'Dinner',
+        title: '2 Phulkas with Light Andhra Chicken Curry & Cucumber Salad',
+        itemsAndPortions: [
+          '2 hot oil-free phulkas / chapatis',
+          '1 bowl Andhra chicken curry (or 2-egg curry)',
+          '1 bowl sliced cucumbers and tomatoes with lemon juice',
+        ],
+        estimatedMacros: { calories: 390, carbs: 38, protein: 29, fats: 11, fiber: 6 },
+        whyThisWorks: 'Phulkas digest easily before sleep while chicken/egg protein supports overnight muscle repair without bloating.',
+        quickAlternative: '1 cup light Jeera Rice or Rasam Rice with 2 boiled eggs',
+      },
+      highProteinLight: {
+        category: 'Dinner',
+        title: '2 Phulkas with 180g Andhra Kodi Kura & Tomato Rasam',
+        itemsAndPortions: [
+          '2 light wheat phulkas',
+          '180g lean Andhra chicken curry (Kodi Kura)',
+          '1 cup warm spiced tomato chaaru (rasam)',
+          'Sliced cucumber & onion with lime',
+        ],
+        estimatedMacros: { calories: 420, carbs: 34, protein: 36, fats: 12, fiber: 7 },
+        whyThisWorks: 'High protein density (36g) closes the day’s remaining protein deficit while keeping carbs moderate for nocturnal growth hormone release.',
+        quickAlternative: 'Moong dal pesarattu with egg porutu and fresh mint chaaru',
+      },
+      lightRecovery: {
+        category: 'Dinner',
+        title: '2 Phulkas with Moong Dal & Tomato Chaaru (Rasam)',
+        itemsAndPortions: [
+          '2 light phulkas',
+          '1 bowl yellow moong dal with cumin and garlic',
+          '1 cup warm clear tomato rasam / chaaru',
+          '2 boiled egg whites with pepper',
+        ],
+        estimatedMacros: { calories: 340, carbs: 42, protein: 21, fats: 7, fiber: 6 },
+        whyThisWorks: 'Gentle on digestion, rehydrates with spiced rasam, and fits comfortably within remaining calorie room.',
+        quickAlternative: '1 cup soft Pongal with vegetable sambar and boiled egg',
+      },
+    },
+  },
+
+  vegetarian: {
+    Breakfast: {
+      standard: {
+        category: 'Breakfast',
+        title: '2 Pesarattu with Allam Chutney & Spiced Paneer Bhurji',
+        itemsAndPortions: [
+          '2 medium whole moong Pesarattu',
+          '2 tbsp Allam (Ginger) Chutney',
+          '50g fresh Paneer Bhurji with green chillies & turmeric',
+          '1 tall glass warm water or spiced ragi java',
+        ],
+        estimatedMacros: { calories: 380, carbs: 46, protein: 21, fats: 11, fiber: 9 },
+        whyThisWorks: 'Whole moong dal combined with fresh paneer delivers 21g clean vegetarian protein and long-lasting satiety.',
+        quickAlternative: '3 Idlis with Drumstick Sambar, Coconut Chutney & 1 cup warm milk/ragi malt',
+      },
+      highProtein: {
+        category: 'Breakfast',
+        title: '2 Moong Dal Pesarattu with 80g Paneer Bhurji & Ragi Java',
+        itemsAndPortions: [
+          '2 medium Pesarattu',
+          '80g freshly scrambled Paneer with cumin and onions',
+          '2 tbsp Allam Chutney',
+          '1 cup unsweetened warm ragi porridge',
+        ],
+        estimatedMacros: { calories: 450, carbs: 48, protein: 27, fats: 15, fiber: 10 },
+        whyThisWorks: 'High vegetarian protein density (27g) anchors morning muscle synthesis without any meat or eggs.',
+        quickAlternative: 'Sprouted Moong Salad with chopped paneer, tomato, green chillies & 2 Phulkas',
+      },
+    },
+    Lunch: {
+      standard: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, 100g Paneer Curry & Fresh Curd',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 medium bowl Palakura Pappu (Spinach Dal)',
+          '100g light Paneer Curry with tomatoes and spices',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: { calories: 530, carbs: 60, protein: 27, fats: 16, fiber: 8 },
+        whyThisWorks: '100% vegetarian Andhra meal pairing lentil and dairy proteins for a complete amino acid profile.',
+        quickAlternative: '2 Phulkas with Paneer Bhurji and Dosakaya Pappu',
+      },
+      highProtein: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Soya Chunks Curry, Thick Dal Tadka & Fresh Curd',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 bowl high-protein Soya Chunks Curry in Andhra onion-tomato gravy',
+          '1 small bowl Thick Toor Dal Tadka',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: { calories: 540, carbs: 55, protein: 35, fats: 14, fiber: 10 },
+        whyThisWorks: 'Soya chunks deliver an outstanding 35g plant protein with rich prebiotic fiber to fuel training recovery.',
+        quickAlternative: '3 Phulkas with Palak Paneer and Thick Dal',
+      },
+      calorieControlled: {
+        category: 'Lunch',
+        title: '2 Phulkas with Thick Tomato Pappu, 80g Boiled Chana & Cucumber Salad',
+        itemsAndPortions: [
+          '2 oil-free wheat Phulkas',
+          '1 generous bowl Tomato Pappu (lentils with tomatoes & spices)',
+          '80g boiled white or black chickpeas (Chana / Guggillu)',
+          '1 bowl sliced cucumbers & tomatoes with lemon juice',
+        ],
+        estimatedMacros: { calories: 410, carbs: 54, protein: 21, fats: 7, fiber: 11 },
+        whyThisWorks: 'High volume and fiber from chickpeas and lentils ensure high fullness on a deficit budget.',
+        quickAlternative: '1 cup steamed brown rice with vegetable chaaru and thick moong dal',
+      },
+    },
+    Snacks: {
+      standard: {
+        category: 'Evening Snacks',
+        title: 'Chilled Spiced Buttermilk & Roasted Chana (Putnalu)',
+        itemsAndPortions: [
+          '1 tall glass spiced majjiga (buttermilk with ginger, curry leaves & hing)',
+          '40g roasted chana / putnalu',
+          '1 small banana or guava',
+        ],
+        estimatedMacros: { calories: 210, carbs: 26, protein: 12, fats: 5, fiber: 6 },
+        whyThisWorks: 'Refreshing digestive cooling with slow-digesting vegetarian protein and zero heavy fats.',
+        quickAlternative: 'Moong sprouts salad with chopped onion, tomato, and lemon juice',
+      },
+      preWorkout: {
+        category: 'Evening Snacks',
+        title: 'Moong Sprouts Salad with Paneer & Chilled Buttermilk',
+        itemsAndPortions: [
+          '1 bowl freshly sprouted moong beans with chopped cucumber, tomato, and lime',
+          '40g diced fresh paneer',
+          '1 tall glass spiced majjiga',
+        ],
+        estimatedMacros: { calories: 230, carbs: 20, protein: 16, fats: 8, fiber: 6 },
+        whyThisWorks: 'Living enzymes from sprouts plus dairy electrolytes optimize physical stamina before evening workouts.',
+        quickAlternative: '1 cup Boiled Black Chana Sundal (Guggillu)',
+      },
+    },
+    Dinner: {
+      standard: {
+        category: 'Dinner',
+        title: '2 Phulkas with 100g Paneer Curry, Yellow Dal & Cucumber Salad',
+        itemsAndPortions: [
+          '2 hot oil-free phulkas',
+          '100g Paneer Curry in light tomato-onion gravy',
+          '1 small bowl yellow moong dal',
+          'Sliced cucumber and tomato with lemon',
+        ],
+        estimatedMacros: { calories: 410, carbs: 42, protein: 26, fats: 14, fiber: 7 },
+        whyThisWorks: 'Slow-digesting casein from paneer supports overnight muscle repair without weighing down digestion.',
+        quickAlternative: '1 cup soft Pongal with vegetable sambar and curd',
+      },
+      highProteinLight: {
+        category: 'Dinner',
+        title: '2 Phulkas with 120g Soya Chunks Curry & Tomato Chaaru (Rasam)',
+        itemsAndPortions: [
+          '2 light wheat phulkas',
+          '120g high-protein Soya Chunks Curry',
+          '1 cup warm clear tomato rasam',
+          'Sliced cucumber & onions with lemon juice',
+        ],
+        estimatedMacros: { calories: 410, carbs: 40, protein: 32, fats: 9, fiber: 9 },
+        whyThisWorks: 'Provides 32g clean plant protein on a light carb baseline to optimize nighttime metabolic rate.',
+        quickAlternative: 'Moong dal pesarattu with Paneer Bhurji and fresh chaaru',
+      },
+      lightRecovery: {
+        category: 'Dinner',
+        title: '2 Phulkas with Yellow Moong Dal & Spiced Tomato Chaaru',
+        itemsAndPortions: [
+          '2 light phulkas',
+          '1 bowl yellow moong dal with cumin & garlic',
+          '1 cup warm clear tomato rasam / chaaru',
+          'Cucumber salad with a pinch of black salt',
+        ],
+        estimatedMacros: { calories: 320, carbs: 44, protein: 16, fats: 6, fiber: 7 },
+        whyThisWorks: 'Light on digestion, rehydrates with spiced rasam, and fits comfortably within remaining calorie budget.',
+        quickAlternative: '1 bowl vegetable daliya khichdi with curd',
+      },
+    },
+  },
+
+  eggetarian: {
+    Breakfast: {
+      standard: {
+        category: 'Breakfast',
+        title: '2 Pesarattu with Allam Chutney & 1 Boiled Egg',
+        itemsAndPortions: [
+          '2 medium whole moong Pesarattu',
+          '2 tbsp Allam (Ginger) Chutney',
+          '1 boiled egg with black pepper',
+          '1 tall glass warm water or spiced ragi java',
+        ],
+        estimatedMacros: { calories: 380, carbs: 44, protein: 22, fats: 9, fiber: 9 },
+        whyThisWorks: 'Whole moong dal paired with egg protein provides complete amino acids without any meat or poultry.',
+        quickAlternative: '3 Idlis with Sambar & 1 boiled egg',
+      },
+      highProtein: {
+        category: 'Breakfast',
+        title: 'Andhra Egg Porutu (3 Eggs Scrambled) with 2 Phulkas',
+        itemsAndPortions: [
+          '3 eggs scrambled with onions, green chillies, turmeric, and curry leaves',
+          '2 soft oil-free wheat phulkas',
+          '1 cup warm unsweetened ragi porridge',
+        ],
+        estimatedMacros: { calories: 440, carbs: 36, protein: 28, fats: 16, fiber: 6 },
+        whyThisWorks: 'Supplies 28g high-bioavailability egg protein to jumpstart morning muscle repair and satiety.',
+        quickAlternative: '2 Pesarattu with 2 boiled eggs and ginger chutney',
+      },
+    },
+    Lunch: {
+      standard: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, 2 Boiled Eggs & Curd',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 medium bowl Palakura Pappu (Spinach Dal)',
+          '2 boiled eggs with pepper',
+          '1 small katori fresh homemade curd (perugu)',
+        ],
+        estimatedMacros: { calories: 510, carbs: 58, protein: 26, fats: 14, fiber: 8 },
+        whyThisWorks: 'Balanced eggetarian lunch combining lentils, whole eggs, and probiotic curd.',
+        quickAlternative: '2 Phulkas with Andhra 2-Egg Curry and cucumber slices',
+      },
+      highProtein: {
+        category: 'Lunch',
+        title: '2 Phulkas with 3-Egg Andhra Curry, Spinach Dal & Curd',
+        itemsAndPortions: [
+          '2 soft phulkas',
+          '3-egg Andhra Curry in aromatic onion-tomato gravy',
+          '1 small bowl Palakura Pappu',
+          '1 small katori fresh homemade curd',
+        ],
+        estimatedMacros: { calories: 530, carbs: 48, protein: 32, fats: 18, fiber: 7 },
+        whyThisWorks: 'Supplies 32g egg and lentil protein with controlled complex carbs.',
+        quickAlternative: 'Steamed rice with 3 boiled eggs, dal, and fresh salad',
+      },
+      calorieControlled: {
+        category: 'Lunch',
+        title: '2 Phulkas with Tomato Pappu, 3 Boiled Egg Whites & Salad',
+        itemsAndPortions: [
+          '2 oil-free wheat Phulkas',
+          '1 generous bowl Tomato Pappu',
+          '3 boiled egg whites with pepper',
+          '1 bowl sliced cucumbers & tomatoes with lemon squeeze',
+        ],
+        estimatedMacros: { calories: 420, carbs: 50, protein: 24, fats: 8, fiber: 9 },
+        whyThisWorks: 'High volume and fiber from lentils and fresh salad with clean egg white protein.',
+        quickAlternative: '1 cup steamed brown rice with vegetable chaaru and 2 boiled eggs',
+      },
+    },
+    Snacks: {
+      standard: {
+        category: 'Evening Snacks',
+        title: 'Chilled Spiced Buttermilk & Roasted Chana (Putnalu)',
+        itemsAndPortions: [
+          '1 tall glass spiced buttermilk (majjiga)',
+          '35g roasted chana / putnalu (or 2 boiled eggs)',
+          '1 small banana or guava',
+        ],
+        estimatedMacros: { calories: 220, carbs: 22, protein: 15, fats: 6, fiber: 5 },
+        whyThisWorks: 'Electrolyte-rich majjiga aids cooling while roasted chana provides steady plant protein.',
+        quickAlternative: 'Moong sprouts salad with 1 boiled egg and lime',
+      },
+      preWorkout: {
+        category: 'Evening Snacks',
+        title: '2 Boiled Eggs with Black Pepper & Chilled Majjiga',
+        itemsAndPortions: [
+          '2 boiled eggs with black pepper',
+          '1 tall glass spiced majjiga',
+          '1 small banana (if training within 45 mins)',
+        ],
+        estimatedMacros: { calories: 230, carbs: 18, protein: 16, fats: 9, fiber: 3 },
+        whyThisWorks: 'Clean, easily digestible protein and electrolytes hydrate muscle tissue before workouts.',
+        quickAlternative: '1 cup Boiled Chickpeas / Sundal with 1 boiled egg',
+      },
+    },
+    Dinner: {
+      standard: {
+        category: 'Dinner',
+        title: '2 Phulkas with 2-Egg Andhra Curry & Sliced Cucumber',
+        itemsAndPortions: [
+          '2 hot oil-free phulkas',
+          '2-egg Andhra Curry in light tomato-onion gravy',
+          '1 bowl sliced cucumbers and tomatoes with lemon juice',
+        ],
+        estimatedMacros: { calories: 380, carbs: 38, protein: 24, fats: 12, fiber: 6 },
+        whyThisWorks: 'Easy on digestion before bedtime while fulfilling amino acid requirements for recovery.',
+        quickAlternative: '1 cup light Jeera Rice or Rasam Rice with 2 boiled eggs',
+      },
+      highProteinLight: {
+        category: 'Dinner',
+        title: '2 Phulkas with 3-Egg Porutu (Scramble) & Tomato Chaaru',
+        itemsAndPortions: [
+          '2 light wheat phulkas',
+          '3-egg scramble with green chillies, onions & curry leaves',
+          '1 cup warm clear tomato rasam (chaaru)',
+          'Sliced cucumber & onions with lime',
+        ],
+        estimatedMacros: { calories: 410, carbs: 32, protein: 30, fats: 15, fiber: 5 },
+        whyThisWorks: 'High protein density (30g) cleanly closes remaining protein needs without meat or fish.',
+        quickAlternative: 'Moong dal pesarattu with egg porutu and fresh mint chaaru',
+      },
+      lightRecovery: {
+        category: 'Dinner',
+        title: '2 Phulkas with Moong Dal, Tomato Chaaru & 2 Egg Whites',
+        itemsAndPortions: [
+          '2 light phulkas',
+          '1 bowl yellow moong dal with cumin & garlic',
+          '1 cup warm clear tomato rasam',
+          '2 boiled egg whites with pepper',
+        ],
+        estimatedMacros: { calories: 340, carbs: 42, protein: 21, fats: 7, fiber: 6 },
+        whyThisWorks: 'Gentle on digestion, rehydrates with spiced rasam, and fits comfortably within remaining calorie budget.',
+        quickAlternative: '1 cup soft Pongal with vegetable sambar and boiled egg white',
+      },
+    },
+  },
+
+  vegan: {
+    Breakfast: {
+      standard: {
+        category: 'Breakfast',
+        title: '2 Green Moong Pesarattu with Allam Chutney & Spiced Ragi Java',
+        itemsAndPortions: [
+          '2 medium whole moong Pesarattu (no ghee)',
+          '2 tbsp Allam (Ginger) Chutney (no dairy)',
+          '1 cup warm unsweetened spiced ragi porridge with water/plant milk',
+          '1 small bowl sprouted moong salad with lemon',
+        ],
+        estimatedMacros: { calories: 370, carbs: 54, protein: 19, fats: 5, fiber: 11 },
+        whyThisWorks: '100% plant-based breakfast supplying sustained complex carbohydrates and prebiotic fiber without animal products.',
+        quickAlternative: '3 Idlis with Drumstick Sambar & Coconut Chutney (no dairy)',
+      },
+      highProtein: {
+        category: 'Breakfast',
+        title: '2 Moong Pesarattu with 80g Spiced Tofu Bhurji & Ragi Java',
+        itemsAndPortions: [
+          '2 medium whole moong Pesarattu',
+          '80g scrambled organic Tofu with turmeric, green chillies & onions',
+          '2 tbsp Allam Chutney',
+          '1 cup warm ragi java',
+        ],
+        estimatedMacros: { calories: 420, carbs: 50, protein: 25, fats: 10, fiber: 11 },
+        whyThisWorks: 'Supplies 25g pure vegan protein from moong dal and tofu to fuel morning muscle protein synthesis.',
+        quickAlternative: 'Sprouted Moong & Kala Chana Salad with 2 whole wheat Phulkas',
+      },
+    },
+    Lunch: {
+      standard: {
+        category: 'Lunch',
+        title: 'Steamed Rice with Palakura Pappu, 100g Soya Chunks & Salad',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 medium bowl Palakura Pappu (Spinach Dal made with vegetable oil, no ghee)',
+          '100g Soya Chunks Curry in aromatic tomato gravy',
+          '1 bowl fresh cucumber, tomato & onion salad with lemon',
+        ],
+        estimatedMacros: { calories: 510, carbs: 62, protein: 28, fats: 10, fiber: 11 },
+        whyThisWorks: '100% vegan meal pairing lentil and soya proteins for complete plant amino acids.',
+        quickAlternative: '2 Phulkas with Soya Chunks Curry and Dosakaya Pappu',
+      },
+      highProtein: {
+        category: 'Lunch',
+        title: 'Steamed Rice with High-Protein Soya Chunks & Thick Green Gram Dal',
+        itemsAndPortions: [
+          '1 cup steamed Sona Masoori rice (~150g cooked)',
+          '1 generous bowl Soya Chunks Curry in Andhra spices',
+          '1 small bowl Thick Whole Green Gram (Moong) Dal',
+          'Raw cucumber & carrot slices with lemon juice',
+        ],
+        estimatedMacros: { calories: 530, carbs: 58, protein: 34, fats: 11, fiber: 13 },
+        whyThisWorks: 'Delivers 34g plant-based protein with exceptional fiber for lasting satiety and glucose control.',
+        quickAlternative: '3 Phulkas with Tofu Curry and Thick Toor Dal',
+      },
+      calorieControlled: {
+        category: 'Lunch',
+        title: '2 Phulkas with Thick Tomato Pappu, 80g Boiled Chana & Salad',
+        itemsAndPortions: [
+          '2 oil-free wheat Phulkas',
+          '1 generous bowl Tomato Pappu (no ghee/butter)',
+          '80g boiled Kala Chana (black chickpeas) with mustard tempering',
+          '1 bowl sliced cucumbers & tomatoes with lemon squeeze',
+        ],
+        estimatedMacros: { calories: 400, carbs: 56, protein: 20, fats: 6, fiber: 12 },
+        whyThisWorks: 'High volume and fiber from chickpeas and lentils ensure high fullness on a vegan calorie budget.',
+        quickAlternative: '1 cup steamed brown rice with vegetable chaaru and thick moong dal',
+      },
+    },
+    Snacks: {
+      standard: {
+        category: 'Evening Snacks',
+        title: 'Spiced Moong Sprouts Salad & Roasted Chana (Putnalu)',
+        itemsAndPortions: [
+          '1 bowl fresh moong sprouts with chopped onion, tomato, green chilli & lime',
+          '35g roasted chana / putnalu',
+          '1 tall glass lemon water or coconut water',
+        ],
+        estimatedMacros: { calories: 210, carbs: 28, protein: 13, fats: 4, fiber: 7 },
+        whyThisWorks: 'Enzyme-rich sprouts and roasted chana provide clean plant protein and hydration with zero dairy.',
+        quickAlternative: 'Boiled Peanuts / Kala Chana Sundal with curry leaf tempering',
+      },
+      preWorkout: {
+        category: 'Evening Snacks',
+        title: 'Roasted Chana (Putnalu) + 1 Medium Banana & Coconut Water',
+        itemsAndPortions: [
+          '40g roasted chana (putnalu)',
+          '1 medium ripe banana',
+          '1 glass tender coconut water or lemon-mint water',
+        ],
+        estimatedMacros: { calories: 230, carbs: 34, protein: 11, fats: 4, fiber: 6 },
+        whyThisWorks: 'Potassium from banana and plant protein from chana prime muscular endurance before workouts.',
+        quickAlternative: '1 cup Boiled Black Chana (Guggillu) with lemon',
+      },
+    },
+    Dinner: {
+      standard: {
+        category: 'Dinner',
+        title: '2 Phulkas with 100g Soya Chunks Curry, Moong Dal & Cucumber',
+        itemsAndPortions: [
+          '2 hot oil-free phulkas',
+          '100g Soya Chunks Curry in light tomato-onion gravy',
+          '1 small bowl yellow moong dal (no ghee)',
+          'Sliced cucumber and tomato with lemon juice',
+        ],
+        estimatedMacros: { calories: 390, carbs: 46, protein: 27, fats: 8, fiber: 9 },
+        whyThisWorks: '100% plant-based dinner that digests easily before sleep while fulfilling recovery protein.',
+        quickAlternative: '1 cup light Jeera Rice with Soya Curry and Tomato Chaaru',
+      },
+      highProteinLight: {
+        category: 'Dinner',
+        title: '2 Phulkas with 120g Tofu / Soya Masala & Clear Tomato Chaaru',
+        itemsAndPortions: [
+          '2 light wheat phulkas',
+          '120g Tofu or Soya Chunks in Andhra curry spices',
+          '1 cup warm clear tomato rasam / chaaru',
+          'Sliced cucumber & onions with lime',
+        ],
+        estimatedMacros: { calories: 410, carbs: 42, protein: 31, fats: 10, fiber: 10 },
+        whyThisWorks: 'Provides 31g pure vegan protein on a light carb baseline for optimal nighttime recovery.',
+        quickAlternative: 'Moong dal pesarattu with Tofu Bhurji and fresh chaaru',
+      },
+      lightRecovery: {
+        category: 'Dinner',
+        title: '2 Phulkas with Yellow Moong Dal & Clear Tomato Chaaru',
+        itemsAndPortions: [
+          '2 light phulkas',
+          '1 bowl yellow moong dal with cumin & garlic (no ghee)',
+          '1 cup warm clear tomato rasam / chaaru',
+          'Sliced cucumber with lemon juice',
+        ],
+        estimatedMacros: { calories: 310, carbs: 44, protein: 15, fats: 5, fiber: 7 },
+        whyThisWorks: 'Gentle on digestion, rehydrates with spiced rasam, and fits comfortably within remaining calorie budget.',
+        quickAlternative: '1 bowl vegetable daliya khichdi with tomato chutney',
+      },
+    },
+  },
+};
+
+/**
+ * Universal meal template selector respecting DIET and ALLERGIES strictly
+ */
+export function getDietMealTemplate(category, variant, profile) {
+  let diet = (profile?.diet_preference || 'no_preference').toLowerCase();
+  if (diet === 'no_preference') diet = 'non_vegetarian';
+  if (!DIET_MEAL_TEMPLATES[diet]) diet = 'vegetarian';
+
+  const categoryTemplates = DIET_MEAL_TEMPLATES[diet]?.[category] || DIET_MEAL_TEMPLATES.vegetarian[category];
+  const meal = categoryTemplates?.[variant] || categoryTemplates?.standard;
+
+  if (!meal) {
+    return DIET_MEAL_TEMPLATES.vegetarian.Lunch.standard;
+  }
+
+  // Check for allergy exclusions on dairy / eggs / peanuts / gluten
+  const allergies = Array.isArray(profile?.allergies) ? profile.allergies : [];
+  let adapted = { ...meal, itemsAndPortions: [...meal.itemsAndPortions] };
+
+  if (allergies.includes('dairy')) {
+    adapted.title = adapted.title.replace(/paneer/gi, 'Tofu').replace(/curd/gi, 'Rasam').replace(/buttermilk|majjiga/gi, 'Lemon-Mint Water');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/paneer/gi, 'Tofu')
+          .replace(/curd|perugu/gi, 'warm clear rasam')
+          .replace(/buttermilk|majjiga/gi, 'spiced lemon-mint water')
+    );
+  }
+
+  if (allergies.includes('eggs')) {
+    adapted.title = adapted.title.replace(/egg[s]?|boiled egg[s]?|egg porutu/gi, 'Paneer / Dal');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/boiled egg[s]?|egg whites|egg porutu/gi, 'fresh paneer or thick dal')
+    );
+  }
+
+  if (allergies.includes('peanuts')) {
+    adapted.title = adapted.title.replace(/peanut chutney|peanut podi/gi, 'Allam (Ginger) Chutney');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/peanut chutney|peanut podi/gi, 'fresh allam or coconut chutney')
+    );
+  }
+
+  if (allergies.includes('gluten')) {
+    adapted.title = adapted.title.replace(/phulkas|chapatis/gi, 'Steamed Rice / Pesarattu');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/phulkas|chapatis/gi, 'steamed Sona Masoori rice or moong pesarattu')
+    );
+  }
+
+  return adapted;
+}
+
 export const ANDHRA_MEAL_TEMPLATES = {
-  Breakfast: {
-    standard: {
-      category: 'Breakfast',
-      title: '2 Pesarattu with Allam (Ginger) Chutney & 1 Boiled Egg',
-      itemsAndPortions: [
-        '2 medium Pesarattu (whole green gram moong dal crepes)',
-        '2 tbsp Allam (Ginger) Chutney',
-        '1 boiled egg with black pepper (or 50g paneer bhurji)',
-        '1 tall glass warm water or spiced ragi java',
-      ],
-      estimatedMacros: {
-        calories: 380,
-        carbs: 44,
-        protein: 22,
-        fats: 9,
-        fiber: 9,
-      },
-      whyThisWorks: 'Whole moong dal delivers sustained complex carbs and 9g prebiotic fiber, paired with egg protein for a steady metabolic start without insulin spikes.',
-      quickAlternative: '3 Idlis with Drumstick Sambar & Peanut Chutney + 1 boiled egg',
-    },
-    highProtein: {
-      category: 'Breakfast',
-      title: 'Moong Dal Pesarattu with Double Boiled Eggs & Coconut Chutney',
-      itemsAndPortions: [
-        '2 medium whole moong Pesarattu',
-        '2 whole boiled eggs with crushed black pepper',
-        '2 tbsp fresh coconut/peanut chutney & allam chutney',
-        '1 cup warm spiced ragi porridge (unsweetened)',
-      ],
-      estimatedMacros: {
-        calories: 450,
-        carbs: 45,
-        protein: 29,
-        fats: 14,
-        fiber: 10,
-      },
-      whyThisWorks: 'Supplies 29g high-biological-value protein to jumpstart muscle recovery and keep satiety elevated through the morning.',
-      quickAlternative: 'Andhra Egg Porutu (3 eggs scrambled with green chillies & onions) + 2 Phulkas',
-    },
-  },
-
-  Lunch: {
-    standard: {
-      category: 'Lunch',
-      title: 'Steamed Rice with Palakura Pappu, Boiled Eggs & Curd',
-      itemsAndPortions: [
-        '1 cup steamed Sona Masoori rice (~150g cooked)',
-        '1 medium bowl Palakura Pappu (Spinach Dal)',
-        '2 boiled eggs (or 100g Paneer / Soya Chunks Curry for vegetarian)',
-        '1 small katori fresh homemade curd (perugu)',
-      ],
-      estimatedMacros: {
-        calories: 510,
-        carbs: 58,
-        protein: 26,
-        fats: 14,
-        fiber: 8,
-      },
-      whyThisWorks: 'Traditional Andhra lunch balanced with measured rice, iron-rich spinach dal, and egg protein to prevent afternoon drowsiness while satisfying calorie needs.',
-      quickAlternative: '2 Phulkas with Andhra Egg Porutu and cucumber slices',
-    },
-    highProtein: {
-      category: 'Lunch',
-      title: 'Controlled Sona Masoori Rice with Andhra Kodi Kura & Spinach Dal',
-      itemsAndPortions: [
-        '1 cup steamed Sona Masoori rice (~150g cooked)',
-        '150g Andhra Chicken Curry (Kodi Kura) or 150g Paneer Curry',
-        '1 small bowl Palakura Pappu',
-        '1 small katori fresh homemade curd (perugu)',
-      ],
-      estimatedMacros: {
-        calories: 560,
-        carbs: 52,
-        protein: 38,
-        fats: 16,
-        fiber: 7,
-      },
-      whyThisWorks: 'Delivers 38g protein to accelerate post-workout repair while measuring rice to keep total carbs in check.',
-      quickAlternative: '3 Phulkas with Chepala Pulusu (Andhra Fish Curry) and raw cucumber salad',
-    },
-    calorieControlled: {
-      category: 'Lunch',
-      title: '2 Phulkas with Thick Tomato Pappu, Boiled Egg Whites & Cucumber Salad',
-      itemsAndPortions: [
-        '2 oil-free wheat Phulkas',
-        '1 generous bowl Tomato Pappu (lentils with tomatoes & spices)',
-        '3 boiled egg whites (or 80g boiled chickpeas/chana)',
-        '1 bowl sliced cucumbers & tomatoes with lemon squeeze',
-      ],
-      estimatedMacros: {
-        calories: 420,
-        carbs: 50,
-        protein: 24,
-        fats: 8,
-        fiber: 9,
-      },
-      whyThisWorks: 'High volume and fiber from lentils and fresh salad maximize fullness on a controlled calorie budget.',
-      quickAlternative: '1 cup steamed brown rice with vegetable chaaru and 2 boiled eggs',
-    },
-  },
-
-  Snacks: {
-    standard: {
-      category: 'Evening Snacks',
-      title: 'Chilled Spiced Buttermilk & Roasted Chana (Putnalu)',
-      itemsAndPortions: [
-        '1 tall glass spiced buttermilk (majjiga with crushed ginger, curry leaves, hing)',
-        '35g roasted chana / putnalu (or 2 boiled eggs with pepper)',
-        '1 small banana or guava for active electrolyte replenish',
-      ],
-      estimatedMacros: {
-        calories: 220,
-        carbs: 22,
-        protein: 15,
-        fats: 6,
-        fiber: 5,
-      },
-      whyThisWorks: 'Electrolyte-rich majjiga aids digestive cooling in warm climates while roasted chana delivers crunch and 15g protein without excess saturated fats.',
-      quickAlternative: 'Moong sprouts salad with chopped onion, tomato, and lemon juice',
-    },
-    preWorkout: {
-      category: 'Evening Snacks',
-      title: 'Spiced Buttermilk with Banana & Boiled Eggs',
-      itemsAndPortions: [
-        '1 medium ripe banana (quick-burning glycogen)',
-        '2 boiled egg whites with rock salt and pepper',
-        '1 glass light majjiga for hydration and cramping prevention',
-      ],
-      estimatedMacros: {
-        calories: 210,
-        carbs: 28,
-        protein: 14,
-        fats: 3,
-        fiber: 4,
-      },
-      whyThisWorks: 'Fast-digesting potassium from banana fuels muscle contraction while light protein primes amino acid availability for training.',
-      quickAlternative: '1 cup warm ragi java with jaggery and a handful of roasted peanuts',
-    },
-  },
-
-  Dinner: {
-    standard: {
-      category: 'Dinner',
-      title: '2 Phulkas with Light Kodi Kura (Chicken Curry) or Egg Curry',
-      itemsAndPortions: [
-        '2 hot wheat Phulkas / chapatis without excess oil',
-        '1 bowl Andhra chicken curry or 2-egg curry (or thick Tadka Dal / Paneer)',
-        'Sliced cucumber, tomato, and onion salad with lemon',
-      ],
-      estimatedMacros: {
-        calories: 390,
-        carbs: 38,
-        protein: 29,
-        fats: 11,
-        fiber: 6,
-      },
-      whyThisWorks: 'Phulkas digest easily before sleep while lean chicken or egg protein supports overnight muscle repair without nocturnal bloating.',
-      quickAlternative: '1 cup light Jeera Rice or Rasam Rice with 2 boiled eggs and green vegetable curry',
-    },
-    highProteinLight: {
-      category: 'Dinner',
-      title: '2 Phulkas with High-Protein Kodi Kura & Leafy Green Vepudu',
-      itemsAndPortions: [
-        '2 dry phulkas',
-        '180g lean chicken breast curry (Kodi Kura) or 150g grilled tofu/paneer',
-        '1 small bowl Thotakura (amaranth) or Palakura stir-fry (vepudu)',
-        '1 bowl fresh sliced cucumbers',
-      ],
-      estimatedMacros: {
-        calories: 420,
-        carbs: 34,
-        protein: 36,
-        fats: 12,
-        fiber: 7,
-      },
-      whyThisWorks: 'High protein density (36g) closes the day’s remaining protein deficit while keeping carbs moderate for nocturnal growth hormone release.',
-      quickAlternative: 'Moong dal pesarattu with egg porutu and fresh mint chaaru',
-    },
-    lightRecovery: {
-      category: 'Dinner',
-      title: '2 Phulkas with Moong Dal & Tomato Chaaru (Rasam)',
-      itemsAndPortions: [
-        '2 light phulkas',
-        '1 bowl yellow moong dal with cumin and garlic',
-        '1 cup warm clear tomato rasam / chaaru',
-        '2 boiled egg whites with pepper',
-      ],
-      estimatedMacros: {
-        calories: 340,
-        carbs: 42,
-        protein: 21,
-        fats: 7,
-        fiber: 6,
-      },
-      whyThisWorks: 'Gentle on digestion, rehydrates with spiced rasam, and fits comfortably within remaining calorie room.',
-      quickAlternative: '1 cup soft Pongal with vegetable sambar and boiled egg',
-    },
-  },
-
-  TomorrowBreakfast: {
-    standard: {
-      category: "Tomorrow's Breakfast",
-      title: 'High-Protein Moong Dal Pesarattu with Allam Chutney & Egg',
-      portion: '2 medium Pesarattu + 1 boiled egg + ginger chutney',
-      estCalories: 380,
-      estProtein: 22,
-    },
-    alternative: {
-      category: "Tomorrow's Breakfast",
-      title: 'Steamed Idlis with Drumstick Sambar & Peanut Podi',
-      portion: '3 idlis + sambar + 1 boiled egg',
-      estCalories: 360,
-      estProtein: 19,
-    },
-  },
-
   DayComplete: {
     category: 'Day Completed',
     title: 'Daily Nutrition Cycle Completed',
@@ -357,23 +749,16 @@ export const ANDHRA_MEAL_TEMPLATES = {
     whyThisWorks: 'Consistent logging and meal adherence form the bedrock of sustainable health and body composition.',
     quickAlternative: 'Prepare tomorrow morning moong batter or boiled eggs in advance.',
   },
-
   LateNight: {
     category: 'Late Night',
     title: 'Overnight Digestion & Sleep Recovery',
     itemsAndPortions: [
       'Meal window closed for heavy digestion',
       '1 glass warm water with a pinch of cumin or ginger',
-      'If hungry, 1 cup light spiced buttermilk or 1 boiled egg white',
+      'If hungry, 1 cup light spiced buttermilk or warm herbal tea',
       'Plan for Tomorrow Breakfast at 7:00 - 8:30 AM',
     ],
-    estimatedMacros: {
-      calories: 60,
-      carbs: 4,
-      protein: 6,
-      fats: 1,
-      fiber: 0,
-    },
+    estimatedMacros: { calories: 60, carbs: 4, protein: 6, fats: 1, fiber: 0 },
     whyThisWorks: 'Eating heavy meals late at night disrupts REM and deep slow-wave sleep. Light hydration supports overnight cellular repair.',
     quickAlternative: 'Herbal chamomile tea or warm turmeric water',
   },
@@ -435,30 +820,34 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = proteinGap > 30 ? 'High Protein Anchor' : 'Clean Morning Fuel';
 
       nextMealData = proteinGap > 30 
-        ? ANDHRA_MEAL_TEMPLATES.Breakfast.highProtein 
-        : ANDHRA_MEAL_TEMPLATES.Breakfast.standard;
+        ? getDietMealTemplate('Breakfast', 'highProtein', profile) 
+        : getDietMealTemplate('Breakfast', 'standard', profile);
+
+      const lunchPreview = getDietMealTemplate('Lunch', 'standard', profile);
+      const snackPreview = getDietMealTemplate('Snacks', 'standard', profile);
+      const dinnerPreview = getDietMealTemplate('Dinner', 'standard', profile);
 
       laterMeals = [
         {
           category: 'Lunch',
-          title: ANDHRA_MEAL_TEMPLATES.Lunch.standard.title,
-          portion: '1 cup Sona Masoori rice + Palakura Pappu + 2 eggs + curd',
-          estCalories: 510,
-          estProtein: 26,
+          title: lunchPreview.title,
+          portion: lunchPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: lunchPreview.estimatedMacros.calories,
+          estProtein: lunchPreview.estimatedMacros.protein,
         },
         {
           category: 'Evening Snacks',
-          title: ANDHRA_MEAL_TEMPLATES.Snacks.standard.title,
-          portion: '1 tall glass majjiga + 35g putnalu (roasted chana)',
-          estCalories: 220,
-          estProtein: 15,
+          title: snackPreview.title,
+          portion: snackPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: snackPreview.estimatedMacros.calories,
+          estProtein: snackPreview.estimatedMacros.protein,
         },
         {
           category: 'Dinner',
-          title: ANDHRA_MEAL_TEMPLATES.Dinner.standard.title,
-          portion: '2 phulkas + 1 bowl chicken curry/dal + salad',
-          estCalories: 390,
-          estProtein: 29,
+          title: dinnerPreview.title,
+          portion: dinnerPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: dinnerPreview.estimatedMacros.calories,
+          estProtein: dinnerPreview.estimatedMacros.protein,
         },
       ];
     } else {
@@ -466,27 +855,30 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       stage = 'recommend_lunch';
       nextCategory = 'Lunch';
       headline = 'Breakfast Logged • Balanced Andhra Lunch Plan';
-      alreadyEatenDiagnosis = `Breakfast logged (${summary.calories} kcal, ${Math.round(summary.protein)}g protein). Plan your lunch around measured rice, protein-dense dal, and eggs to stay on target.`;
+      alreadyEatenDiagnosis = `Breakfast logged (${summary.calories} kcal, ${Math.round(summary.protein)}g protein). Plan your lunch around measured rice, protein-dense dal, and healthy sides to stay on target.`;
       primaryFocus = proteinGap > 40 ? 'High Protein Anchor' : 'Balanced Macro Split';
 
       nextMealData = proteinGap > 40
-        ? ANDHRA_MEAL_TEMPLATES.Lunch.highProtein
-        : ANDHRA_MEAL_TEMPLATES.Lunch.standard;
+        ? getDietMealTemplate('Lunch', 'highProtein', profile)
+        : getDietMealTemplate('Lunch', 'standard', profile);
+
+      const snackPreview = getDietMealTemplate('Snacks', 'standard', profile);
+      const dinnerPreview = getDietMealTemplate('Dinner', 'standard', profile);
 
       laterMeals = [
         {
           category: 'Evening Snacks',
-          title: ANDHRA_MEAL_TEMPLATES.Snacks.standard.title,
-          portion: '1 glass spiced buttermilk + roasted chana',
-          estCalories: 220,
-          estProtein: 15,
+          title: snackPreview.title,
+          portion: snackPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: snackPreview.estimatedMacros.calories,
+          estProtein: snackPreview.estimatedMacros.protein,
         },
         {
           category: 'Dinner',
-          title: ANDHRA_MEAL_TEMPLATES.Dinner.standard.title,
-          portion: '2 phulkas + chicken curry or dal + salad',
-          estCalories: 390,
-          estProtein: 29,
+          title: dinnerPreview.title,
+          portion: dinnerPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: dinnerPreview.estimatedMacros.calories,
+          estProtein: dinnerPreview.estimatedMacros.protein,
         },
       ];
     }
@@ -500,38 +892,42 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
         : 'Lunch Time • Refuel & Catch Up on Protein';
 
       alreadyEatenDiagnosis = isBreakfastLogged
-        ? `Breakfast provided ${summary.calories} kcal. Lunch combines measured Sona Masoori rice with Palakura Pappu, eggs, and homemade curd.`
+        ? `Breakfast provided ${summary.calories} kcal. Lunch combines measured Sona Masoori rice with Palakura Pappu and wholesome protein.`
         : `Breakfast was not logged earlier today. Anchor your energy now with a wholesome, protein-rich Andhra lunch to power your afternoon.`;
 
       primaryFocus = proteinGap > 35 ? 'High Protein Anchor' : 'Glycogen & Recovery';
 
       nextMealData = proteinGap > 35
-        ? ANDHRA_MEAL_TEMPLATES.Lunch.highProtein
+        ? getDietMealTemplate('Lunch', 'highProtein', profile)
         : caloriesRemaining < 600
-        ? ANDHRA_MEAL_TEMPLATES.Lunch.calorieControlled
-        : ANDHRA_MEAL_TEMPLATES.Lunch.standard;
+        ? getDietMealTemplate('Lunch', 'calorieControlled', profile)
+        : getDietMealTemplate('Lunch', 'standard', profile);
+
+      const snackPreview = getDietMealTemplate('Snacks', 'standard', profile);
+      const dinnerPreview = getDietMealTemplate('Dinner', 'standard', profile);
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
 
       laterMeals = [
         {
           category: 'Evening Snacks',
-          title: ANDHRA_MEAL_TEMPLATES.Snacks.standard.title,
-          portion: '1 tall glass majjiga + 35g putnalu / boiled eggs',
-          estCalories: 220,
-          estProtein: 15,
+          title: snackPreview.title,
+          portion: snackPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: snackPreview.estimatedMacros.calories,
+          estProtein: snackPreview.estimatedMacros.protein,
         },
         {
           category: 'Dinner',
-          title: ANDHRA_MEAL_TEMPLATES.Dinner.standard.title,
-          portion: '2 phulkas + chicken curry / egg curry + salad',
-          estCalories: 390,
-          estProtein: 29,
+          title: dinnerPreview.title,
+          portion: dinnerPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: dinnerPreview.estimatedMacros.calories,
+          estProtein: dinnerPreview.estimatedMacros.protein,
         },
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     } else {
@@ -543,23 +939,26 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = 'Protein Satiety & Hydration';
 
       nextMealData = profile?.works_out
-        ? ANDHRA_MEAL_TEMPLATES.Snacks.preWorkout
-        : ANDHRA_MEAL_TEMPLATES.Snacks.standard;
+        ? getDietMealTemplate('Snacks', 'preWorkout', profile)
+        : getDietMealTemplate('Snacks', 'standard', profile);
+
+      const dinnerPreview = getDietMealTemplate('Dinner', 'standard', profile);
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
 
       laterMeals = [
         {
           category: 'Dinner',
-          title: ANDHRA_MEAL_TEMPLATES.Dinner.standard.title,
-          portion: '2 phulkas + chicken curry / dal + cucumber salad',
-          estCalories: 390,
-          estProtein: 29,
+          title: dinnerPreview.title,
+          portion: dinnerPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: dinnerPreview.estimatedMacros.calories,
+          estProtein: dinnerPreview.estimatedMacros.protein,
         },
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     }
@@ -573,23 +972,26 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = 'Digestive Cooling & Protein';
 
       nextMealData = profile?.works_out
-        ? ANDHRA_MEAL_TEMPLATES.Snacks.preWorkout
-        : ANDHRA_MEAL_TEMPLATES.Snacks.standard;
+        ? getDietMealTemplate('Snacks', 'preWorkout', profile)
+        : getDietMealTemplate('Snacks', 'standard', profile);
+
+      const dinnerPreview = getDietMealTemplate('Dinner', 'standard', profile);
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
 
       laterMeals = [
         {
           category: 'Dinner',
-          title: ANDHRA_MEAL_TEMPLATES.Dinner.standard.title,
-          portion: '2 phulkas + chicken curry or dal + salad',
-          estCalories: 390,
-          estProtein: 29,
+          title: dinnerPreview.title,
+          portion: dinnerPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: dinnerPreview.estimatedMacros.calories,
+          estProtein: dinnerPreview.estimatedMacros.protein,
         },
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     } else {
@@ -601,16 +1003,18 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = proteinGap > 25 ? 'High Protein Anchor' : 'Clean Evening Recovery';
 
       nextMealData = proteinGap > 25
-        ? ANDHRA_MEAL_TEMPLATES.Dinner.highProteinLight
-        : ANDHRA_MEAL_TEMPLATES.Dinner.standard;
+        ? getDietMealTemplate('Dinner', 'highProteinLight', profile)
+        : getDietMealTemplate('Dinner', 'standard', profile);
+
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
 
       laterMeals = [
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     }
@@ -624,18 +1028,20 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = caloriesRemaining < 400 ? 'Calorie Deficit Control' : 'Overnight Muscle Synthesis';
 
       nextMealData = caloriesRemaining < 400
-        ? ANDHRA_MEAL_TEMPLATES.Dinner.lightRecovery
+        ? getDietMealTemplate('Dinner', 'lightRecovery', profile)
         : proteinGap > 25
-        ? ANDHRA_MEAL_TEMPLATES.Dinner.highProteinLight
-        : ANDHRA_MEAL_TEMPLATES.Dinner.standard;
+        ? getDietMealTemplate('Dinner', 'highProteinLight', profile)
+        : getDietMealTemplate('Dinner', 'standard', profile);
+
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
 
       laterMeals = [
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     } else {
@@ -647,13 +1053,15 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       primaryFocus = 'Hydration & Overnight Recovery';
 
       nextMealData = ANDHRA_MEAL_TEMPLATES.DayComplete;
+      const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
+
       laterMeals = [
         {
           category: "Tomorrow's Breakfast",
-          title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-          portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-          estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-          estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+          title: tomorrowPreview.title,
+          portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+          estCalories: tomorrowPreview.estimatedMacros.calories,
+          estProtein: tomorrowPreview.estimatedMacros.protein,
         },
       ];
     }
@@ -671,13 +1079,15 @@ export function generateInstantFuelPlan(profile, todayLogs = [], targets = {}, c
       ? ANDHRA_MEAL_TEMPLATES.DayComplete
       : ANDHRA_MEAL_TEMPLATES.LateNight;
 
+    const tomorrowPreview = getDietMealTemplate('Breakfast', 'standard', profile);
+
     laterMeals = [
       {
         category: "Tomorrow's Breakfast",
-        title: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.title,
-        portion: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.portion,
-        estCalories: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estCalories,
-        estProtein: ANDHRA_MEAL_TEMPLATES.TomorrowBreakfast.standard.estProtein,
+        title: tomorrowPreview.title,
+        portion: tomorrowPreview.itemsAndPortions.slice(0, 2).join(' + '),
+        estCalories: tomorrowPreview.estimatedMacros.calories,
+        estProtein: tomorrowPreview.estimatedMacros.protein,
       },
     ];
   }

@@ -46,8 +46,17 @@ import {
   getSuggestedTargetWeight 
 } from '../services/nutrition';
 
-// Common allergy options
-const COMMON_ALLERGIES = [
+// Exercise options for the smart multi-select question
+const EXERCISE_OPTIONS = [
+  { id: 'gym', label: 'Gym', desc: 'Weights, machines, gym cardio' },
+  { id: 'home_workouts', label: 'Home Workouts', desc: 'Bodyweight, calisthenics, resistance bands' },
+  { id: 'outdoor', label: 'Outdoor Exercise', desc: 'Running, cycling, brisk walking' },
+  { id: 'sports', label: 'Sports', desc: 'Badminton, cricket, football, swimming, tennis' },
+  { id: 'none', label: "I Don't Exercise Regularly", desc: 'Focus only on daily movement & nutrition' },
+];
+
+// Categorized food allergies and avoidances
+const ALLERGY_INTOLERANCES = [
   { id: 'dairy', label: 'Dairy / Lactose' },
   { id: 'peanuts', label: 'Peanuts' },
   { id: 'tree_nuts', label: 'Tree Nuts (Almonds, Walnuts)' },
@@ -56,6 +65,9 @@ const COMMON_ALLERGIES = [
   { id: 'eggs', label: 'Eggs' },
   { id: 'shellfish', label: 'Shellfish' },
   { id: 'seafood', label: 'Fish / Seafood' },
+];
+
+const FOODS_TO_AVOID = [
   { id: 'pork', label: 'Pork' },
   { id: 'beef', label: 'Beef' },
 ];
@@ -95,7 +107,8 @@ export function Onboarding() {
   const [dailyActivityLevel, setDailyActivityLevel] = useState('mostly_sitting');
   const [walkingDuration, setWalkingDuration] = useState('15_30');
 
-  // 3. Training & Workout
+  // 3. Training & Workout (Smart Exercise Mode)
+  const [exerciseTypes, setExerciseTypes] = useState(['gym']);
   const [worksOut, setWorksOut] = useState(true);
   const [workoutFrequency, setWorkoutFrequency] = useState(4);
   const [intensity, setIntensity] = useState('Medium');
@@ -107,6 +120,32 @@ export function Onboarding() {
   const [gymDuration, setGymDuration] = useState('60');
   const [cardioDuration, setCardioDuration] = useState('15');
   const [cardioTypes, setCardioTypes] = useState(['Treadmill']);
+
+  // Smart Exercise Toggle Helper
+  const toggleExerciseType = (typeId) => {
+    if (typeId === 'none') {
+      setExerciseTypes(['none']);
+      setWorksOut(false);
+      setGoesToGym(false);
+      return;
+    }
+    setExerciseTypes((prev) => {
+      const filtered = prev.filter((t) => t !== 'none');
+      let next;
+      if (filtered.includes(typeId)) {
+        next = filtered.filter((t) => t !== typeId);
+        if (next.length === 0) {
+          next = ['none'];
+        }
+      } else {
+        next = [...filtered, typeId];
+      }
+      const hasActive = next.some((t) => t !== 'none');
+      setWorksOut(hasActive);
+      setGoesToGym(next.includes('gym'));
+      return next;
+    });
+  };
 
   // 5. Goals
   const [primaryGoal, setPrimaryGoal] = useState('lose_fat');
@@ -180,6 +219,7 @@ export function Onboarding() {
     height: parsedHeightCm,
     height_cm: parsedHeightCm,
     height_unit: heightUnit,
+    exercise_types: exerciseTypes,
     works_out: worksOut,
     workout_frequency: worksOut ? workoutFrequency : 0,
     intensity: worksOut ? intensity : 'Small',
@@ -210,7 +250,7 @@ export function Onboarding() {
   const dynamicBlueprint = calculateDailyTargets(profilePayload);
   const goalExplanation = generateGoalExplanation(dynamicBlueprint, profilePayload);
 
-  // Allergy Toggle Helper
+  // Allergy Toggle Helper with strict mutual exclusivity for 'none'
   const toggleAllergy = (id) => {
     if (id === 'none') {
       setAllergies(['none']);
@@ -686,51 +726,56 @@ export function Onboarding() {
             >
               <form onSubmit={handleProceedFromStep2} className="space-y-5">
                 
-                {/* 1. Do you work out regularly? */}
-                <div className="p-4 rounded-2xl glass-inset">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-white flex items-center space-x-2">
-                        <Dumbbell className="w-4 h-4 text-[#30d158]" />
-                        <span>Do you work out regularly?</span>
-                      </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Resistance training, sports, athletics, home workouts, or active cardio
-                      </p>
-                    </div>
-
-                    <div className="flex items-center space-x-1 glass p-1 rounded-xl">
-                      <button
-                        type="button"
-                        onClick={() => setWorksOut(true)}
-                        className={`btn-press px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                          worksOut ? 'bg-[#30d158] text-black shadow-sm' : 'text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setWorksOut(false)}
-                        className={`btn-press px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                          !worksOut ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        No
-                      </button>
-                    </div>
+                {/* Smart Exercise Question: How do you usually exercise? */}
+                <div className="p-4 rounded-2xl glass-inset space-y-4">
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center space-x-2">
+                      <Dumbbell className="w-4 h-4 text-[#30d158]" />
+                      <span>How do you usually exercise?</span>
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Select all forms of structured exercise or sports that apply to you
+                    </p>
                   </div>
 
-                  {/* Workout Sub-Questions (Smoothly revealed when worksOut is true) */}
+                  {/* Multi-Select Exercise Options */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {EXERCISE_OPTIONS.map((opt) => {
+                      const isSelected = exerciseTypes.includes(opt.id);
+                      const isNone = opt.id === 'none';
+                      return (
+                        <button
+                          type="button"
+                          key={opt.id}
+                          onClick={() => toggleExerciseType(opt.id)}
+                          className={`btn-press p-3 rounded-2xl text-left transition-all relative ${
+                            isSelected
+                              ? isNone
+                                ? 'bg-white/20 border border-white/40 text-white shadow-md'
+                                : 'bg-white/15 border border-[#30d158]/50 text-white shadow-md'
+                              : 'glass-inset text-slate-400 hover:text-white'
+                          } ${isNone ? 'sm:col-span-2' : ''}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-white">{opt.label}</span>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-[#30d158] shrink-0" />}
+                          </div>
+                          <span className="block text-[10px] text-slate-400 mt-0.5 leading-tight">{opt.desc}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Active Exercise Sub-Questions (Smoothly revealed when worksOut is true) */}
                   <AnimatePresence>
                     {worksOut && (
                       <motion.div
-                        key="workout-details-section"
+                        key="active-exercise-subquestions"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-                        className="mt-4 pt-4 border-t border-white/10 space-y-4 overflow-hidden"
+                        className="pt-4 border-t border-white/10 space-y-4 overflow-hidden"
                       >
                         {/* Days per week */}
                         <div>
@@ -816,139 +861,108 @@ export function Onboarding() {
                           </div>
                         </div>
 
-                        {/* 2. Gym Conditional Section */}
-                        <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 mt-3">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h5 className="text-xs font-bold text-white flex items-center space-x-1.5">
+                        {/* Gym Specific Energy Partitioning (Revealed only when Gym is selected in exerciseTypes) */}
+                        <AnimatePresence>
+                          {goesToGym && (
+                            <motion.div
+                              key="gym-specific-details"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+                              className="p-3.5 rounded-2xl bg-white/5 border border-[#ffd60a]/20 space-y-3 overflow-hidden"
+                            >
+                              <div className="flex items-center space-x-2">
                                 <Zap className="w-3.5 h-3.5 text-[#ffd60a]" />
-                                <span>Do you go to a gym?</span>
-                              </h5>
-                              <p className="text-[10px] text-slate-400 mt-0.5">
-                                Allows precise strength vs cardio energy partitioning
-                              </p>
-                            </div>
+                                <h5 className="text-xs font-bold text-white">Gym Session Energy Partitioning</h5>
+                              </div>
 
-                            <div className="flex items-center space-x-1 glass p-0.5 rounded-lg">
-                              <button
-                                type="button"
-                                onClick={() => setGoesToGym(true)}
-                                className={`btn-press px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                                  goesToGym ? 'bg-[#ffd60a] text-black shadow-sm' : 'text-slate-400 hover:text-white'
-                                }`}
-                              >
-                                Yes
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setGoesToGym(false)}
-                                className={`btn-press px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                                  !goesToGym ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-                                }`}
-                              >
-                                No
-                              </button>
-                            </div>
-                          </div>
+                              {/* Gym Session Duration */}
+                              <div>
+                                <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1.5">
+                                  How long is your typical gym session?
+                                </label>
+                                <div className="grid grid-cols-6 gap-1.5">
+                                  {['30', '45', '60', '75', '90', '120'].map((mins) => {
+                                    const isSelected = gymDuration === mins;
+                                    return (
+                                      <button
+                                        type="button"
+                                        key={mins}
+                                        onClick={() => setGymDuration(mins)}
+                                        className={`btn-press py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                          isSelected
+                                            ? 'bg-[#ffd60a] text-black shadow-sm'
+                                            : 'glass-inset text-slate-400 hover:text-white'
+                                        }`}
+                                      >
+                                        {mins}m
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
 
-                          {/* Gym Nested Details (Only when goesToGym is true) */}
-                          <AnimatePresence>
-                            {goesToGym && (
-                              <motion.div
-                                key="gym-details-nested"
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-                                className="mt-3 pt-3 border-t border-white/10 space-y-3 overflow-hidden"
-                              >
-                                {/* Gym Session Duration */}
+                              {/* Cardio Subset Duration */}
+                              <div>
+                                <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1.5">
+                                  How much of that session is cardio?
+                                </label>
+                                <div className="grid grid-cols-5 gap-1.5">
+                                  {['0', '15', '30', '45', '60'].map((mins) => {
+                                    const isSelected = cardioDuration === mins;
+                                    return (
+                                      <button
+                                        type="button"
+                                        key={mins}
+                                        onClick={() => setCardioDuration(mins)}
+                                        className={`btn-press py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                          isSelected
+                                            ? 'bg-[#0a84ff] text-white shadow-sm'
+                                            : 'glass-inset text-slate-400 hover:text-white'
+                                        }`}
+                                      >
+                                        {mins === '0' ? 'None (0m)' : `${mins}m`}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* Cardio Types Multi-Select (Only when cardioDuration > 0) */}
+                              {parseInt(cardioDuration, 10) > 0 && (
                                 <div>
-                                  <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1.5">
-                                    How long is your typical gym session?
-                                  </label>
-                                  <div className="grid grid-cols-6 gap-1.5">
-                                    {['30', '45', '60', '75', '90', '120'].map((mins) => {
-                                      const isSelected = gymDuration === mins;
+                                  <div className="flex items-center justify-between mb-1.5">
+                                    <label className="block text-[11px] font-semibold text-slate-300 caption-label">
+                                      What type of cardio do you usually do?
+                                    </label>
+                                    <span className="text-[10px] text-slate-400 font-normal">Select all that apply</span>
+                                  </div>
+                                  <div className="grid grid-cols-3 gap-1.5">
+                                    {['Treadmill', 'Running', 'Cycling', 'Elliptical', 'Stair Climber', 'Swimming', 'HIIT', 'Walking', 'Other'].map((type) => {
+                                      const isSelected = cardioTypes.some((t) => t.toLowerCase() === type.toLowerCase());
                                       return (
                                         <button
                                           type="button"
-                                          key={mins}
-                                          onClick={() => setGymDuration(mins)}
-                                          className={`btn-press py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                          key={type}
+                                          onClick={() => toggleCardioType(type)}
+                                          className={`btn-press py-1.5 px-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center space-x-1 ${
                                             isSelected
-                                              ? 'bg-[#ffd60a] text-black shadow-sm'
-                                              : 'glass-inset text-slate-400 hover:text-white'
+                                              ? 'bg-[#0a84ff]/30 border border-[#0a84ff] text-white shadow-sm font-bold'
+                                              : 'glass-inset text-slate-400 hover:text-slate-200'
                                           }`}
                                         >
-                                          {mins}m
+                                          {isSelected && <Check className="w-3 h-3 text-[#0a84ff] shrink-0" />}
+                                          <span className="truncate">{type}</span>
                                         </button>
                                       );
                                     })}
                                   </div>
                                 </div>
-
-                                {/* Cardio Subset Duration */}
-                                <div>
-                                  <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1.5">
-                                    How much of that session is cardio?
-                                  </label>
-                                  <div className="grid grid-cols-5 gap-1.5">
-                                    {['0', '15', '30', '45', '60'].map((mins) => {
-                                      const isSelected = cardioDuration === mins;
-                                      return (
-                                        <button
-                                          type="button"
-                                          key={mins}
-                                          onClick={() => setCardioDuration(mins)}
-                                          className={`btn-press py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                            isSelected
-                                              ? 'bg-[#0a84ff] text-white shadow-sm'
-                                              : 'glass-inset text-slate-400 hover:text-white'
-                                          }`}
-                                        >
-                                          {mins === '0' ? 'None (0m)' : `${mins}m`}
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-
-                                {/* Cardio Types Multi-Select (Only when cardioDuration > 0) */}
-                                {parseInt(cardioDuration, 10) > 0 && (
-                                  <div>
-                                    <div className="flex items-center justify-between mb-1.5">
-                                      <label className="block text-[11px] font-semibold text-slate-300 caption-label">
-                                        What type of cardio do you usually do?
-                                      </label>
-                                      <span className="text-[10px] text-slate-400 font-normal">Select all that apply</span>
-                                    </div>
-                                    <div className="grid grid-cols-3 gap-1.5">
-                                      {['Treadmill', 'Running', 'Cycling', 'Elliptical', 'Stair Climber', 'Swimming', 'HIIT', 'Walking', 'Other'].map((type) => {
-                                        const isSelected = cardioTypes.some((t) => t.toLowerCase() === type.toLowerCase());
-                                        return (
-                                          <button
-                                            type="button"
-                                            key={type}
-                                            onClick={() => toggleCardioType(type)}
-                                            className={`btn-press py-1.5 px-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center space-x-1 ${
-                                              isSelected
-                                                ? 'bg-[#0a84ff]/30 border border-[#0a84ff] text-white shadow-sm font-bold'
-                                                : 'glass-inset text-slate-400 hover:text-slate-200'
-                                            }`}
-                                          >
-                                            {isSelected && <Check className="w-3 h-3 text-[#0a84ff] shrink-0" />}
-                                            <span className="truncate">{type}</span>
-                                          </button>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
-                                )}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -1285,40 +1299,80 @@ export function Onboarding() {
                 </div>
 
                 {/* 3. Food Allergies & Foods to Avoid */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 caption-label mb-2 flex items-center space-x-1.5">
+                <div className="space-y-3">
+                  <label className="block text-xs font-semibold text-slate-300 caption-label flex items-center space-x-1.5">
                     <ShieldAlert className="w-3.5 h-3.5 text-[#ff2d55]" />
-                    <span>3. Are there any foods you need to avoid?</span>
+                    <span>3. Do you have any food allergies or foods you avoid?</span>
                   </label>
-                  <div className="flex flex-wrap gap-1.5">
+
+                  {/* None Option */}
+                  <div>
                     <button
                       type="button"
                       onClick={() => toggleAllergy('none')}
-                      className={`btn-press px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                      className={`btn-press px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2 ${
                         allergies.includes('none')
-                          ? 'bg-[#30d158] text-black font-bold'
-                          : 'glass text-slate-400 hover:text-white'
+                          ? 'bg-[#30d158] text-black font-bold shadow-md'
+                          : 'glass-inset text-slate-400 hover:text-white'
                       }`}
                     >
-                      None (No Allergies)
+                      {allergies.includes('none') && <Check className="w-3.5 h-3.5 text-black shrink-0" />}
+                      <span>None (No Allergies or Avoidances)</span>
                     </button>
-                    {COMMON_ALLERGIES.map((item) => {
-                      const isSelected = allergies.includes(item.id);
-                      return (
-                        <button
-                          type="button"
-                          key={item.id}
-                          onClick={() => toggleAllergy(item.id)}
-                          className={`btn-press px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                            isSelected
-                              ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white font-bold'
-                              : 'glass text-slate-400 hover:text-white'
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      );
-                    })}
+                  </div>
+
+                  {/* Allergies & Intolerances */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Allergies & Intolerances
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {ALLERGY_INTOLERANCES.map((item) => {
+                        const isSelected = allergies.includes(item.id);
+                        return (
+                          <button
+                            type="button"
+                            key={item.id}
+                            onClick={() => toggleAllergy(item.id)}
+                            className={`btn-press px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                              isSelected
+                                ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white font-bold shadow-sm'
+                                : 'glass text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {isSelected && <Check className="w-3 h-3 text-[#ff2d55] shrink-0" />}
+                            <span>{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Foods Chosen to Avoid */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Foods Chosen to Avoid
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {FOODS_TO_AVOID.map((item) => {
+                        const isSelected = allergies.includes(item.id);
+                        return (
+                          <button
+                            type="button"
+                            key={item.id}
+                            onClick={() => toggleAllergy(item.id)}
+                            className={`btn-press px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                              isSelected
+                                ? 'bg-[#ff9f0a]/30 border border-[#ff9f0a] text-white font-bold shadow-sm'
+                                : 'glass text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {isSelected && <Check className="w-3 h-3 text-[#ff9f0a] shrink-0" />}
+                            <span>{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Custom Allergy Adder */}

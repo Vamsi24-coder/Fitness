@@ -115,6 +115,8 @@ export function AISuggestions({ profile, todayLogs = [], targets = {}, selectedD
     profile?.works_out, 
     profile?.intensity, 
     profile?.duration,
+    profile?.diet_preference,
+    Array.isArray(profile?.allergies) ? profile.allergies.join(',') : '',
     todayLogs?.length,
     // Deep log change detection via summarized hash
     useMemo(() => todayLogs.map(l => `${l.id || l.food_name}-${l.carbs}-${l.protein}-${l.fats}`).join('|'), [todayLogs]),

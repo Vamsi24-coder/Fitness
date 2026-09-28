@@ -21,15 +21,28 @@ import { useAuth } from '../contexts/AuthContext';
 import { upsertUserProfile } from '../lib/supabase';
 import { calculateDailyTargets, cmToFeetInches, feetInchesToCm } from '../services/nutrition';
 
-const COMMON_ALLERGIES = [
+// Exercise options for the smart multi-select question
+const EXERCISE_OPTIONS = [
+  { id: 'gym', label: 'Gym', desc: 'Weights, machines, gym cardio' },
+  { id: 'home_workouts', label: 'Home Workouts', desc: 'Bodyweight, calisthenics, resistance bands' },
+  { id: 'outdoor', label: 'Outdoor Exercise', desc: 'Running, cycling, brisk walking' },
+  { id: 'sports', label: 'Sports', desc: 'Badminton, cricket, football, swimming, tennis' },
+  { id: 'none', label: "I Don't Exercise Regularly", desc: 'Focus only on daily movement & nutrition' },
+];
+
+// Categorized food allergies and avoidances
+const ALLERGY_INTOLERANCES = [
   { id: 'dairy', label: 'Dairy / Lactose' },
   { id: 'peanuts', label: 'Peanuts' },
-  { id: 'tree_nuts', label: 'Tree Nuts' },
+  { id: 'tree_nuts', label: 'Tree Nuts (Almonds, Walnuts)' },
   { id: 'gluten', label: 'Gluten / Wheat' },
   { id: 'soy', label: 'Soy' },
   { id: 'eggs', label: 'Eggs' },
   { id: 'shellfish', label: 'Shellfish' },
-  { id: 'seafood', label: 'Seafood' },
+  { id: 'seafood', label: 'Fish / Seafood' },
+];
+
+const FOODS_TO_AVOID = [
   { id: 'pork', label: 'Pork' },
   { id: 'beef', label: 'Beef' },
 ];
@@ -66,7 +79,8 @@ export function SettingsModal({ isOpen, onClose }) {
   const [dailyActivityLevel, setDailyActivityLevel] = useState('mostly_sitting');
   const [walkingDuration, setWalkingDuration] = useState('15_30');
 
-  // 3. Training & Gym
+  // 3. Training & Gym (Smart Exercise Mode)
+  const [exerciseTypes, setExerciseTypes] = useState(['gym']);
   const [worksOut, setWorksOut] = useState(true);
   const [workoutFrequency, setWorkoutFrequency] = useState(4);
   const [intensity, setIntensity] = useState('Medium');
@@ -113,11 +127,26 @@ export function SettingsModal({ isOpen, onClose }) {
 
       setDailyActivityLevel(profile.daily_activity_level || 'mostly_sitting');
       setWalkingDuration(profile.walking_duration || '15_30');
-      setWorksOut(profile.works_out !== false);
+
+      // Exercise sync
+      let loadedExercises = ['gym'];
+      if (Array.isArray(profile.exercise_types) && profile.exercise_types.length > 0) {
+        loadedExercises = profile.exercise_types;
+      } else if (profile.works_out === false) {
+        loadedExercises = ['none'];
+      } else if (profile.goes_to_gym) {
+        loadedExercises = ['gym'];
+      } else if (profile.works_out) {
+        loadedExercises = ['home_workouts'];
+      }
+      setExerciseTypes(loadedExercises);
+
+      const isWorkingOut = loadedExercises.some((t) => t !== 'none');
+      setWorksOut(isWorkingOut);
       setWorkoutFrequency(profile.workout_frequency || 4);
       setIntensity(profile.intensity || 'Medium');
       setDuration(String(profile.duration || 45));
-      setGoesToGym(Boolean(profile.goes_to_gym));
+      setGoesToGym(loadedExercises.includes('gym'));
       setGymFrequency(profile.gym_frequency || 4);
       setGymDuration(String(profile.gym_duration || 60));
       setCardioDuration(String(profile.cardio_duration || 15));
@@ -171,6 +200,7 @@ export function SettingsModal({ isOpen, onClose }) {
     height: numHeight,
     height_cm: numHeight,
     height_unit: heightUnit,
+    exercise_types: exerciseTypes,
     works_out: worksOut,
     workout_frequency: worksOut ? workoutFrequency : 0,
     intensity: worksOut ? intensity : 'Small',
@@ -192,6 +222,31 @@ export function SettingsModal({ isOpen, onClose }) {
     diet_preference: dietPreference,
     allergies,
   });
+
+  const toggleExerciseType = (typeId) => {
+    if (typeId === 'none') {
+      setExerciseTypes(['none']);
+      setWorksOut(false);
+      setGoesToGym(false);
+      return;
+    }
+    setExerciseTypes((prev) => {
+      const filtered = prev.filter((t) => t !== 'none');
+      let next;
+      if (filtered.includes(typeId)) {
+        next = filtered.filter((t) => t !== typeId);
+        if (next.length === 0) {
+          next = ['none'];
+        }
+      } else {
+        next = [...filtered, typeId];
+      }
+      const hasActive = next.some((t) => t !== 'none');
+      setWorksOut(hasActive);
+      setGoesToGym(next.includes('gym'));
+      return next;
+    });
+  };
 
   const toggleAllergy = (id) => {
     if (id === 'none') {
@@ -237,6 +292,7 @@ export function SettingsModal({ isOpen, onClose }) {
       height: numHeight,
       height_cm: numHeight,
       height_unit: heightUnit,
+      exercise_types: exerciseTypes,
       works_out: worksOut,
       workout_frequency: worksOut ? workoutFrequency : 0,
       intensity: worksOut ? intensity : 'Small',
@@ -554,36 +610,49 @@ export function SettingsModal({ isOpen, onClose }) {
           {/* TAB 2: Activity & Gym */}
           {activeTab === 'activity' && (
             <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl glass-inset">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">Do you work out regularly?</span>
-                  <div className="flex space-x-1">
-                    <button
-                      type="button"
-                      onClick={() => setWorksOut(true)}
-                      className={`btn-press px-3 py-1 rounded-lg text-xs font-bold ${
-                        worksOut ? 'bg-[#30d158] text-black' : 'glass text-slate-400'
-                      }`}
-                    >
-                      Yes
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setWorksOut(false)}
-                      className={`btn-press px-3 py-1 rounded-lg text-xs font-bold ${
-                        !worksOut ? 'bg-white/20 text-white' : 'glass text-slate-400'
-                      }`}
-                    >
-                      No
-                    </button>
-                  </div>
+              <div className="p-3.5 rounded-2xl glass-inset space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-white caption-label flex items-center space-x-1.5">
+                    <Dumbbell className="w-3.5 h-3.5 text-[#30d158]" />
+                    <span>How do you usually exercise?</span>
+                  </label>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    Multi-select forms of exercise or sports that apply to you
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-1.5">
+                  {EXERCISE_OPTIONS.map((opt) => {
+                    const isSelected = exerciseTypes.includes(opt.id);
+                    const isNone = opt.id === 'none';
+                    return (
+                      <button
+                        type="button"
+                        key={opt.id}
+                        onClick={() => toggleExerciseType(opt.id)}
+                        className={`btn-press p-2 rounded-xl text-left transition-all ${
+                          isSelected
+                            ? isNone
+                              ? 'bg-white/20 border border-white/40 text-white shadow-sm'
+                              : 'bg-[#30d158]/20 border border-[#30d158] text-white shadow-sm'
+                            : 'glass text-slate-400 hover:text-white'
+                        } ${isNone ? 'col-span-2' : ''}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white">{opt.label}</span>
+                          {isSelected && <Check className="w-3 h-3 text-[#30d158] shrink-0" />}
+                        </div>
+                        <span className="block text-[9px] text-slate-400 mt-0.5">{opt.desc}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {worksOut && (
                   <div className="mt-3 pt-3 border-t border-white/10 space-y-3">
                     <div>
                       <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1">
-                        Days per week
+                        Days per week: {workoutFrequency}d
                       </label>
                       <div className="grid grid-cols-7 gap-1">
                         {[1, 2, 3, 4, 5, 6, 7].map((d) => (
@@ -603,7 +672,7 @@ export function SettingsModal({ isOpen, onClose }) {
 
                     <div>
                       <label className="block text-[11px] font-semibold text-slate-300 caption-label mb-1">
-                        Workout Intensity
+                        Workout Intensity: {intensity}
                       </label>
                       <div className="grid grid-cols-3 gap-1.5">
                         {['Small', 'Medium', 'Intensive'].map((item) => (
@@ -621,100 +690,74 @@ export function SettingsModal({ isOpen, onClose }) {
                       </div>
                     </div>
 
-                    {/* Gym Section */}
-                    <div className="pt-2 border-t border-white/10">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-white">Goes to gym?</span>
-                        <div className="flex space-x-1">
-                          <button
-                            type="button"
-                            onClick={() => setGoesToGym(true)}
-                            className={`btn-press px-3 py-1 rounded-lg text-xs font-bold ${
-                              goesToGym ? 'bg-[#ffd60a] text-black' : 'glass text-slate-400'
-                            }`}
-                          >
-                            Yes
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setGoesToGym(false)}
-                            className={`btn-press px-3 py-1 rounded-lg text-xs font-bold ${
-                              !goesToGym ? 'bg-white/20 text-white' : 'glass text-slate-400'
-                            }`}
-                          >
-                            No
-                          </button>
+                    {goesToGym && (
+                      <div className="p-2.5 rounded-xl bg-white/5 border border-[#ffd60a]/20 space-y-2.5">
+                        <span className="text-[10px] font-bold text-[#ffd60a] block">Gym Session Energy Details</span>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[10px] text-slate-400 mb-1">Total Session Duration</label>
+                            <select
+                              value={gymDuration}
+                              onChange={(e) => setGymDuration(e.target.value)}
+                              className="w-full px-2.5 py-1.5 glass rounded-lg text-xs text-white"
+                            >
+                              {['30', '45', '60', '75', '90', '120'].map((m) => (
+                                <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-slate-400 mb-1">Cardio Portion</label>
+                            <select
+                              value={cardioDuration}
+                              onChange={(e) => setCardioDuration(e.target.value)}
+                              className="w-full px-2.5 py-1.5 glass rounded-lg text-xs text-white"
+                            >
+                              {['0', '15', '30', '45', '60'].map((m) => (
+                                <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      {goesToGym && (
-                        <div className="space-y-2.5 pt-1">
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="block text-[10px] text-slate-400 mb-1">Total Session Duration</label>
-                              <select
-                                value={gymDuration}
-                                onChange={(e) => setGymDuration(e.target.value)}
-                                className="w-full px-2.5 py-1.5 glass rounded-lg text-xs text-white"
-                              >
-                                {['30', '45', '60', '75', '90', '120'].map((m) => (
-                                  <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
-                                ))}
-                              </select>
+                        {parseInt(cardioDuration, 10) > 0 && (
+                          <div>
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="block text-[10px] text-slate-400">Cardio Types</label>
+                              <span className="text-[9px] text-slate-500">Select all that apply</span>
                             </div>
-                            <div>
-                              <label className="block text-[10px] text-slate-400 mb-1">Cardio Portion</label>
-                              <select
-                                value={cardioDuration}
-                                onChange={(e) => setCardioDuration(e.target.value)}
-                                className="w-full px-2.5 py-1.5 glass rounded-lg text-xs text-white"
-                              >
-                                {['0', '15', '30', '45', '60'].map((m) => (
-                                  <option key={m} value={m} className="bg-slate-900 text-white">{m} mins</option>
-                                ))}
-                              </select>
+                            <div className="grid grid-cols-3 gap-1">
+                              {['Treadmill', 'Running', 'Cycling', 'Elliptical', 'Stair Climber', 'Swimming', 'HIIT', 'Walking', 'Other'].map((t) => {
+                                const isSelected = cardioTypes.some((item) => item.toLowerCase() === t.toLowerCase());
+                                return (
+                                  <button
+                                    type="button"
+                                    key={t}
+                                    onClick={() => {
+                                      setCardioTypes((prev) => {
+                                        const exists = prev.some((x) => x.toLowerCase() === t.toLowerCase());
+                                        if (exists) {
+                                          const next = prev.filter((x) => x.toLowerCase() !== t.toLowerCase());
+                                          return next.length === 0 ? [t] : next;
+                                        } else {
+                                          return [...prev, t];
+                                        }
+                                      });
+                                    }}
+                                    className={`btn-press py-1.5 px-1 rounded-lg text-[10px] font-semibold flex items-center justify-center space-x-1 ${
+                                      isSelected ? 'bg-[#0a84ff]/30 border border-[#0a84ff] text-white font-bold' : 'glass text-slate-400'
+                                    }`}
+                                  >
+                                    {isSelected && <Check className="w-2.5 h-2.5 text-[#0a84ff] shrink-0" />}
+                                    <span className="truncate">{t}</span>
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
-
-                          {parseInt(cardioDuration, 10) > 0 && (
-                            <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <label className="block text-[10px] text-slate-400">Cardio Types</label>
-                                <span className="text-[9px] text-slate-500">Select all that apply</span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-1">
-                                {['Treadmill', 'Running', 'Cycling', 'Elliptical', 'Stair Climber', 'Swimming', 'HIIT', 'Walking', 'Other'].map((t) => {
-                                  const isSelected = cardioTypes.some((item) => item.toLowerCase() === t.toLowerCase());
-                                  return (
-                                    <button
-                                      type="button"
-                                      key={t}
-                                      onClick={() => {
-                                        setCardioTypes((prev) => {
-                                          const exists = prev.some((x) => x.toLowerCase() === t.toLowerCase());
-                                          if (exists) {
-                                            const next = prev.filter((x) => x.toLowerCase() !== t.toLowerCase());
-                                            return next.length === 0 ? [t] : next;
-                                          } else {
-                                            return [...prev, t];
-                                          }
-                                        });
-                                      }}
-                                      className={`btn-press py-1.5 px-1 rounded-lg text-[10px] font-semibold flex items-center justify-center space-x-1 ${
-                                        isSelected ? 'bg-[#0a84ff]/30 border border-[#0a84ff] text-white font-bold' : 'glass text-slate-400'
-                                      }`}
-                                    >
-                                      {isSelected && <Check className="w-2.5 h-2.5 text-[#0a84ff] shrink-0" />}
-                                      <span className="truncate">{t}</span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -894,11 +937,11 @@ export function SettingsModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-300 caption-label mb-1.5">
                   Foods to Avoid / Allergies
                 </label>
-                <div className="flex flex-wrap gap-1.5">
+                <div>
                   <button
                     type="button"
                     onClick={() => toggleAllergy('none')}
@@ -906,20 +949,46 @@ export function SettingsModal({ isOpen, onClose }) {
                       allergies.includes('none') ? 'bg-[#30d158] text-black' : 'glass text-slate-400'
                     }`}
                   >
-                    None
+                    None (No Allergies)
                   </button>
-                  {COMMON_ALLERGIES.map((a) => (
-                    <button
-                      type="button"
-                      key={a.id}
-                      onClick={() => toggleAllergy(a.id)}
-                      className={`btn-press px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
-                        allergies.includes(a.id) ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white' : 'glass text-slate-400'
-                      }`}
-                    >
-                      {a.label}
-                    </button>
-                  ))}
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Allergies & Intolerances
+                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {ALLERGY_INTOLERANCES.map((a) => (
+                      <button
+                        type="button"
+                        key={a.id}
+                        onClick={() => toggleAllergy(a.id)}
+                        className={`btn-press px-2.5 py-1 rounded-lg text-[10px] font-semibold ${
+                          allergies.includes(a.id) ? 'bg-[#ff2d55]/30 border border-[#ff2d55] text-white font-bold' : 'glass text-slate-400'
+                        }`}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Foods Chosen to Avoid
+                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {FOODS_TO_AVOID.map((a) => (
+                      <button
+                        type="button"
+                        key={a.id}
+                        onClick={() => toggleAllergy(a.id)}
+                        className={`btn-press px-2.5 py-1 rounded-lg text-[10px] font-semibold ${
+                          allergies.includes(a.id) ? 'bg-[#ff9f0a]/30 border border-[#ff9f0a] text-white font-bold' : 'glass text-slate-400'
+                        }`}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
