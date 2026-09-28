@@ -340,7 +340,13 @@ USER PROFILE:
 - Gender: ${profile?.gender || 'Adult'}
 - Age: ${profile?.age || 25} years
 - Weight: ${profile?.weight || 70} kg
-- Daily Workout: ${profile?.works_out ? `Yes (${profile.intensity} intensity, ${profile.duration} mins/day)` : 'Sedentary / Rest day'}
+- Primary Goal: ${profile?.primary_goal ? String(profile.primary_goal).replace('_', ' ').toUpperCase() : 'MAINTAIN WEIGHT'}
+- Diet Preference: ${profile?.diet_preference ? String(profile.diet_preference).replace('_', ' ').toUpperCase() : 'NO SPECIFIC PREFERENCE'}
+- Foods to Avoid / Allergies: ${Array.isArray(profile?.allergies) && profile.allergies.length > 0 ? profile.allergies.join(', ') : 'None'}
+- General Daily Activity: ${profile?.daily_activity_level || 'mostly sitting'}
+- Daily Walking: ${profile?.walking_duration || '15-30m'}
+- Structured Workout: ${profile?.works_out ? `Yes (${profile.intensity} intensity, ${profile.duration} mins/day)` : 'Sedentary / Rest day'}
+- Gym Routine: ${profile?.goes_to_gym ? `Yes (${profile.gym_duration || 60} mins, including ${profile.cardio_duration || 0} mins ${profile.cardio_type || 'cardio'})` : 'No'}
 - Basal Metabolic Rate (BMR): ${targets.bmr || 1650} kcal
 - Daily Calorie Target: ${targets.calories || 2000} kcal
 - Daily Macro Targets: ${targets.protein || 120}g Protein (${targets.factors?.proteinPerKg || 1.7}g/kg), ${targets.carbs || 220}g Carbs, ${targets.fats || 65}g Fats, ${targets.fiber || 28}g Fiber
@@ -359,26 +365,29 @@ CURRENT STAGE: ${stage}
 IMMEDIATE NEXT MEAL TO RECOMMEND: ${nextCategory}
 UNLOGGED UPCOMING MEALS: ${unloggedCategories.filter((c) => c !== nextCategory).join(', ') || 'None'}
 
-CRITICAL DIETARY & CULTURAL RULES FOR ANDHRA PRADESH / SOUTH INDIA:
-1. EXCLUSIVELY RECOMMEND REALISTIC, FAMILIAR ANDHRA / SOUTH INDIAN FOODS:
+CRITICAL DIETARY & CULTURAL RULES:
+1. STRICTLY RESPECT DIET PREFERENCES & ALLERGIES:
+   - Diet: ${profile?.diet_preference || 'no_preference'}. If vegetarian, NEVER suggest chicken, fish, seafood, meat or eggs. If eggetarian, eggs and dairy are allowed, but no meat/fish. If vegan, no animal products (no dairy, ghee, curd, paneer, eggs, meat).
+   - Allergies: NEVER recommend any dish containing the user's declared allergens: ${Array.isArray(profile?.allergies) ? profile.allergies.join(', ') : 'None'}.
+2. EXCLUSIVELY RECOMMEND REALISTIC, FAMILIAR ANDHRA / SOUTH INDIAN FOODS:
    - Breakfasts: Pesarattu (with allam/ginger chutney), Idli (with sambar or peanut/coconut chutney), Dosa, Rava Upma, Pongal, Chapati, Boiled eggs/egg porutu, Ragi java/porridge.
    - Lunches: Steamed rice (Sona Masoori/brown, measured in cups), Pappu (Palakura, Tomato, Dosakaya, Mamidikaya, Thotakura), Sambar, Rasam (chaaru), Vepudu/Curries (bendakaya, dondakaya, beerakaya, aratikaya), Leafy greens (gongura, thotakura), Curd (perugu), Boiled eggs, Kodi kura (Andhra chicken curry/roast with controlled oil), Chepala pulusu (fish curry), Paneer/Soya chunks curry.
    - Evening Snacks: Spiced Buttermilk (chilled majjiga with ginger, curry leaves, hing), Guggillu / Sundal (boiled tempered chickpeas or black chana), Roasted chana (putnalu), Boiled peanuts, Boiled eggs with black pepper, Moong sprouts salad with lemon, local fruits (guava, banana, papaya, pomegranate).
    - Dinners: Phulkas/Chapatis (2-3 phulkas without excess oil), Light rice with rasam or dal, Moong dal pesarattu, Egg curry, Andhra chicken with sliced cucumber, Curd.
    - DO NOT default to generic Western fitness foods (NO avocado toast, Greek yogurt bowls, quinoa salads, protein pancakes, kale smoothies, turkey deli slices, or cottage cheese).
-2. ANDHRA EATING PATTERNS:
+3. ANDHRA EATING PATTERNS:
    - Lunch is traditionally substantial (Rice + Pappu + Curry + Curd). Honor this rhythm while controlling rice portions (e.g. 1 to 1.5 cups) and boosting dal/egg/curd protein.
    - If Breakfast was carb-dense, recommend high-protein, fiber-rich lunch and dinner (thick dal, boiled eggs, chicken, curd).
    - If Lunch was heavy on rice/carbs, recommend high-protein/low-carb snacks (boiled eggs + buttermilk or roasted chana).
    - If calories are running low, suggest light, satiating options (vegetable chaaru, clear rasam, stir-fried leafy greens, boiled egg whites).
-3. SPECIFIC REALISTIC PORTIONS & REASONING:
+4. SPECIFIC REALISTIC PORTIONS & REASONING:
    - Always state exact portions (e.g., "1 cup steamed rice (~150g cooked)", "1 bowl Palakura Pappu", "2 boiled eggs", "1 tall glass majjiga (250ml)").
-   - Explain WHY this meal fits what has already been eaten today.
-4. WORKOUT TIMING:
-   - Connect meal timing to user's workout: ${profile?.works_out ? `${profile.intensity} workout (${profile.duration} mins)` : 'Rest day'}.
-   - Recommend pre-workout fuel (e.g. banana or ragi malt 30-45 mins before) and post-workout protein replenishment (within 1-2 hours).
-5. HYDRATION & RECOVERY:
-   - Provide practical hydration advice considering bodyweight (${profile?.weight || 70}kg) and Andhra warm climate (recommend spiced buttermilk/majjiga for electrolytes, lemon water, and 2.5-3.5L water).
+   - Explain WHY this meal fits what has already been eaten today and aligns with their primary goal (${profile?.primary_goal || 'Maintain'}).
+5. WORKOUT & MOVEMENT TIMING:
+   - Connect meal timing to user's workout & gym routine: ${profile?.works_out ? `${profile.intensity} workout (${profile.duration} mins)` : 'Rest day'}.
+   - Recommend pre-workout fuel and post-workout protein replenishment.
+6. HYDRATION & RECOVERY:
+   - Provide practical hydration advice considering bodyweight (${profile?.weight || 70}kg) and climate (recommend spiced buttermilk/majjiga for electrolytes, lemon water, and 2.5-3.5L water).
 
 Respond STRICTLY with a valid JSON object matching this schema (NO markdown fences):
 {

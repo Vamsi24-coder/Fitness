@@ -136,12 +136,22 @@ test.describe('Login Page Layout & Simplification Verifications', () => {
     expect(page.url()).toContain('/login');
   });
 
-  test('LOGIN-09 Demo Onboarding Step 2 serves as final preview without launch button', async ({ page }) => {
+  test('LOGIN-09 Demo Onboarding Step 4 serves as final preview without launch button', async ({ page }) => {
     const demoButton = page.getByText('Test Dynamic Onboarding').first();
     await demoButton.click();
     await page.waitForURL(/onboarding/, { timeout: 10000 });
 
-    // Click Review Calculated Blueprint
+    // Step 1 -> Step 2
+    const step1Next = page.getByText('Next: Training Routine').first();
+    await step1Next.click();
+    await page.waitForTimeout(300);
+
+    // Step 2 -> Step 3
+    const step2Next = page.getByText('Next: Goals & Diet').first();
+    await step2Next.click();
+    await page.waitForTimeout(300);
+
+    // Step 3 -> Step 4 (Blueprint Reveal)
     const reviewBtn = page.getByText('Review Calculated Blueprint').first();
     await reviewBtn.click();
     await page.waitForTimeout(400);
@@ -153,6 +163,191 @@ test.describe('Login Page Layout & Simplification Verifications', () => {
     // Verify Confirm & Launch Dashboard is completely absent in demo mode
     const launchBtn = page.getByText('Confirm & Launch Dashboard');
     expect(await launchBtn.count()).toBe(0);
+  });
+
+  test('LOGIN-10 Dynamic Multi-Select behavior for Cardio, Performance Focus, and Recomp Priorities', async ({ page }) => {
+    const demoButton = page.getByText('Test Dynamic Onboarding').first();
+    await demoButton.click();
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+
+    // Step 1 -> Step 2
+    await page.getByText('Next: Training Routine').first().click();
+    await page.waitForTimeout(300);
+
+    // Verify Step 2 Cardio multi-select: toggle Treadmill, Cycling, HIIT
+    const treadmillBtn = page.getByRole('button', { name: 'Treadmill', exact: true }).first();
+    const cyclingBtn = page.getByRole('button', { name: 'Cycling', exact: true }).first();
+    const hiitBtn = page.getByRole('button', { name: 'HIIT', exact: true }).first();
+
+    await cyclingBtn.click();
+    await page.waitForTimeout(100);
+    await hiitBtn.click();
+    await page.waitForTimeout(100);
+
+    // Both should be selected simultaneously (have active blue border/background)
+    await expect(cyclingBtn).toHaveClass(/border-\[#0a84ff\]/);
+    await expect(hiitBtn).toHaveClass(/border-\[#0a84ff\]/);
+
+    // Step 2 -> Step 3
+    await page.getByText('Next: Goals & Diet').first().click();
+    await page.waitForTimeout(300);
+
+    // Test 1: Performance Focus Multi-Select
+    const perfGoalBtn = page.getByRole('button', { name: /improve performance/i }).first();
+    await perfGoalBtn.click();
+    await page.waitForTimeout(200);
+
+    const strengthBtn = page.getByRole('button', { name: 'Strength', exact: true }).first();
+    const enduranceBtn = page.getByRole('button', { name: 'Endurance', exact: true }).first();
+    const sportsBtn = page.getByRole('button', { name: 'Sports Specific', exact: true }).first();
+
+    await enduranceBtn.click();
+    await page.waitForTimeout(100);
+    await sportsBtn.click();
+    await page.waitForTimeout(100);
+
+    // Strength, Endurance, and Sports should all be active
+    await expect(strengthBtn).toHaveClass(/bg-\[#ffd60a\]/);
+    await expect(enduranceBtn).toHaveClass(/bg-\[#ffd60a\]/);
+    await expect(sportsBtn).toHaveClass(/bg-\[#ffd60a\]/);
+
+    // Test 2: Recomposition Priorities intelligent multi-select
+    const recompGoalBtn = page.getByRole('button', { name: /body recomposition/i }).first();
+    await recompGoalBtn.click();
+    await page.waitForTimeout(200);
+
+    const reduceFatBtn = page.getByRole('button', { name: 'Reduce body fat', exact: true }).first();
+    const buildMuscleBtn = page.getByRole('button', { name: 'Build muscle', exact: true }).first();
+    const bothEquallyBtn = page.getByRole('button', { name: 'Both equally', exact: true }).first();
+
+    // Initially both are selected
+    await expect(bothEquallyBtn).toHaveClass(/bg-\[#bf5af2\]/);
+
+    // Deselect 'Reduce body fat' -> 'Both equally' should unselect
+    await reduceFatBtn.click();
+    await page.waitForTimeout(100);
+    await expect(bothEquallyBtn).not.toHaveClass(/bg-\[#bf5af2\]/);
+    await expect(buildMuscleBtn).toHaveClass(/bg-\[#bf5af2\]/);
+
+    // Click 'Both equally' -> selects both
+    await bothEquallyBtn.click();
+    await page.waitForTimeout(100);
+    await expect(bothEquallyBtn).toHaveClass(/bg-\[#bf5af2\]/);
+    await expect(reduceFatBtn).toHaveClass(/bg-\[#bf5af2\]/);
+    await expect(buildMuscleBtn).toHaveClass(/bg-\[#bf5af2\]/);
+
+    // Step 3 -> Step 4 Blueprint Reveal
+    await page.getByText('Review Calculated Blueprint').first().click();
+    await page.waitForTimeout(400);
+
+    // Verify "What This Means For You" Coach Card and Pace details are visible
+    await expect(page.getByText('What This Means For You').first()).toBeVisible();
+    await expect(page.getByText(/Estimated Pace|Metabolic/i).first()).toBeVisible();
+    await expect(page.getByText('Macronutrient Energy Distribution').first()).toBeVisible();
+    await expect(page.getByText('Under the Hood: Technical Formula Breakdown').first()).toBeVisible();
+  });
+
+  test('LOGIN-11 Height Biometric input with cm / ft+in switcher updates dynamic calculation', async ({ page }) => {
+    const demoButton = page.getByText('Test Dynamic Onboarding').first();
+    await demoButton.click();
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+
+    // Step 1: Verify Height section is visible with cm and ft/in toggle buttons
+    const heightLabel = page.getByText('3. Height').first();
+    await expect(heightLabel).toBeVisible();
+
+    const cmBtn = page.getByRole('button', { name: 'cm' }).first();
+    const ftInBtn = page.getByRole('button', { name: 'ft/in' }).first();
+    await expect(cmBtn).toBeVisible();
+    await expect(ftInBtn).toBeVisible();
+
+    // Default is cm (e.g. 175)
+    await expect(cmBtn).toHaveClass(/bg-\[#30d158\]/);
+
+    // Switch to ft/in
+    await ftInBtn.click();
+    await page.waitForTimeout(150);
+    await expect(ftInBtn).toHaveClass(/bg-\[#30d158\]/);
+
+    // Verify ft and in inputs are visible
+    const ftInput = page.getByPlaceholder('5').first();
+    const inInput = page.getByPlaceholder('9').first();
+    await expect(ftInput).toBeVisible();
+    await expect(inInput).toBeVisible();
+
+    // Switch back to cm
+    await cmBtn.click();
+    await page.waitForTimeout(150);
+    await expect(cmBtn).toHaveClass(/bg-\[#30d158\]/);
+
+    // Proceed through wizard to Step 4
+    await page.getByText('Next: Training Routine').first().click();
+    await page.waitForTimeout(300);
+
+    await page.getByText('Next: Goals & Diet').first().click();
+    await page.waitForTimeout(300);
+
+    await page.getByText('Review Calculated Blueprint').first().click();
+    await page.waitForTimeout(400);
+
+    // Verify Step 4 Active Profile Blueprint displays height pill
+    await expect(page.getByText(/\d+\s*cm|\d+′\d+″/).first()).toBeVisible();
+  });
+
+  test('LOGIN-12 Step 4 includes Previous Step button navigating back through all steps with inputs preserved', async ({ page }) => {
+    const demoButton = page.getByText('Test Dynamic Onboarding').first();
+    await demoButton.click();
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+    await expect(page.getByText('Personalize Your Lifestyle').first()).toBeVisible();
+
+    // Step 1 -> Step 2
+    await page.getByText('Next: Training Routine').first().click();
+    await expect(page.getByText('Your Training & Movement').first()).toBeVisible();
+
+    // Step 2 -> Step 3
+    await page.getByText('Next: Goals & Diet').first().click();
+    await expect(page.getByText('Goals & Dietary Blueprint').first()).toBeVisible();
+
+    // Step 3 -> Step 4
+    await page.getByText('Review Calculated Blueprint').first().click();
+    await expect(page.getByText('Your Dynamic Daily Blueprint').first()).toBeVisible();
+
+    // Step 4: Verify Previous Step button exists and works -> goes to Step 3
+    await page.getByTestId('step4-prev-btn').click();
+    await expect(page.getByText('Goals & Dietary Blueprint').first()).toBeVisible();
+
+    // Step 3 -> Step 2
+    await page.getByTestId('step3-prev-btn').click();
+    await expect(page.getByText('Your Training & Movement').first()).toBeVisible();
+
+    // Step 2 -> Step 1
+    await page.getByTestId('step2-prev-btn').click();
+    await expect(page.getByText('Personalize Your Lifestyle').first()).toBeVisible();
+  });
+
+  test('LOGIN-13 Dynamic healthy weight range and target weight helpers in Step 3 and Step 4', async ({ page }) => {
+    const demoButton = page.getByText('Test Dynamic Onboarding').first();
+    await demoButton.click();
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+
+    // Step 1 -> Step 2 -> Step 3
+    await page.getByText('Next: Training Routine').first().click();
+    await page.waitForTimeout(300);
+    await page.getByText('Next: Goals & Diet').first().click();
+    await page.waitForTimeout(300);
+
+    // In Step 3: Verify Estimated Healthy Range and Suggested Target helper
+    await expect(page.getByText(/Estimated Healthy Range:/i).first()).toBeVisible();
+    await expect(page.getByText(/Suggested Target:/i).first()).toBeVisible();
+
+    // Proceed to Step 4
+    await page.getByText('Review Calculated Blueprint').first().click();
+    await page.waitForTimeout(400);
+
+    // In Step 4: Verify Weight breakdown cards
+    await expect(page.getByText('CURRENT WEIGHT').first()).toBeVisible();
+    await expect(page.getByText('TARGET WEIGHT').first()).toBeVisible();
+    await expect(page.getByText('ESTIMATED HEALTHY RANGE').first()).toBeVisible();
   });
 });
 

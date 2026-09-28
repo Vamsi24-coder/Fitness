@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import { getFoodLogsByDate, deleteFoodLog } from '../lib/supabase';
-import { calculateDailyTargets, summarizeLogs } from '../services/nutrition';
+import { calculateDailyTargets, summarizeLogs, isProfileComplete, calculateProfileCompletion } from '../services/nutrition';
 import { ActivityRings } from '../components/ActivityRings';
 import { MealCard } from '../components/MealCard';
 import { AddFoodModal } from '../components/AddFoodModal';
@@ -10,6 +10,7 @@ import { AISuggestions } from '../components/AISuggestions';
 import { DatabaseSchemaAlert } from '../components/DatabaseSchemaAlert';
 import { CalendarPicker } from '../components/CalendarPicker';
 import { SettingsModal } from '../components/SettingsModal';
+import { CompleteProfileModal } from '../components/CompleteProfileModal';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -71,6 +72,7 @@ export function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Breakfast');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCompleteProfileOpen, setIsCompleteProfileOpen] = useState(false);
 
   // Targets calculated from user profile
   const targets = calculateDailyTargets(profile);
@@ -297,6 +299,51 @@ export function Dashboard() {
 
       </div>
 
+      {/* Friendly Profile Completion Prompt for Existing / Incomplete Profiles */}
+      {profile && !calculateProfileCompletion(profile).isComplete && (() => {
+        const completion = calculateProfileCompletion(profile);
+        const runtimeDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        return (
+          <div className="p-4 sm:p-5 rounded-[24px] bg-gradient-to-r from-emerald-950/70 via-cyan-950/60 to-slate-900/80 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-xl">
+            <div className="flex items-start sm:items-center space-x-3.5 flex-1">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#30d158] to-[#0a84ff] flex items-center justify-center text-black font-black shadow-lg shrink-0 mt-0.5 sm:mt-0">
+                <Sparkles className="w-5 h-5 text-black" />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="headline text-sm sm:text-base text-white font-bold">
+                    Complete Your NutriPulse Profile
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono">
+                    {completion.percentage}% Complete
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Updated {runtimeDate}
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full max-w-md h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#30d158] to-[#0a84ff] rounded-full transition-all duration-500"
+                    style={{ width: `${completion.percentage}%` }}
+                  />
+                </div>
+                <p className="text-slate-300 max-w-xl text-xs sm:text-sm leading-relaxed">
+                  Add a few details about your height, lifestyle activity, and fitness goals to formulate your precise calorie blueprint and fuel plan.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsCompleteProfileOpen(true)}
+              className="btn-press px-5 py-2.5 rounded-2xl bg-[#30d158] hover:bg-[#30d158]/90 text-black font-bold text-xs shadow-lg flex items-center space-x-1.5 shrink-0 self-stretch sm:self-auto justify-center"
+            >
+              <span>Complete My Profile</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        );
+      })()}
+
       {/* Dynamic Profile Target Blueprint Banner */}
       <div className="p-4 rounded-[24px] glass-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center space-x-3">
@@ -312,7 +359,8 @@ export function Dashboard() {
             </div>
             <p className="text-[11px] text-slate-400 mt-0.5">
               Calibrated for {profile?.gender || 'Adult'} • {profile?.age || 25} yrs • {profile?.weight || 70} kg •{' '}
-              {profile?.works_out ? `${profile.intensity} workout (${profile.duration} mins)` : 'Sedentary/Rest'}
+              {profile?.primary_goal ? profile.primary_goal.replace('_', ' ').toUpperCase() : 'MAINTAIN'} •{' '}
+              {profile?.goes_to_gym ? `Gym (${profile.gym_duration || 60}m)` : profile?.works_out ? `${profile.intensity} (${profile.duration}m)` : 'Sedentary/Rest'}
             </p>
           </div>
         </div>
@@ -413,6 +461,12 @@ export function Dashboard() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+      />
+
+      {/* 7. Complete Profile Modal for Incomplete Profiles */}
+      <CompleteProfileModal
+        isOpen={isCompleteProfileOpen}
+        onClose={() => setIsCompleteProfileOpen(false)}
       />
 
     </div>

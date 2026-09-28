@@ -16,12 +16,53 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
     gender TEXT NOT NULL,
     age INTEGER NOT NULL CHECK (age > 0 AND age < 150),
     weight NUMERIC(6, 2) NOT NULL CHECK (weight > 0),
+    height NUMERIC(5, 1) DEFAULT 170.0,
+    height_unit TEXT DEFAULT 'cm',
     works_out BOOLEAN NOT NULL DEFAULT false,
     intensity TEXT CHECK (intensity IN ('Intensive', 'Medium', 'Small', 'None')),
     duration INTEGER DEFAULT 0 CHECK (duration >= 0),
+    workout_frequency INTEGER DEFAULT 3,
+    daily_activity_level TEXT DEFAULT 'mostly_sitting',
+    walking_duration TEXT DEFAULT '15_30',
+    goes_to_gym BOOLEAN DEFAULT false,
+    gym_frequency INTEGER DEFAULT 0,
+    gym_duration INTEGER DEFAULT 0,
+    cardio_duration INTEGER DEFAULT 0,
+    cardio_type TEXT DEFAULT 'Walking',
+    primary_goal TEXT DEFAULT 'maintain',
+    target_weight NUMERIC(6, 2),
+    recomp_priority TEXT,
+    performance_focus TEXT,
+    competition_type TEXT,
+    competition_date DATE,
+    competition_weight_category TEXT,
+    diet_preference TEXT DEFAULT 'no_preference',
+    allergies JSONB DEFAULT '[]'::jsonb,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Upgrade existing user_profiles if already created
+ALTER TABLE public.user_profiles 
+    ADD COLUMN IF NOT EXISTS height NUMERIC(5, 1) DEFAULT 170.0,
+    ADD COLUMN IF NOT EXISTS height_unit TEXT DEFAULT 'cm',
+    ADD COLUMN IF NOT EXISTS workout_frequency INTEGER DEFAULT 3,
+    ADD COLUMN IF NOT EXISTS daily_activity_level TEXT DEFAULT 'mostly_sitting',
+    ADD COLUMN IF NOT EXISTS walking_duration TEXT DEFAULT '15_30',
+    ADD COLUMN IF NOT EXISTS goes_to_gym BOOLEAN DEFAULT false,
+    ADD COLUMN IF NOT EXISTS gym_frequency INTEGER DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS gym_duration INTEGER DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS cardio_duration INTEGER DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS cardio_type TEXT DEFAULT 'Walking',
+    ADD COLUMN IF NOT EXISTS primary_goal TEXT DEFAULT 'maintain',
+    ADD COLUMN IF NOT EXISTS target_weight NUMERIC(6, 2),
+    ADD COLUMN IF NOT EXISTS recomp_priority TEXT,
+    ADD COLUMN IF NOT EXISTS performance_focus TEXT,
+    ADD COLUMN IF NOT EXISTS competition_type TEXT,
+    ADD COLUMN IF NOT EXISTS competition_date DATE,
+    ADD COLUMN IF NOT EXISTS competition_weight_category TEXT,
+    ADD COLUMN IF NOT EXISTS diet_preference TEXT DEFAULT 'no_preference',
+    ADD COLUMN IF NOT EXISTS allergies JSONB DEFAULT '[]'::jsonb;
 
 -- 2. Create food_logs table
 CREATE TABLE IF NOT EXISTS public.food_logs (
