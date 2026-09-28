@@ -699,39 +699,126 @@ export function getDietMealTemplate(category, variant, profile) {
     return DIET_MEAL_TEMPLATES.vegetarian.Lunch.standard;
   }
 
-  // Check for allergy exclusions on dairy / eggs / peanuts / gluten
-  const allergies = Array.isArray(profile?.allergies) ? profile.allergies : [];
-  let adapted = { ...meal, itemsAndPortions: [...meal.itemsAndPortions] };
+  // Check for allergy & custom food exclusions
+  const allergies = Array.isArray(profile?.allergies) ? profile.allergies.map((a) => String(a).toLowerCase().trim()) : [];
+  const customStr = typeof profile?.custom_allergies === 'string' ? profile.custom_allergies : '';
+  const customTokens = customStr
+    .split(',')
+    .map((s) => s.toLowerCase().trim())
+    .filter(Boolean);
 
-  if (allergies.includes('dairy')) {
-    adapted.title = adapted.title.replace(/paneer/gi, 'Tofu').replace(/curd/gi, 'Rasam').replace(/buttermilk|majjiga/gi, 'Lemon-Mint Water');
+  const allExclusions = Array.from(new Set([...allergies, ...customTokens])).filter((item) => item !== 'none');
+
+  let adapted = {
+    ...meal,
+    itemsAndPortions: [...meal.itemsAndPortions],
+  };
+
+  const hasExclusion = (term) => allExclusions.some((ex) => ex.includes(term) || term.includes(ex));
+
+  // 1. Dairy / Lactose exclusion
+  if (hasExclusion('dairy') || hasExclusion('lactose') || hasExclusion('milk') || hasExclusion('curd') || hasExclusion('paneer')) {
+    adapted.title = adapted.title
+      .replace(/paneer/gi, 'Tofu')
+      .replace(/curd|perugu/gi, 'Rasam')
+      .replace(/buttermilk|majjiga/gi, 'Spiced Lemon-Mint Water');
     adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
-      item.replace(/paneer/gi, 'Tofu')
-          .replace(/curd|perugu/gi, 'warm clear rasam')
-          .replace(/buttermilk|majjiga/gi, 'spiced lemon-mint water')
+      item
+        .replace(/paneer/gi, 'Tofu')
+        .replace(/curd|perugu/gi, 'warm clear rasam')
+        .replace(/buttermilk|majjiga/gi, 'spiced lemon-mint water')
     );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/curd|paneer|buttermilk|majjiga/gi, 'Tofu / Rasam');
+    }
   }
 
-  if (allergies.includes('eggs')) {
-    adapted.title = adapted.title.replace(/egg[s]?|boiled egg[s]?|egg porutu/gi, 'Paneer / Dal');
+  // 2. Eggs exclusion
+  if (hasExclusion('egg') || hasExclusion('eggs')) {
+    adapted.title = adapted.title
+      .replace(/egg[s]?|boiled egg[s]?|egg porutu|3-egg/gi, 'Paneer / Dal')
+      .replace(/2-egg/gi, 'Paneer');
     adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
-      item.replace(/boiled egg[s]?|egg whites|egg porutu/gi, 'fresh paneer or thick dal')
+      item.replace(/boiled egg[s]?|egg whites|egg porutu|3-egg scramble|2-egg/gi, 'fresh paneer or thick moong dal')
     );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/boiled egg[s]?|egg porutu|egg whites/gi, 'fresh paneer or moong dal');
+    }
   }
 
-  if (allergies.includes('peanuts')) {
-    adapted.title = adapted.title.replace(/peanut chutney|peanut podi/gi, 'Allam (Ginger) Chutney');
+  // 3. Peanuts exclusion
+  if (hasExclusion('peanut') || hasExclusion('peanuts')) {
+    adapted.title = adapted.title
+      .replace(/peanut chutney|peanut podi|boiled peanuts/gi, 'Allam (Ginger) Chutney');
     adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
-      item.replace(/peanut chutney|peanut podi/gi, 'fresh allam or coconut chutney')
+      item
+        .replace(/peanut chutney|peanut podi/gi, 'fresh allam or coconut chutney')
+        .replace(/boiled peanuts/gi, 'roasted chana (putnalu)')
     );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/peanut chutney|peanut podi|boiled peanuts/gi, 'Allam Chutney / Sundal');
+    }
   }
 
-  if (allergies.includes('gluten')) {
-    adapted.title = adapted.title.replace(/phulkas|chapatis/gi, 'Steamed Rice / Pesarattu');
+  // 4. Gluten / Wheat exclusion
+  if (hasExclusion('gluten') || hasExclusion('wheat')) {
+    adapted.title = adapted.title
+      .replace(/phulkas|chapatis|rava upma|daliya/gi, 'Steamed Rice / Pesarattu');
     adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
-      item.replace(/phulkas|chapatis/gi, 'steamed Sona Masoori rice or moong pesarattu')
+      item.replace(/phulkas|chapatis|rava upma|daliya khichdi/gi, 'steamed Sona Masoori rice or moong pesarattu')
     );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/phulkas|chapatis|rava/gi, 'Steamed Rice / Pesarattu');
+    }
   }
+
+  // 5. Soy / Tofu exclusion
+  if (hasExclusion('soy') || hasExclusion('soya') || hasExclusion('tofu')) {
+    adapted.title = adapted.title
+      .replace(/soya chunks|tofu/gi, 'Paneer / Sprouted Moong');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/soya chunks|tofu bhurji|tofu/gi, 'fresh paneer or sprouted moong curry')
+    );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/soya|tofu/gi, 'Sprouted Moong / Paneer');
+    }
+  }
+
+  // 6. Seafood / Fish / Shellfish / Prawns exclusion
+  if (hasExclusion('fish') || hasExclusion('seafood') || hasExclusion('shellfish') || hasExclusion('prawn') || hasExclusion('prawns') || hasExclusion('shrimp')) {
+    adapted.title = adapted.title
+      .replace(/chepala pulusu|fish curry|prawn[s]?|seafood/gi, 'Andhra Kodi Kura (Chicken Curry)');
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) =>
+      item.replace(/chepala pulusu|fish curry|prawn[s]?|seafood/gi, 'lean Andhra Chicken Curry (Kodi Kura)')
+    );
+    if (adapted.quickAlternative) {
+      adapted.quickAlternative = adapted.quickAlternative
+        .replace(/chepala pulusu|fish curry|prawn[s]?/gi, 'Andhra Chicken Curry');
+    }
+  }
+
+  // 7. Custom Ingredient Substrings check (e.g. mushrooms, avocado, coconut, mustard, banana, etc.)
+  customTokens.forEach((token) => {
+    if (!token || token.length < 2) return;
+    const regex = new RegExp(`\\b${token}[s]?\\b`, 'gi');
+    if (regex.test(adapted.title)) {
+      adapted.title = adapted.title.replace(regex, 'Vegetable');
+    }
+    adapted.itemsAndPortions = adapted.itemsAndPortions.map((item) => {
+      if (regex.test(item)) {
+        return item.replace(regex, 'fresh seasonal vegetable');
+      }
+      return item;
+    });
+    if (adapted.quickAlternative && regex.test(adapted.quickAlternative)) {
+      adapted.quickAlternative = adapted.quickAlternative.replace(regex, 'vegetables');
+    }
+  });
 
   return adapted;
 }

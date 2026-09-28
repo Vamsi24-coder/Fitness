@@ -95,7 +95,7 @@ export function CompleteProfileModal({ isOpen, onClose }) {
   // 5. Nutrition Preferences
   const [dietPreference, setDietPreference] = useState('non_vegetarian');
   const [allergies, setAllergies] = useState(['none']);
-  const [customAllergy, setCustomAllergy] = useState('');
+  const [customAllergies, setCustomAllergies] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -180,6 +180,7 @@ export function CompleteProfileModal({ isOpen, onClose }) {
 
       setDietPreference(profile.diet_preference || 'non_vegetarian');
       setAllergies(Array.isArray(profile.allergies) ? profile.allergies : ['none']);
+      setCustomAllergies(profile.custom_allergies || '');
       setErrorMessage('');
     }
   }, [isOpen, profile]);
@@ -236,6 +237,7 @@ export function CompleteProfileModal({ isOpen, onClose }) {
     competition_weight_category: competitionCategory,
     diet_preference: dietPreference,
     allergies,
+    custom_allergies: customAllergies.trim(),
   };
   const liveTargets = calculateDailyTargets(livePayload);
 
@@ -318,16 +320,6 @@ export function CompleteProfileModal({ isOpen, onClose }) {
     });
   };
 
-  const handleAddCustomAllergy = (e) => {
-    e.preventDefault();
-    if (!customAllergy.trim()) return;
-    const clean = customAllergy.trim();
-    if (!allergies.includes(clean)) {
-      setAllergies((prev) => [...prev.filter((i) => i !== 'none'), clean]);
-    }
-    setCustomAllergy('');
-  };
-
   const handleSave = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -383,9 +375,13 @@ export function CompleteProfileModal({ isOpen, onClose }) {
               <Sparkles className="w-5 h-5 text-black" />
             </div>
             <div>
-              <h3 className="headline text-base sm:text-lg text-white">Complete Your NutriPulse Profile</h3>
+              <h3 className="headline text-base sm:text-lg text-white">
+                {profile ? 'Review Your Personalized Routine' : 'Complete Your NutriPulse Profile'}
+              </h3>
               <p className="text-xs text-slate-400">
-                Personalize your height, daily activity, and goal metrics for precision energy targets.
+                {profile 
+                  ? "Welcome back. Let's make sure your profile still reflects your current routine."
+                  : "Personalize your biometrics, activity, and goals for precision energy targets."}
               </p>
             </div>
           </div>
@@ -951,22 +947,18 @@ export function CompleteProfileModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Custom Allergy Adder */}
-            <div className="flex items-center space-x-2 pt-1">
+            {/* Other Foods to Avoid */}
+            <div className="space-y-1.5 pt-1.5">
+              <label className="block text-[11px] font-semibold text-slate-300">
+                Other foods to avoid
+              </label>
               <input
                 type="text"
-                value={customAllergy}
-                onChange={(e) => setCustomAllergy(e.target.value)}
-                placeholder="Add custom avoidance..."
-                className="flex-1 px-2.5 py-1.5 glass rounded-lg text-xs text-white focus:outline-none placeholder:text-slate-500"
+                value={customAllergies}
+                onChange={(e) => setCustomAllergies(e.target.value)}
+                placeholder="e.g. mushrooms, avocado, prawns, a specific ingredient..."
+                className="w-full px-3 py-2 glass rounded-xl text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#30d158] placeholder:text-slate-500"
               />
-              <button
-                type="button"
-                onClick={handleAddCustomAllergy}
-                className="btn-press px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200"
-              >
-                Add
-              </button>
             </div>
           </div>
 

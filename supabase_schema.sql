@@ -16,9 +16,13 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
     works_out BOOLEAN NOT NULL DEFAULT false,
     intensity TEXT CHECK (intensity IN ('Intensive', 'Medium', 'Small', 'None')),
     duration INTEGER DEFAULT 0 CHECK (duration >= 0),
+    custom_allergies TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Migration for existing user_profiles table columns:
+ALTER TABLE public.user_profiles ADD COLUMN IF NOT EXISTS custom_allergies TEXT DEFAULT '';
 
 -- 2. Create food_logs table
 CREATE TABLE IF NOT EXISTS public.food_logs (

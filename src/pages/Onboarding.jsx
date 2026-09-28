@@ -73,53 +73,61 @@ const FOODS_TO_AVOID = [
 ];
 
 export function Onboarding() {
-  const { user, isDemoUser, logout, refreshProfile, setProfile, isSchemaMissing, setIsSchemaMissing } = useAuth();
+  const { user, profile, isDemoUser, logout, refreshProfile, setProfile, isSchemaMissing, setIsSchemaMissing } = useAuth();
   const navigate = useNavigate();
+
+  // Existing user detection for conversational review vs fresh onboarding
+  const isExistingUser = Boolean(profile && (profile.weight || profile.gender));
 
   // Wizard Stage: 1 = Biometrics & Lifestyle, 2 = Training & Gym, 3 = Goals & Diet, 4 = Blueprint Reveal
   const [currentStep, setCurrentStep] = useState(1);
 
   // 1. Core Biometrics
-  const [gender, setGender] = useState('Male');
-  const [age, setAge] = useState('26');
-  const [weight, setWeight] = useState('72');
-  const [heightUnit, setHeightUnit] = useState('cm'); // 'cm' | 'ft_in'
-  const [heightCm, setHeightCm] = useState('175');
-  const [heightFeet, setHeightFeet] = useState('5');
-  const [heightInches, setHeightInches] = useState('9');
+  const [gender, setGender] = useState(profile?.gender || '');
+  const [age, setAge] = useState(profile?.age ? String(profile.age) : '');
+  const [weight, setWeight] = useState(profile?.weight ? String(profile.weight) : '');
+  const [heightUnit, setHeightUnit] = useState(profile?.height_unit || 'cm'); // 'cm' | 'ft_in'
+  
+  const initialHeightCm = profile?.height_cm || profile?.height || '';
+  const [heightCm, setHeightCm] = useState(initialHeightCm ? String(initialHeightCm) : '');
+  const [heightFeet, setHeightFeet] = useState(initialHeightCm ? String(cmToFeetInches(initialHeightCm).feet) : '');
+  const [heightInches, setHeightInches] = useState(initialHeightCm ? String(cmToFeetInches(initialHeightCm).inches) : '');
 
   // Height Unit Switcher
   const handleHeightUnitToggle = (newUnit) => {
     if (newUnit === heightUnit) return;
     if (newUnit === 'ft_in') {
-      const currentCm = parseFloat(heightCm) || 175;
+      const currentCm = parseFloat(heightCm) || (gender === 'Female' ? 163 : 175);
       const { feet, inches } = cmToFeetInches(currentCm);
       setHeightFeet(String(feet));
       setHeightInches(String(inches));
     } else {
       const currentCm = feetInchesToCm(parseInt(heightFeet, 10) || 0, parseFloat(heightInches) || 0);
-      setHeightCm(String(Math.round(currentCm)));
+      setHeightCm(currentCm > 0 ? String(Math.round(currentCm)) : '');
     }
     setHeightUnit(newUnit);
   };
 
   // 2. Daily Movement & General Activity
-  const [dailyActivityLevel, setDailyActivityLevel] = useState('mostly_sitting');
-  const [walkingDuration, setWalkingDuration] = useState('15_30');
+  const [dailyActivityLevel, setDailyActivityLevel] = useState(profile?.daily_activity_level || '');
+  const [walkingDuration, setWalkingDuration] = useState(profile?.walking_duration || '');
 
   // 3. Training & Workout (Smart Exercise Mode)
-  const [exerciseTypes, setExerciseTypes] = useState(['gym']);
-  const [worksOut, setWorksOut] = useState(true);
-  const [workoutFrequency, setWorkoutFrequency] = useState(4);
-  const [intensity, setIntensity] = useState('Medium');
-  const [duration, setDuration] = useState('45');
+  const initialExercises = Array.isArray(profile?.exercise_types) && profile.exercise_types.length > 0
+    ? profile.exercise_types
+    : (profile?.works_out === false ? ['none'] : (profile?.goes_to_gym ? ['gym'] : []));
+  const [exerciseTypes, setExerciseTypes] = useState(initialExercises);
+  const [worksOut, setWorksOut] = useState(profile?.works_out !== undefined ? profile.works_out : initialExercises.some((t) => t !== 'none' && t !== ''));
+  const [workoutFrequency, setWorkoutFrequency] = useState(profile?.workout_frequency || 4);
+  const [intensity, setIntensity] = useState(profile?.intensity || '');
+  const [duration, setDuration] = useState(profile?.duration ? String(profile.duration) : '');
 
   // 4. Gym & Cardio
-  const [goesToGym, setGoesToGym] = useState(true);
-  const [gymFrequency, setGymFrequency] = useState(4);
-  const [gymDuration, setGymDuration] = useState('60');
-  const [cardioDuration, setCardioDuration] = useState('15');
-  const [cardioTypes, setCardioTypes] = useState(['Treadmill']);
+  const [goesToGym, setGoesToGym] = useState(profile?.goes_to_gym || initialExercises.includes('gym'));
+  const [gymFrequency, setGymFrequency] = useState(profile?.gym_frequency || 4);
+  const [gymDuration, setGymDuration] = useState(profile?.gym_duration ? String(profile.gym_duration) : '');
+  const [cardioDuration, setCardioDuration] = useState(profile?.cardio_duration !== undefined ? String(profile.cardio_duration) : '');
+  const [cardioTypes, setCardioTypes] = useState(Array.isArray(profile?.cardio_types) ? profile.cardio_types : ['Treadmill']);
 
   // Smart Exercise Toggle Helper
   const toggleExerciseType = (typeId) => {
@@ -134,9 +142,6 @@ export function Onboarding() {
       let next;
       if (filtered.includes(typeId)) {
         next = filtered.filter((t) => t !== typeId);
-        if (next.length === 0) {
-          next = ['none'];
-        }
       } else {
         next = [...filtered, typeId];
       }
@@ -148,32 +153,32 @@ export function Onboarding() {
   };
 
   // 5. Goals
-  const [primaryGoal, setPrimaryGoal] = useState('lose_fat');
-  const [targetWeight, setTargetWeight] = useState('');
-  const [hasCustomTargetWeight, setHasCustomTargetWeight] = useState(false);
-  const [recompPriorities, setRecompPriorities] = useState(['fat_loss', 'muscle_gain']);
-  const [performanceFocus, setPerformanceFocus] = useState(['strength']);
-  const [competitionType, setCompetitionType] = useState('bodybuilding');
-  const [competitionDate, setCompetitionDate] = useState('');
-  const [competitionCategory, setCompetitionCategory] = useState('');
+  const [primaryGoal, setPrimaryGoal] = useState(profile?.primary_goal || '');
+  const [targetWeight, setTargetWeight] = useState(profile?.target_weight ? String(profile.target_weight) : '');
+  const [hasCustomTargetWeight, setHasCustomTargetWeight] = useState(Boolean(profile?.target_weight));
+  const [recompPriorities, setRecompPriorities] = useState(Array.isArray(profile?.recomp_priorities) ? profile.recomp_priorities : ['fat_loss', 'muscle_gain']);
+  const [performanceFocus, setPerformanceFocus] = useState(Array.isArray(profile?.performance_focus) ? profile.performance_focus : ['strength']);
+  const [competitionType, setCompetitionType] = useState(profile?.competition_type || 'bodybuilding');
+  const [competitionDate, setCompetitionDate] = useState(profile?.competition_date || '');
+  const [competitionCategory, setCompetitionCategory] = useState(profile?.competition_weight_category || '');
 
   // 6. Nutrition Preferences & Allergies
-  const [dietPreference, setDietPreference] = useState('non_vegetarian');
-  const [allergies, setAllergies] = useState(['none']);
-  const [customAllergy, setCustomAllergy] = useState('');
+  const [dietPreference, setDietPreference] = useState(profile?.diet_preference || '');
+  const [allergies, setAllergies] = useState(Array.isArray(profile?.allergies) ? profile.allergies : ['none']);
+  const [customAllergies, setCustomAllergies] = useState(profile?.custom_allergies || '');
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Numerical Parsing & Sanitization
-  const parsedAge = parseInt(age, 10) || 25;
+  // Numerical Parsing & Sanitization for Dynamic Calculation
+  const parsedAge = parseInt(age, 10) || 26;
   const parsedWeight = parseFloat(weight) || 70;
   const parsedHeightCm = heightUnit === 'cm'
     ? (parseFloat(heightCm) || 175)
     : feetInchesToCm(parseInt(heightFeet, 10) || 0, parseFloat(heightInches) || 0);
 
-  const healthyRange = calculateHealthyWeightRange(parsedHeightCm, gender);
-  const suggestedTargetWeight = getSuggestedTargetWeight(parsedWeight, parsedHeightCm, primaryGoal, gender);
+  const healthyRange = calculateHealthyWeightRange(parsedHeightCm, gender || 'Male');
+  const suggestedTargetWeight = getSuggestedTargetWeight(parsedWeight, parsedHeightCm, primaryGoal || 'maintain', gender || 'Male');
   const parsedTargetWeight = (primaryGoal === 'lose_fat' || primaryGoal === 'gain_muscle')
     ? (targetWeight !== '' && !isNaN(parseFloat(targetWeight)) ? parseFloat(targetWeight) : suggestedTargetWeight)
     : null;
@@ -211,9 +216,9 @@ export function Onboarding() {
     ? 'both_equally'
     : (recompPriorities.includes('fat_loss') ? 'fat_loss' : (recompPriorities.includes('muscle_gain') ? 'muscle_gain' : 'both_equally'));
 
-  // Profile Payload for Real-time Blueprint Calculation
+  // Profile Payload for Real-time Blueprint Calculation & Persistence
   const profilePayload = {
-    gender,
+    gender: gender || 'Male',
     age: parsedAge,
     weight: parsedWeight,
     height: parsedHeightCm,
@@ -222,17 +227,17 @@ export function Onboarding() {
     exercise_types: exerciseTypes,
     works_out: worksOut,
     workout_frequency: worksOut ? workoutFrequency : 0,
-    intensity: worksOut ? intensity : 'Small',
+    intensity: worksOut ? (intensity || 'Medium') : 'Small',
     duration: parsedDuration,
-    daily_activity_level: dailyActivityLevel,
-    walking_duration: walkingDuration,
+    daily_activity_level: dailyActivityLevel || 'mostly_sitting',
+    walking_duration: walkingDuration || '15_30',
     goes_to_gym: worksOut && goesToGym,
     gym_frequency: worksOut && goesToGym ? gymFrequency : 0,
     gym_duration: parsedGymDuration,
     cardio_duration: parsedCardioDuration,
     cardio_type: cardioTypes.join(', '),
     cardio_types: cardioTypes,
-    primary_goal: primaryGoal,
+    primary_goal: primaryGoal || 'maintain',
     target_weight: parsedTargetWeight,
     recomp_priority: canonicalRecompPriority,
     recomp_priorities: recompPriorities,
@@ -241,8 +246,9 @@ export function Onboarding() {
     competition_type: competitionType,
     competition_date: competitionDate,
     competition_weight_category: competitionCategory,
-    diet_preference: dietPreference,
+    diet_preference: dietPreference || 'non_vegetarian',
     allergies,
+    custom_allergies: customAllergies.trim(),
   };
 
   const [showMathDetails, setShowMathDetails] = useState(false);
@@ -267,33 +273,43 @@ export function Onboarding() {
     });
   };
 
-  const handleAddCustomAllergy = (e) => {
-    e.preventDefault();
-    if (!customAllergy.trim()) return;
-    const clean = customAllergy.trim();
-    if (!allergies.includes(clean)) {
-      setAllergies((prev) => [...prev.filter((i) => i !== 'none'), clean]);
-    }
-    setCustomAllergy('');
-  };
-
   // Step 1 Validation
   const handleProceedFromStep1 = (e) => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (isNaN(parsedAge) || parsedAge < 10 || parsedAge > 120) {
+    if (!gender) {
+      setErrorMsg('Please select your biological gender.');
+      return;
+    }
+
+    if (!age || isNaN(parsedAge) || parsedAge < 10 || parsedAge > 120) {
       setErrorMsg('Please enter a valid age between 10 and 120.');
       return;
     }
 
-    if (isNaN(parsedHeightCm) || parsedHeightCm < 50 || parsedHeightCm > 250) {
-      setErrorMsg('Please enter a valid height between 50 cm and 250 cm (approx. 20 to 98 inches).');
+    if (heightUnit === 'cm' && (!heightCm || isNaN(parsedHeightCm) || parsedHeightCm < 50 || parsedHeightCm > 250)) {
+      setErrorMsg('Please enter a valid height in cm (50 to 250 cm).');
       return;
     }
 
-    if (isNaN(parsedWeight) || parsedWeight <= 20 || parsedWeight > 350) {
+    if (heightUnit === 'ft_in' && (!heightFeet || !heightInches || isNaN(parsedHeightCm) || parsedHeightCm < 50 || parsedHeightCm > 250)) {
+      setErrorMsg('Please enter your height in feet and inches.');
+      return;
+    }
+
+    if (!weight || isNaN(parsedWeight) || parsedWeight <= 20 || parsedWeight > 350) {
       setErrorMsg('Please enter a valid weight in kg (20 - 350 kg).');
+      return;
+    }
+
+    if (!dailyActivityLevel) {
+      setErrorMsg('Please select your typical normal activity outside workouts.');
+      return;
+    }
+
+    if (!walkingDuration) {
+      setErrorMsg('Please select how much you walk in a typical day.');
       return;
     }
 
@@ -305,6 +321,16 @@ export function Onboarding() {
   const handleProceedFromStep2 = (e) => {
     e.preventDefault();
     setErrorMsg('');
+
+    if (exerciseTypes.length === 0) {
+      setErrorMsg('Please select how you usually exercise (or choose "I Don\'t Exercise Regularly").');
+      return;
+    }
+
+    if (worksOut && !intensity) {
+      setErrorMsg('Please select your typical workout intensity.');
+      return;
+    }
 
     if (worksOut && (isNaN(parsedDuration) || parsedDuration < 5)) {
       setErrorMsg('Please enter a valid workout duration (at least 5 minutes).');
@@ -324,6 +350,16 @@ export function Onboarding() {
   const handleProceedFromStep3 = (e) => {
     e.preventDefault();
     setErrorMsg('');
+
+    if (!primaryGoal) {
+      setErrorMsg('Please select your primary goal.');
+      return;
+    }
+
+    if (!dietPreference) {
+      setErrorMsg('Please select your dietary preference.');
+      return;
+    }
 
     if ((primaryGoal === 'lose_fat' || primaryGoal === 'gain_muscle') && targetWeight) {
       if (isNaN(parsedTargetWeight) || parsedTargetWeight < 20 || parsedTargetWeight > 350) {
@@ -439,6 +475,18 @@ export function Onboarding() {
             >
               <form onSubmit={handleProceedFromStep1} className="space-y-5">
                 
+                {/* Existing User Conversational Review Notice */}
+                {isExistingUser && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-[#30d158] shrink-0" />
+                      <span className="leading-snug">
+                        Welcome back! You are currently recorded as <strong>{profile?.weight} kg</strong> ({profile?.gender}, {profile?.age} yrs, {profile?.height || profile?.height_cm} cm). Has your body weight or biometrics changed recently?
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* 1. Biological Gender */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 caption-label mb-2">
@@ -726,6 +774,18 @@ export function Onboarding() {
             >
               <form onSubmit={handleProceedFromStep2} className="space-y-5">
                 
+                {/* Existing User Conversational Review Notice */}
+                {isExistingUser && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-[#30d158] shrink-0" />
+                      <span className="leading-snug">
+                        You currently train <strong>{profile?.workout_frequency || 4} days/week</strong> ({profile?.goes_to_gym ? 'Gym' : (profile?.works_out ? 'Home workouts / Outdoor' : 'Daily movement & nutrition')}). Update or confirm your current routine below.
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Smart Exercise Question: How do you usually exercise? */}
                 <div className="p-4 rounded-2xl glass-inset space-y-4">
                   <div>
@@ -1020,6 +1080,18 @@ export function Onboarding() {
             >
               <form onSubmit={handleProceedFromStep3} className="space-y-5">
                 
+                {/* Existing User Conversational Review Notice */}
+                {isExistingUser && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-[#30d158] shrink-0" />
+                      <span className="leading-snug">
+                        Your active goal is <strong>{GOAL_DETAILS[profile?.primary_goal]?.label || 'Maintain Weight'}</strong> ({profile?.diet_preference ? String(profile.diet_preference).replace('_', ' ') : 'vegetarian'}). Keep this goal or update below.
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* 1. Primary Goal Selection */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 caption-label mb-2">
@@ -1375,22 +1447,18 @@ export function Onboarding() {
                     </div>
                   </div>
 
-                  {/* Custom Allergy Adder */}
-                  <div className="mt-2.5 flex items-center space-x-2">
+                  {/* Other Foods to Avoid */}
+                  <div className="space-y-1.5 pt-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Other foods to avoid
+                    </label>
                     <input
                       type="text"
-                      value={customAllergy}
-                      onChange={(e) => setCustomAllergy(e.target.value)}
-                      placeholder="Add custom food to avoid (e.g. Mushrooms, Mustard)..."
-                      className="flex-1 px-3 py-2 glass rounded-xl text-xs text-white focus:outline-none placeholder:text-slate-500"
+                      value={customAllergies}
+                      onChange={(e) => setCustomAllergies(e.target.value)}
+                      placeholder="e.g. mushrooms, avocado, prawns, a specific ingredient..."
+                      className="w-full px-4 py-3 glass-inset rounded-2xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#30d158]/50 placeholder:text-slate-500"
                     />
-                    <button
-                      type="button"
-                      onClick={handleAddCustomAllergy}
-                      className="btn-press px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200"
-                    >
-                      Add
-                    </button>
                   </div>
                 </div>
 

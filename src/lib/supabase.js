@@ -174,6 +174,9 @@ export function sanitizeProfilePayload(raw) {
   if (raw.allergies !== undefined && raw.allergies !== null) {
     payload.allergies = Array.isArray(raw.allergies) ? raw.allergies : [String(raw.allergies)];
   }
+  if (raw.custom_allergies !== undefined && raw.custom_allergies !== null) {
+    payload.custom_allergies = String(raw.custom_allergies);
+  }
 
   payload.updated_at = new Date().toISOString();
 

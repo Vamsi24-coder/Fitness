@@ -98,6 +98,7 @@ export function SettingsModal({ isOpen, onClose }) {
   const [performanceFocus, setPerformanceFocus] = useState(['strength']);
   const [dietPreference, setDietPreference] = useState('non_vegetarian');
   const [allergies, setAllergies] = useState(['none']);
+  const [customAllergies, setCustomAllergies] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -171,6 +172,7 @@ export function SettingsModal({ isOpen, onClose }) {
 
       setDietPreference(profile.diet_preference || 'non_vegetarian');
       setAllergies(Array.isArray(profile.allergies) ? profile.allergies : ['none']);
+      setCustomAllergies(profile.custom_allergies || '');
       setErrorMessage('');
       setSaveSuccess(false);
     }
@@ -221,6 +223,7 @@ export function SettingsModal({ isOpen, onClose }) {
     performance_focuses: performanceFocus,
     diet_preference: dietPreference,
     allergies,
+    custom_allergies: customAllergies.trim(),
   });
 
   const toggleExerciseType = (typeId) => {
@@ -313,6 +316,7 @@ export function SettingsModal({ isOpen, onClose }) {
       performance_focuses: performanceFocus,
       diet_preference: dietPreference,
       allergies,
+      custom_allergies: customAllergies.trim(),
       updated_at: new Date().toISOString(),
     };
 
@@ -989,6 +993,20 @@ export function SettingsModal({ isOpen, onClose }) {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* Other Foods to Avoid */}
+                <div className="space-y-1.5 pt-1">
+                  <label className="block text-[11px] font-semibold text-slate-300">
+                    Other foods to avoid
+                  </label>
+                  <input
+                    type="text"
+                    value={customAllergies}
+                    onChange={(e) => setCustomAllergies(e.target.value)}
+                    placeholder="e.g. mushrooms, avocado, prawns, a specific ingredient..."
+                    className="w-full px-3 py-2 glass rounded-xl text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#30d158] placeholder:text-slate-500"
+                  />
                 </div>
               </div>
             </div>
